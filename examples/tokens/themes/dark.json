@@ -1,0 +1,51 @@
+{
+  "$schema": "../../../schemas/tokens/base.schema.json",
+  "semantic": {
+    "colors": {
+      "primary": {
+        "$type": "color",
+        "$ref": "../primitives/colors.json#/colors/blue/400"
+      },
+      "primaryHover": {
+        "$type": "color",
+        "$ref": "../primitives/colors.json#/colors/blue/300"
+      },
+      "primaryActive": {
+        "$type": "color",
+        "$ref": "../primitives/colors.json#/colors/blue/500"
+      },
+      "background": {
+        "$type": "color",
+        "$value": "#111827"
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "#1f2937"
+      },
+      "text": {
+        "primary": {
+          "$type": "color",
+          "$value": "#f9fafb"
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": "#d1d5db"
+        },
+        "muted": {
+          "$type": "color",
+          "$value": "#6b7280"
+        }
+      },
+      "border": {
+        "default": {
+          "$type": "color",
+          "$value": "#374151"
+        },
+        "focus": {
+          "$type": "color",
+          "$ref": "../primitives/colors.json#/colors/blue/400"
+        }
+      }
+    }
+  }
+}

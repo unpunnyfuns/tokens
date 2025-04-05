@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dimension Token Schema",
+  "description": "Schema for dimension tokens (spacing, sizing, etc)",
+  "allOf": [
+    { "$ref": "../base.schema.json#/$defs/leaf" },
+    {
+      "type": "object",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "const": "dimension"
+        },
+        "$value": {
+          "$ref": "../value-types.schema.json#/$defs/dimensionValue"
+        }
+      },
+      "required": ["$type"]
+    }
+  ]
+}

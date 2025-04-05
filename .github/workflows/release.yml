@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version type (patch, minor, major)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+      
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Bump version
+        run: |
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+      
+      - name: Build schemas with new version
+        run: npm run build:schemas
+      
+      - name: Run validation
+        run: |
+          npm run dev:validate-schemas
+          npm run validate:examples || true
+      
+      - name: Commit version bump and build
+        run: |
+          git add package.json package-lock.json dist/
+          git commit -m "chore: release v${{ env.NEW_VERSION }}"
+          git tag -a "v${{ env.NEW_VERSION }}" -m "Release v${{ env.NEW_VERSION }}"
+      
+      - name: Push changes
+        run: |
+          git push origin main
+          git push origin "v${{ env.NEW_VERSION }}"
+      
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.NEW_VERSION }}
+          name: Release v${{ env.NEW_VERSION }}
+          body: |
+            ## What's Changed
+            
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ env.PREV_VERSION }}...v${{ env.NEW_VERSION }}
+            
+            ## Installation
+            
+            ```bash
+            npm install @unpunnyfuns/tokens@${{ env.NEW_VERSION }}
+            ```
+            
+            ## Schema URLs
+            
+            The schemas are available at:
+            - https://tokens.unpunny.fun/schema/${{ env.NEW_VERSION }}/[schema-name]
+            - https://tokens.unpunny.fun/schema/latest/[schema-name]
+          draft: false
+          prerelease: false

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../../schemas/tokens/base.schema.json",
+  "semantic": {
+    "colors": {
+      "background": {
+        "$type": "color",
+        "$value": "#ffffff"
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "#f9fafb"
+      },
+      "text": {
+        "primary": {
+          "$type": "color",
+          "$value": "#111827"
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": "#4b5563"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Design Tokens Resolver Manifest",
+  "description": "Schema for resolver manifest files that define token composition across themes and modes",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to the JSON schema"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the resolver configuration"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of what this resolver configuration is for"
+    },
+    "sets": {
+      "type": "array",
+      "description": "Base token sets that are always loaded",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the token set"
+          },
+          "values": {
+            "type": "array",
+            "description": "Array of token file paths to load",
+            "items": {
+              "type": "string",
+              "pattern": "^[^\\s]+\\.json$"
+            },
+            "minItems": 1
+          }
+        },
+        "required": ["name", "values"],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "modifiers": {
+      "type": "array",
+      "description": "Modifiers that can be applied to base sets (themes, modes, etc)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the modifier dimension (e.g., 'theme', 'contrast')"
+          },
+          "values": {
+            "type": "array",
+            "description": "Possible values for this modifier",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of this modifier value (e.g., 'light', 'dark')"
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Token files to apply for this modifier value",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[^\\s]+\\.json$"
+                  }
+                }
+              },
+              "required": ["name", "values"],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          },
+          "meta": {
+            "type": "object",
+            "description": "Additional metadata for this modifier",
+            "additionalProperties": true
+          }
+        },
+        "required": ["values"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["sets", "modifiers"],
+  "additionalProperties": false
+}

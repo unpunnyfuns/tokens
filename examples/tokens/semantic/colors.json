@@ -1,0 +1,147 @@
+{
+  "$schema": "../../../schemas/tokens/base.schema.json",
+  "$description": "Semantic color tokens - references to primitives with meaningful names",
+
+  "brand": {
+    "primary": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/blue/600" }
+    },
+    "primary-hover": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/blue/700" }
+    },
+    "primary-active": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/blue/800" }
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/600" }
+    },
+    "secondary-hover": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/700" }
+    },
+    "secondary-active": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/800" }
+    }
+  },
+
+  "feedback": {
+    "error": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/red/600" }
+    },
+    "error-light": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/red/50" }
+    },
+    "warning": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/yellow/500" }
+    },
+    "warning-light": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/yellow/50" }
+    },
+    "success": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/green/600" }
+    },
+    "success-light": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/green/50" }
+    },
+    "info": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/blue/500" }
+    },
+    "info-light": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/blue/50" }
+    }
+  },
+
+  "text": {
+    "primary": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/900" }
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/600" }
+    },
+    "tertiary": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/500" }
+    },
+    "disabled": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/400" }
+    },
+    "inverse": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/base/white" }
+    },
+    "link": {
+      "$type": "color",
+      "$value": { "$ref": "#/brand/primary" }
+    },
+    "link-hover": {
+      "$type": "color",
+      "$value": { "$ref": "#/brand/primary-hover" }
+    }
+  },
+
+  "background": {
+    "primary": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/base/white" }
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/50" }
+    },
+    "tertiary": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/100" }
+    },
+    "disabled": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/100" }
+    },
+    "overlay": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/base/black-50" }
+    },
+    "inverse": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/900" }
+    }
+  },
+
+  "border": {
+    "default": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/200" }
+    },
+    "subtle": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/100" }
+    },
+    "strong": {
+      "$type": "color",
+      "$value": { "$ref": "../primitives/colors.json#/colors/gray/300" }
+    },
+    "focus": {
+      "$type": "color",
+      "$value": { "$ref": "#/brand/primary" }
+    },
+    "error": {
+      "$type": "color",
+      "$value": { "$ref": "#/feedback/error" }
+    }
+  }
+}

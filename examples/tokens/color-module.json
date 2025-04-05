@@ -1,0 +1,160 @@
+{
+  "$schema": "../../schemas/tokens/full.schema.json",
+  "$description": "Examples using the new color module specification with various color spaces",
+
+  "colors": {
+    "$description": "Colors defined using the new color module format",
+
+    "brand": {
+      "$description": "Brand colors in different color spaces",
+      "primary-srgb": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.4, 0.8],
+          "alpha": 1,
+          "hex": "#0066cc"
+        }
+      },
+      "primary-oklch": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.55, 0.15, 260],
+          "alpha": 1
+        }
+      },
+      "primary-p3": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "display-p3",
+          "components": [0, 0.4, 0.85],
+          "alpha": 1,
+          "hex": "#0066d9"
+        }
+      }
+    },
+
+    "semantic": {
+      "$description": "Semantic colors using perceptually uniform color spaces",
+      "success": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklab",
+          "components": [0.7, -0.2, 0.15],
+          "alpha": 1,
+          "hex": "#22c55e"
+        }
+      },
+      "warning": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "lch",
+          "components": [80, 70, 85],
+          "alpha": 1,
+          "hex": "#f59e0b"
+        }
+      },
+      "error": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "lab",
+          "components": [50, 60, 30],
+          "alpha": 1,
+          "hex": "#ef4444"
+        }
+      }
+    },
+
+    "gradients": {
+      "$description": "Colors for gradients with smooth interpolation",
+      "gradient-start": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "hsl",
+          "components": [240, 100, 50],
+          "alpha": 1
+        }
+      },
+      "gradient-mid": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "hsl",
+          "components": [180, 100, 50],
+          "alpha": 0.8
+        }
+      },
+      "gradient-end": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "hsl",
+          "components": [120, 100, 50],
+          "alpha": 0.6
+        }
+      }
+    },
+
+    "wide-gamut": {
+      "$description": "Colors utilizing wide gamut color spaces",
+      "vivid-red": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "rec2020",
+          "components": [1, 0, 0],
+          "alpha": 1,
+          "hex": "#ff0000"
+        }
+      },
+      "deep-blue": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "prophoto-rgb",
+          "components": [0, 0, 1],
+          "alpha": 1,
+          "hex": "#0000ff"
+        }
+      },
+      "bright-green": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "a98-rgb",
+          "components": [0, 1, 0],
+          "alpha": 1,
+          "hex": "#00ff00"
+        }
+      }
+    },
+
+    "special": {
+      "$description": "Special color features",
+      "transparent-overlay": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 0],
+          "alpha": 0.3
+        }
+      },
+      "missing-channel": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "hwb",
+          "components": [240, "none", 20],
+          "alpha": 1
+        }
+      },
+      "referenced-components": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            { "$ref": "#/colors/brand/primary-srgb/$value/components/0" },
+            { "$ref": "#/colors/brand/primary-srgb/$value/components/1" },
+            1
+          ],
+          "alpha": 1
+        }
+      }
+    }
+  }
+}

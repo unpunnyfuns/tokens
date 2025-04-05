@@ -1,0 +1,79 @@
+{
+	"name": "@unpunnyfuns/tokens",
+	"version": "0.1.0",
+	"description": "JSON Schema for DTCG-style design tokens with resolver manifest and JSON pointer aliases",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/unpunnyfuns/tokens.git"
+	},
+	"bugs": {
+		"url": "https://github.com/unpunnyfuns/tokens/issues"
+	},
+	"homepage": "https://github.com/unpunnyfuns/tokens#readme",
+	"author": "unpunnyfuns <unpunnyfuns@gmail.com>",
+	"license": "MIT",
+	"keywords": [
+		"design-tokens",
+		"dtcg",
+		"json-schema",
+		"design-system",
+		"tokens",
+		"resolver"
+	],
+	"type": "module",
+	"main": "./src/index.ts",
+	"bin": {
+		"upft": "./src/cli.ts"
+	},
+	"engines": {
+		"node": ">=22.6.0"
+	},
+	"exports": {
+		".": "./src/index.ts",
+		"./schemas/*": "./dist/schema/0.1.0/*.json",
+		"./schemas/latest/*": "./dist/schema/latest/*.json",
+		"./validators": "./src/validation/index.ts",
+		"./bundler": "./src/bundler/index.ts",
+		"./bundler/api": "./src/bundler/api.ts",
+		"./transformers": "./src/transformers/index.ts",
+		"./package.json": "./package.json"
+	},
+	"files": [
+		"dist/",
+		"src/",
+		"schemas/",
+		"README.md",
+		"LICENSE"
+	],
+	"scripts": {
+		"format": "biome format --write .",
+		"lint": "biome lint .",
+		"lint:fix": "biome lint --write .",
+		"check": "biome check --write .",
+		"typecheck": "tsc --noEmit",
+		"dev:validate-schemas": "node --experimental-strip-types scripts/dev-cli.ts validate-schemas",
+		"dev:test": "node --experimental-strip-types scripts/dev-cli.ts test",
+		"dev:build": "node --experimental-strip-types scripts/dev-cli.ts build",
+		"test": "npm run dev:validate-schemas && npm run dev:test",
+		"validate:examples": "node --experimental-strip-types src/cli.ts validate ./examples",
+		"bundle": "node --experimental-strip-types src/cli.ts bundle",
+		"watch:examples": "nodemon --watch schemas --watch examples --watch src --ext json,ts --exec \"npm run validate:examples\"",
+		"watch:schemas": "nodemon --watch schemas --watch src --ext json,ts --exec \"npm run dev:validate-schemas\"",
+		"watch": "nodemon --watch schemas --watch examples --watch src --ext json,ts --exec \"npm run test\"",
+		"build:schemas": "node --experimental-strip-types scripts/build-schemas.ts",
+		"build": "npm run build:schemas"
+	},
+	"dependencies": {
+		"@hyperjump/browser": "^1.3.1",
+		"@hyperjump/json-schema": "^1.16.2",
+		"commander": "^14.0.0",
+		"picocolors": "^1.1.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@types/node": "^24.2.1",
+		"glob": "^11.0.3",
+		"nodemon": "3.1.9",
+		"typescript": "^5.9.2"
+	}
+}

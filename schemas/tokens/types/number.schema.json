@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Number Token Schema",
+  "description": "Schema for number tokens",
+  "allOf": [
+    { "$ref": "../base.schema.json#/$defs/leaf" },
+    {
+      "type": "object",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "const": "number"
+        },
+        "$value": {
+          "type": "number",
+          "description": "Numeric value"
+        }
+      },
+      "required": ["$type"]
+    }
+  ]
+}

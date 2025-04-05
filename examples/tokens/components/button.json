@@ -1,0 +1,122 @@
+{
+  "$schema": "../../../schemas/tokens/full.schema.json",
+  "$description": "Button component tokens with cross-file references",
+
+  "button": {
+    "$description": "Button component design tokens",
+
+    "padding": {
+      "small": {
+        "$type": "dimension",
+        "$value": { "$ref": "../primitives/dimensions.json#/spacing/xs" }
+      },
+      "medium": {
+        "$type": "dimension",
+        "$value": { "$ref": "../primitives/dimensions.json#/spacing/sm" }
+      },
+      "large": {
+        "$type": "dimension",
+        "$value": { "$ref": "../primitives/dimensions.json#/spacing/md" }
+      }
+    },
+
+    "typography": {
+      "label": {
+        "$type": "typography",
+        "$value": { "$ref": "../primitives/typography.json#/body/base" },
+        "$description": "Button label typography"
+      }
+    },
+
+    "colors": {
+      "primary": {
+        "background": {
+          "$type": "color",
+          "$value": {
+            "$ref": "../semantic/colors.json#/semantic/interactive/primary"
+          }
+        },
+        "text": {
+          "$type": "color",
+          "$value": { "$ref": "../primitives/colors.json#/base/white" }
+        },
+        "border": {
+          "$type": "color",
+          "$value": {
+            "$ref": "../semantic/colors.json#/semantic/interactive/primary"
+          }
+        }
+      },
+      "secondary": {
+        "background": {
+          "$type": "color",
+          "$value": { "$ref": "../primitives/colors.json#/base/white" }
+        },
+        "text": {
+          "$type": "color",
+          "$value": { "$ref": "../semantic/colors.json#/semantic/text/primary" }
+        },
+        "border": {
+          "$type": "color",
+          "$value": {
+            "$ref": "../semantic/colors.json#/semantic/border/default"
+          }
+        }
+      }
+    },
+
+    "border": {
+      "default": {
+        "$type": "border",
+        "$value": {
+          "color": { "$ref": "#/button/colors/primary/border" },
+          "width": "1px",
+          "style": { "$ref": "../composite-tokens.json#/borders/styles/solid" }
+        }
+      },
+      "focus": {
+        "$type": "border",
+        "$value": {
+          "color": {
+            "$ref": "../semantic/colors.json#/semantic/interactive/focus"
+          },
+          "width": "2px",
+          "style": "solid"
+        }
+      }
+    },
+
+    "shadow": {
+      "rest": {
+        "$type": "shadow",
+        "$value": { "$ref": "../shadows.json#/elevation/level-0" }
+      },
+      "hover": {
+        "$type": "shadow",
+        "$value": { "$ref": "../shadows.json#/elevation/level-1" }
+      },
+      "active": {
+        "$type": "shadow",
+        "$value": { "$ref": "../shadows.json#/functional/inset-well" }
+      },
+      "focus": {
+        "$type": "shadow",
+        "$value": { "$ref": "../shadows.json#/functional/focus-ring" }
+      }
+    },
+
+    "transition": {
+      "$type": "transition",
+      "$value": {
+        "duration": {
+          "$ref": "../composite-tokens.json#/animations/transitions/quick/$value/duration"
+        },
+        "delay": "0ms",
+        "timingFunction": {
+          "$ref": "../composite-tokens.json#/animations/easings/ease-in-out"
+        }
+      },
+      "$description": "Button state transition"
+    }
+  }
+}

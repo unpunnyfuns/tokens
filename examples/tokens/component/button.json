@@ -1,0 +1,183 @@
+{
+  "$schema": "../../../schemas/tokens/full.schema.json",
+  "$description": "Button component tokens - references semantic and primitive tokens",
+
+  "button": {
+    "$description": "Button component design tokens following the pyramid structure",
+
+    "primary": {
+      "default": {
+        "background": {
+          "$type": "color",
+          "$value": { "$ref": "../semantic/colors.json#/brand/primary" }
+        },
+        "text": {
+          "$type": "color",
+          "$value": { "$ref": "../semantic/colors.json#/text/inverse" }
+        },
+        "border": {
+          "$type": "border",
+          "$value": {
+            "color": { "$ref": "../semantic/colors.json#/brand/primary" },
+            "width": {
+              "$ref": "../primitives/dimensions.json#/border-width/thin"
+            },
+            "style": {
+              "$ref": "../primitives/borders.json#/borders/styles/solid"
+            }
+          }
+        }
+      },
+      "hover": {
+        "background": {
+          "$type": "color",
+          "$value": { "$ref": "../semantic/colors.json#/brand/primary-hover" }
+        },
+        "border": {
+          "$type": "border",
+          "$value": {
+            "color": {
+              "$ref": "../semantic/colors.json#/brand/primary-hover"
+            },
+            "width": {
+              "$ref": "../primitives/dimensions.json#/border-width/thin"
+            },
+            "style": {
+              "$ref": "../primitives/borders.json#/borders/styles/solid"
+            }
+          }
+        }
+      },
+      "active": {
+        "background": {
+          "$type": "color",
+          "$value": {
+            "$ref": "../semantic/colors.json#/brand/primary-active"
+          }
+        }
+      },
+      "disabled": {
+        "background": {
+          "$type": "color",
+          "$value": { "$ref": "../semantic/colors.json#/background/disabled" }
+        },
+        "text": {
+          "$type": "color",
+          "$value": { "$ref": "../semantic/colors.json#/text/disabled" }
+        }
+      }
+    },
+
+    "secondary": {
+      "default": {
+        "background": {
+          "$type": "color",
+          "$value": { "$ref": "../semantic/colors.json#/background/primary" }
+        },
+        "text": {
+          "$type": "color",
+          "$value": { "$ref": "../semantic/colors.json#/text/primary" }
+        },
+        "border": {
+          "$type": "border",
+          "$value": {
+            "color": { "$ref": "../semantic/colors.json#/border/default" },
+            "width": {
+              "$ref": "../primitives/dimensions.json#/border-width/thin"
+            },
+            "style": {
+              "$ref": "../primitives/borders.json#/borders/styles/solid"
+            }
+          }
+        }
+      },
+      "hover": {
+        "background": {
+          "$type": "color",
+          "$value": {
+            "$ref": "../semantic/colors.json#/background/secondary"
+          }
+        },
+        "border": {
+          "$type": "border",
+          "$value": {
+            "color": { "$ref": "../semantic/colors.json#/border/strong" },
+            "width": {
+              "$ref": "../primitives/dimensions.json#/border-width/thin"
+            },
+            "style": {
+              "$ref": "../primitives/borders.json#/borders/styles/solid"
+            }
+          }
+        }
+      }
+    },
+
+    "size": {
+      "small": {
+        "padding-x": {
+          "$type": "dimension",
+          "$value": { "$ref": "../semantic/spacing.json#/padding/sm" }
+        },
+        "padding-y": {
+          "$type": "dimension",
+          "$value": { "$ref": "../semantic/spacing.json#/padding/xs" }
+        },
+        "typography": {
+          "$type": "typography",
+          "$value": {
+            "$ref": "../semantic/typography.json#/text-style/body-small"
+          }
+        }
+      },
+      "medium": {
+        "padding-x": {
+          "$type": "dimension",
+          "$value": { "$ref": "../semantic/spacing.json#/padding/md" }
+        },
+        "padding-y": {
+          "$type": "dimension",
+          "$value": { "$ref": "../semantic/spacing.json#/padding/sm" }
+        },
+        "typography": {
+          "$type": "typography",
+          "$value": { "$ref": "../semantic/typography.json#/text-style/body" }
+        }
+      },
+      "large": {
+        "padding-x": {
+          "$type": "dimension",
+          "$value": { "$ref": "../semantic/spacing.json#/padding/lg" }
+        },
+        "padding-y": {
+          "$type": "dimension",
+          "$value": { "$ref": "../semantic/spacing.json#/padding/md" }
+        },
+        "typography": {
+          "$type": "typography",
+          "$value": {
+            "$ref": "../semantic/typography.json#/text-style/body-large"
+          }
+        }
+      }
+    },
+
+    "radius": {
+      "$type": "dimension",
+      "$value": { "$ref": "../primitives/dimensions.json#/radius/md" }
+    },
+
+    "focus-ring": {
+      "$type": "shadow",
+      "$value": {
+        "color": { "$ref": "../semantic/colors.json#/border/focus" },
+        "offsetX": { "$ref": "../primitives/dimensions.json#/dimensions/zero" },
+        "offsetY": { "$ref": "../primitives/dimensions.json#/dimensions/zero" },
+        "blur": { "$ref": "../primitives/dimensions.json#/dimensions/zero" },
+        "spread": {
+          "$ref": "../primitives/dimensions.json#/dimensions/shadow/spread-md"
+        }
+      }
+    }
+  }
+}

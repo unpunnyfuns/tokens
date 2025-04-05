@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Full Design Tokens Schema",
+  "description": "Complete schema with all token types for full validation",
+  "$ref": "#/$defs/root",
+
+  "$defs": {
+    "root": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "Reference to the JSON schema"
+        },
+        "$description": {
+          "type": "string",
+          "description": "Description of the token file"
+        },
+        "$extensions": {
+          "type": "object",
+          "description": "Custom extensions",
+          "additionalProperties": true
+        }
+      },
+      "patternProperties": {
+        "^[^$].*": {
+          "$ref": "#/$defs/groupOrToken"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "group": {
+      "type": "object",
+      "properties": {
+        "$description": {
+          "type": "string",
+          "description": "Description of this group"
+        },
+        "$extensions": {
+          "type": "object",
+          "description": "Custom extensions",
+          "additionalProperties": true
+        }
+      },
+      "patternProperties": {
+        "^[^$].*": {
+          "$ref": "#/$defs/groupOrToken"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "groupOrToken": {
+      "anyOf": [
+        { "$ref": "./types/color.schema.json" },
+        { "$ref": "./types/dimension.schema.json" },
+        { "$ref": "./types/font-family.schema.json" },
+        { "$ref": "./types/font-weight.schema.json" },
+        { "$ref": "./types/duration.schema.json" },
+        { "$ref": "./types/number.schema.json" },
+        { "$ref": "./types/shadow.schema.json" },
+        { "$ref": "./types/typography.schema.json" },
+        { "$ref": "./types/cubic-bezier.schema.json" },
+        { "$ref": "./types/stroke-style.schema.json" },
+        { "$ref": "./types/border.schema.json" },
+        { "$ref": "./types/transition.schema.json" },
+        { "$ref": "./types/gradient.schema.json" },
+        { "$ref": "#/$defs/genericToken" },
+        { "$ref": "#/$defs/group" }
+      ]
+    },
+
+    "genericToken": {
+      "type": "object",
+      "description": "Generic token for types not yet defined",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "description": "Token type"
+        },
+        "$value": {
+          "description": "Token value"
+        },
+        "$ref": {
+          "type": "string",
+          "pattern": "^(#(/[^/]+)*|[^#]+#(/[^/]+)*|\\./[^#]+#(/[^/]+)*)$",
+          "description": "Reference to another token"
+        },
+        "$description": {
+          "type": "string"
+        },
+        "$extensions": {
+          "type": "object"
+        },
+        "$deprecated": {
+          "oneOf": [{ "type": "boolean" }, { "type": "string" }]
+        }
+      },
+      "oneOf": [
+        {
+          "required": ["$value"],
+          "not": { "required": ["$ref"] }
+        },
+        {
+          "required": ["$ref"],
+          "not": { "required": ["$value"] }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}
