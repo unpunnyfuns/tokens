@@ -4,13 +4,6 @@ interface ConversionStrategy {
   warnOnConversion?: boolean;
 }
 
-type TokenValue =
-  | string
-  | number
-  | boolean
-  | Record<string, unknown>
-  | unknown[];
-
 /**
  * Convert tokens from JSON Schema $ref format to DTCG alias format
  */
@@ -93,7 +86,7 @@ function transformTokenTree(
 /**
  * Convert a JSON Pointer $ref to DTCG alias format
  */
-function convertRefToAlias(
+export function convertRefToAlias(
   ref: string,
   strategy: Required<ConversionStrategy>,
 ): string | { $ref: string } {

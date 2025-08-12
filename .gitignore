@@ -10,6 +10,7 @@ logs/
 
 # Build files
 build/
+dist/schema/*-dev/
 
 # Environment variables
 .env

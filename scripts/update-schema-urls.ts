@@ -1,7 +1,6 @@
 #!/usr/bin/env node --experimental-strip-types
 
 import * as fs from "node:fs";
-import * as path from "node:path";
 import { globSync } from "glob";
 
 const VERSION = process.argv[2] || "0.1.0";

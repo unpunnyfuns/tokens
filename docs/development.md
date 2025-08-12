@@ -8,7 +8,7 @@
 
 ## Technology Stack
 
-- **JSON Schema Validation**: [@hyperjump/json-schema](https://github.com/hyperjump-io/json-schema) with 2020-12 support
+- **JSON Schema Validation**: [AJV](https://ajv.js.org/) with JSON Schema draft 2020-12 support
 - **TypeScript**: Native Node.js type stripping (no build step required)
 - **Linting/Formatting**: Biome for fast code quality checks
 

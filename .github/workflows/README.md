@@ -7,12 +7,13 @@ This project uses GitHub Actions for CI/CD. Here are the workflows:
 **Triggers:** On every push to main and on pull requests
 
 **What it does:**
-1. Runs linting (`npm run check`)
-2. Validates all schema files
-3. Builds schemas and checks if dist/ is up to date
-4. Validates example files
+1. Runs linting and formatting checks (`npm run check`)
+2. Runs unit tests (`npm run test:run`)
+3. Validates all schema files (`npm run dev:schemas`)
+4. Builds schemas and checks if dist/ is up to date
+5. Validates example files against schemas
 
-**Purpose:** Ensures code quality and that all schemas are valid
+**Purpose:** Ensures code quality, tests pass, and schemas are valid
 
 ## Release Workflow (`release.yml`)
 
@@ -30,11 +31,13 @@ This project uses GitHub Actions for CI/CD. Here are the workflows:
 
 ## Deploy to Netlify (`deploy-netlify.yml`)
 
-**Triggers:** When dist/ or netlify.toml changes on main branch
+**Triggers:** Manual workflow dispatch only
 
 **What it does:**
-1. Deploys the dist/ folder to Netlify
-2. Makes schemas available at https://tokens.unpunny.fun
+1. Sets up Node.js and installs dependencies
+2. Builds schemas (`npm run build:schemas`)
+3. Deploys the dist/ folder to Netlify
+4. Makes schemas available at https://tokens.unpunny.fun
 
 **Required Secrets:**
 - `NETLIFY_AUTH_TOKEN` - Personal access token from Netlify
