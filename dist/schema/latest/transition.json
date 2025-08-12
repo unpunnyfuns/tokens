@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.0/transition",
+  "$id": "https://tokens.unpunny.fun/schema/0.1.1/transition",
   "title": "Transition Token Schema",
   "description": "Schema for transition composite tokens",
   "allOf": [
     {
-      "$ref": "https://tokens.unpunny.fun/schema/0.1.0/base#/$defs/leaf"
+      "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/leaf"
     },
     {
       "type": "object",
@@ -20,10 +20,10 @@
             "duration": {
               "oneOf": [
                 {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/durationValue"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/durationValue"
                 },
                 {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/base#/$defs/$ref"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/$ref"
                 }
               ],
               "description": "Transition duration"
@@ -31,10 +31,10 @@
             "delay": {
               "oneOf": [
                 {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/durationValue"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/durationValue"
                 },
                 {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/base#/$defs/$ref"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/$ref"
                 }
               ],
               "description": "Transition delay"
@@ -53,7 +53,7 @@
                   "maxItems": 4
                 },
                 {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/base#/$defs/$ref"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/$ref"
                 }
               ],
               "description": "Transition timing function"

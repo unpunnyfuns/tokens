@@ -1,6 +1,6 @@
 {
 	"name": "@unpunnyfuns/tokens",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "JSON Schema for DTCG-style design tokens with resolver manifest and JSON pointer aliases",
 	"repository": {
 		"type": "git",
@@ -30,7 +30,7 @@
 	},
 	"exports": {
 		".": "./src/index.ts",
-		"./schemas/*": "./dist/schema/0.1.0/*.json",
+		"./schemas/*": "./dist/schema/0.1.1/*.json",
 		"./schemas/latest/*": "./dist/schema/latest/*.json",
 		"./validators": "./src/validation/index.ts",
 		"./bundler": "./src/bundler/index.ts",

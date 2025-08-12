@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.0/value-types",
+  "$id": "https://tokens.unpunny.fun/schema/0.1.1/value-types",
   "title": "Design Token Value Types",
   "description": "Shared value type definitions for design tokens - no dependencies",
   "$comment": "This schema contains all shared value types and helpers used across different token types. It has NO dependencies on other schemas to avoid circular references.",

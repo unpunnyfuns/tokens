@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.0/color",
+  "$id": "https://tokens.unpunny.fun/schema/0.1.1/color",
   "title": "Color Token Schema",
   "description": "Schema for color tokens using the new color module format",
   "allOf": [
     {
-      "$ref": "https://tokens.unpunny.fun/schema/0.1.0/base#/$defs/leaf"
+      "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/leaf"
     },
     {
       "type": "object",

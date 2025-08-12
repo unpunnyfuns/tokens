@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.0/shadow",
+  "$id": "https://tokens.unpunny.fun/schema/0.1.1/shadow",
   "title": "Shadow Token Schema",
   "description": "Schema for shadow composite tokens",
   "allOf": [
     {
-      "$ref": "https://tokens.unpunny.fun/schema/0.1.0/base#/$defs/leaf"
+      "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/leaf"
     },
     {
       "type": "object",
@@ -20,22 +20,22 @@
               "type": "object",
               "properties": {
                 "color": {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/colorValueOrRef"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/colorValueOrRef"
                 },
                 "offsetX": {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/dimensionValueOrRef"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValueOrRef"
                 },
                 "offsetY": {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/dimensionValueOrRef"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValueOrRef"
                 },
                 "blur": {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/dimensionValueOrRef"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValueOrRef"
                 },
                 "spread": {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/dimensionValueOrRef"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValueOrRef"
                 },
                 "inset": {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/booleanOrRef"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/booleanOrRef"
                 }
               },
               "$comment": "Per DTCG spec: color, offsetX, offsetY, blur, spread are required. inset is optional (defaults to false)",
@@ -54,22 +54,22 @@
                 "type": "object",
                 "properties": {
                   "color": {
-                    "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/colorValueOrRef"
+                    "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/colorValueOrRef"
                   },
                   "offsetX": {
-                    "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/dimensionValueOrRef"
+                    "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValueOrRef"
                   },
                   "offsetY": {
-                    "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/dimensionValueOrRef"
+                    "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValueOrRef"
                   },
                   "blur": {
-                    "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/dimensionValueOrRef"
+                    "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValueOrRef"
                   },
                   "spread": {
-                    "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/dimensionValueOrRef"
+                    "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValueOrRef"
                   },
                   "inset": {
-                    "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/booleanOrRef"
+                    "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/booleanOrRef"
                   }
                 },
                 "$comment": "Per DTCG spec: color, offsetX, offsetY, blur, spread are required. inset is optional (defaults to false)",

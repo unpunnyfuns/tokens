@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.0/full",
+  "$id": "https://tokens.unpunny.fun/schema/0.1.1/full",
   "title": "Full Design Tokens Schema",
   "description": "Complete schema with all token types for full validation",
   "$ref": "#/$defs/root",
@@ -52,43 +52,43 @@
     "groupOrToken": {
       "anyOf": [
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/color"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/color"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/dimension"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/dimension"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/font-family"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/font-family"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/font-weight"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/font-weight"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/duration"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/duration"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/number"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/number"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/shadow"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/shadow"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/typography"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/typography"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/cubic-bezier"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/cubic-bezier"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/stroke-style"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/stroke-style"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/border"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/border"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/transition"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/transition"
         },
         {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.0/gradient"
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/gradient"
         },
         {
           "$ref": "#/$defs/genericToken"

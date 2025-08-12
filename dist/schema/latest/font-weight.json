@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.0/font-weight",
+  "$id": "https://tokens.unpunny.fun/schema/0.1.1/font-weight",
   "title": "Font Weight Token Schema",
   "description": "Schema for font weight tokens",
   "allOf": [
     {
-      "$ref": "https://tokens.unpunny.fun/schema/0.1.0/base#/$defs/leaf"
+      "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/leaf"
     },
     {
       "type": "object",

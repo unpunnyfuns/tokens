@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.0/resolver",
+  "$id": "https://tokens.unpunny.fun/schema/0.1.1/resolver",
   "title": "Design Tokens Resolver Manifest",
   "description": "Schema for resolver manifest files that define token composition across themes and modes",
   "type": "object",

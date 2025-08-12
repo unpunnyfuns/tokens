@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.0/base",
+  "$id": "https://tokens.unpunny.fun/schema/0.1.1/base",
   "title": "Design Tokens Base Schema",
   "description": "Base schema for design tokens with JSON Schema $ref support",
   "$comment": "DESIGN DECISIONS: 1) Uses JSON Schema $ref (url#/json/pointer) instead of DTCG's {token.path} syntax for better tooling support and standard compliance. 2) Follows DTCG token structure and types as guidance. 3) Structure: root -> groups -> leaves. Groups organize tokens, leaves hold actual values.",
@@ -46,7 +46,7 @@
       ]
     },
     "$ref": {
-      "$ref": "https://tokens.unpunny.fun/schema/0.1.0/value-types#/$defs/$ref"
+      "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/$ref"
     },
     "$description": {
       "type": "string",
