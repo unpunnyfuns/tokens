@@ -1,5 +1,5 @@
 import { promises as fs } from "node:fs";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 
 // Get the project root directory
 export const getProjectRoot = (): string => {
@@ -34,4 +34,24 @@ export async function findJsonFiles(directory: string): Promise<string[]> {
 
   await traverse(directory);
   return files;
+}
+
+// Resolve a schema path relative to a base file
+export function resolveSchemaPath(
+  schemaPath: string,
+  basePath?: string,
+): string {
+  // If schema path is absolute, return as-is
+  if (schemaPath.startsWith("/")) {
+    return schemaPath;
+  }
+
+  // If we have a base path, resolve relative to its directory
+  if (basePath) {
+    const baseDir = dirname(basePath);
+    return resolve(baseDir, schemaPath);
+  }
+
+  // Otherwise resolve relative to current working directory
+  return resolve(process.cwd(), schemaPath);
 }

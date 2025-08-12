@@ -22,22 +22,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run linting
+      - name: Run linting and formatting
         run: npm run check
       
+      - name: Check TypeScript
+        run: npm run typecheck
+      
+      - name: Run unit tests
+        run: npm run test:run
+      
       - name: Validate schemas
-        run: npm run dev:validate-schemas
+        run: npm run dev:schemas
       
-      - name: Build schemas
-        run: npm run build:schemas
-      
-      - name: Check if dist is up to date
+      - name: Build schemas (verify they compile)
         run: |
-          if [ -n "$(git status --porcelain dist/)" ]; then
-            echo "Error: dist/ is not up to date. Run 'npm run build:schemas' and commit the changes."
-            git diff dist/
-            exit 1
-          fi
+          npm run build:schemas
+          echo "✅ Schemas built successfully. Dist files will be generated during release."
       
       - name: Validate examples
         run: npm run validate:examples

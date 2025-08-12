@@ -4,8 +4,8 @@
  */
 
 // Export public validation functions
-export { validateFiles } from "./example-validator.ts";
+export { validateFiles } from "./cli-validator.ts";
 export {
-  validateResolverManifest as validateResolver,
   resolveTokens,
-} from "./resolver-validator.ts";
+  validateResolverManifest as validateResolver,
+} from "./manifest-validator.ts";

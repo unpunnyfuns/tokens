@@ -51,7 +51,7 @@ jobs:
       
       - name: Run validation
         run: |
-          npm run dev:validate-schemas
+          npm run dev:schemas
           npm run validate:examples || true
       
       - name: Commit version bump and build

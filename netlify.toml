@@ -16,8 +16,14 @@
     Content-Type = "application/schema+json"
     Cache-Control = "public, max-age=3600"  # Shorter cache for latest
 
+# Schema redirects - allow accessing without .json extension
+[[redirects]]
+  from = "/schema/:version/:name"
+  to = "/schema/:version/:name.json"
+  status = 200
+
 # Root redirect to GitHub
 [[redirects]]
   from = "/"
-  to = "https://github.com/unpunnyfuns/dtcg-schema"
+  to = "https://github.com/unpunnyfuns/tokens"
   status = 302

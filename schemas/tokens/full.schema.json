@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Full Design Tokens Schema",
-  "description": "Complete schema with all token types for full validation",
+  "title": "Strict Full Design Tokens Schema",
+  "description": "Complete schema with strict validation for all defined token types",
   "$ref": "#/$defs/root",
 
   "$defs": {
@@ -66,48 +66,8 @@
         { "$ref": "./types/border.schema.json" },
         { "$ref": "./types/transition.schema.json" },
         { "$ref": "./types/gradient.schema.json" },
-        { "$ref": "#/$defs/genericToken" },
         { "$ref": "#/$defs/group" }
       ]
-    },
-
-    "genericToken": {
-      "type": "object",
-      "description": "Generic token for types not yet defined",
-      "properties": {
-        "$type": {
-          "type": "string",
-          "description": "Token type"
-        },
-        "$value": {
-          "description": "Token value"
-        },
-        "$ref": {
-          "type": "string",
-          "pattern": "^(#(/[^/]+)*|[^#]+#(/[^/]+)*|\\./[^#]+#(/[^/]+)*)$",
-          "description": "Reference to another token"
-        },
-        "$description": {
-          "type": "string"
-        },
-        "$extensions": {
-          "type": "object"
-        },
-        "$deprecated": {
-          "oneOf": [{ "type": "boolean" }, { "type": "string" }]
-        }
-      },
-      "oneOf": [
-        {
-          "required": ["$value"],
-          "not": { "required": ["$ref"] }
-        },
-        {
-          "required": ["$ref"],
-          "not": { "required": ["$value"] }
-        }
-      ],
-      "additionalProperties": false
     }
   }
 }

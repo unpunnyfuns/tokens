@@ -17,7 +17,11 @@ interface PackageJson {
 const pkg = JSON.parse(
   fs.readFileSync(path.join(ROOT, "package.json"), "utf8"),
 ) as PackageJson;
-const VERSION = pkg.version;
+
+// Use dev version for local builds, actual version for releases
+const isRelease =
+  process.env.CI === "true" && process.env.GITHUB_REF?.startsWith("refs/tags/");
+const VERSION = isRelease ? pkg.version : `${pkg.version}-dev`;
 
 const SCHEMA_BASE_URL = `https://tokens.unpunny.fun/schema/${VERSION}`;
 const SOURCE_DIR = path.join(ROOT, "schemas");
@@ -130,27 +134,6 @@ for (const file of schemaFiles) {
   fs.writeFileSync(latestPath, JSON.stringify(orderedSchema, null, 2));
 
   console.log(`  Built: ${outputName}`);
-}
-
-// Update netlify.toml with current version
-const netlifyPath = path.join(ROOT, "netlify.toml");
-if (fs.existsSync(netlifyPath)) {
-  let netlifyConfig = fs.readFileSync(netlifyPath, "utf8");
-  netlifyConfig = netlifyConfig.replace(
-    /to = "\/schema\/[\d.]+\//g,
-    `to = "/schema/${VERSION}/`,
-  );
-  fs.writeFileSync(netlifyPath, netlifyConfig);
-  console.log(`\nUpdated netlify.toml redirects to version ${VERSION}`);
-}
-
-// Update package.json exports to point to new version
-const pkgPath = path.join(ROOT, "package.json");
-const pkgData = JSON.parse(fs.readFileSync(pkgPath, "utf8")) as PackageJson;
-if (pkgData.exports?.["./schemas/*"]) {
-  pkgData.exports["./schemas/*"] = `./dist/schema/${VERSION}/*.json`;
-  fs.writeFileSync(pkgPath, JSON.stringify(pkgData, null, "\t"));
-  console.log(`\nUpdated package.json exports to version ${VERSION}`);
 }
 
 console.log(`\n✅ Built ${schemaFiles.length} schemas for version ${VERSION}`);

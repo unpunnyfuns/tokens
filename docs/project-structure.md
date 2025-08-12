@@ -7,7 +7,7 @@ This project is organized with a clear separation between public API and interna
 ### Technology Stack
 
 - **TypeScript**: All source files are `.ts` with Node.js native type stripping
-- **JSON Schema Validation**: [@hyperjump/json-schema](https://github.com/hyperjump-io/json-schema) for robust schema validation
+- **JSON Schema Validation**: [AJV](https://ajv.js.org/) with draft 2020-12 support for robust schema validation
 - **Node.js 22.6.0+**: Required for `--experimental-strip-types` flag
 
 ## Directory Layout

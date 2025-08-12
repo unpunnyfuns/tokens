@@ -307,7 +307,7 @@ Token files can be validated against schemas:
 }
 ```
 
-Available schemas:
+Available schemas (`.json` extension is optional in URLs):
 - `/full` - Complete schema with all token types
 - `/base` - Basic structure for scaffolding
 - `/resolver` - Resolver manifest schema

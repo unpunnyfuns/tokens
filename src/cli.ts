@@ -1,12 +1,16 @@
 #!/usr/bin/env node --experimental-strip-types
 
 import { readFileSync } from "node:fs";
-import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Command, Option } from "commander";
 import pc from "picocolors";
-import { bundleWithMetadata } from "./bundler/api.ts";
-import { validateFiles } from "./validation/index.ts";
+import {
+  executeAST,
+  executeBundle,
+  executeValidate,
+  formatError,
+  getExitCode,
+} from "./api/cli-commands.ts";
 import { getProjectRoot } from "./validation/utils.ts";
 
 interface PackageJson {
@@ -68,20 +72,24 @@ program
 
     try {
       log.info(`🔍 Validating token files in ${path}...`);
-      const valid = await validateFiles(path);
 
-      if (valid) {
-        log.success("\n✅ Token validation passed!");
+      const result = await executeValidate({
+        path,
+        verbose: options.verbose,
+      });
+
+      if (result.valid) {
+        log.success(`\n${result.message}`);
       } else {
-        log.error("\n❌ Token validation failed");
+        log.error(`\n${result.message}`);
+        if (result.details) {
+          console.error(result.details);
+        }
       }
-      process.exit(valid ? 0 : 1);
+
+      process.exit(getExitCode(result));
     } catch (error) {
-      const err = error as Error;
-      log.error(`Validation error: ${err.message}`);
-      if (options.verbose) {
-        console.error(err.stack);
-      }
+      log.error(`Unexpected error: ${formatError(error, options.verbose)}`);
       process.exit(1);
     }
   });
@@ -105,6 +113,7 @@ program
   .option("--no-convert-internal", "Don't convert internal references")
   .option("--quiet", "Suppress conversion warnings")
   .option("--pretty", "Pretty print JSON output", true)
+  .option("-v, --verbose", "Show detailed error output")
   .action(async (options) => {
     const log: Logger = {
       info: (msg: string) => !options.quiet && console.log(pc.blue(msg)),
@@ -122,68 +131,47 @@ program
         log.dim?.(`   Format: ${options.format}`);
       if (options.resolveRefs) log.dim?.("   Resolving references");
 
-      // Prepare bundle options
-      const bundleOptions = {
+      const result = await executeBundle({
         manifest: options.manifest,
+        output: options.output,
         theme: options.theme,
         mode: options.mode,
         format: options.format,
-        resolveRefs: options.resolveRefs
-          ? options.resolveExternal
-            ? "external-only"
-            : true
-          : false,
-        referenceStrategy: {
-          preserveExternal: options.preserveExternal,
-          convertInternal: options.convertInternal !== false,
-          warnOnConversion: !options.quiet,
-        },
-      };
-
-      // Use our own API as dogfood
-      const result = await bundleWithMetadata({
-        ...bundleOptions,
-        resolveValues: bundleOptions.resolveRefs === true,
-        includeMetadata: !options.quiet,
+        resolveRefs: options.resolveRefs,
+        resolveExternal: options.resolveExternal,
+        preserveExternal: options.preserveExternal,
+        convertInternal: options.convertInternal,
+        quiet: options.quiet,
+        pretty: options.pretty,
       });
 
-      // Show metadata if not quiet
-      if (result.metadata && !options.quiet) {
-        log.dim?.(`   Loaded ${result.metadata.files.count} files`);
-        log.dim?.(`   Found ${result.metadata.stats.totalTokens} tokens`);
-        if (result.metadata.stats.hasReferences) {
+      // Show metadata if available
+      if (result.metadata) {
+        log.dim?.(`   Loaded ${result.metadata.filesLoaded} files`);
+        log.dim?.(`   Found ${result.metadata.totalTokens} tokens`);
+        if (result.metadata.hasReferences) {
           log.dim?.("   Contains references");
         }
-      }
 
-      // Validate references if not resolving
-      if (!bundleOptions.resolveRefs && !options.quiet) {
-        const validation = await result.validate();
-        if (!validation.valid) {
-          log.error(`⚠️  Found ${validation.errors.length} reference errors`);
-          for (const err of validation.errors) {
+        // Show validation errors if any
+        if (result.metadata.validationErrors) {
+          log.error(
+            `⚠️  Found ${result.metadata.validationErrors.length} reference errors`,
+          );
+          for (const err of result.metadata.validationErrors) {
             log.error(`   ${err}`);
           }
         }
       }
 
-      const output = options.pretty
-        ? result.toJSON()
-        : JSON.stringify(result.tokens);
-
-      // Write output
+      // Output results
       if (options.output) {
-        await writeFile(options.output, output);
         log.success(`✅ Bundled tokens written to ${options.output}`);
       } else {
-        console.log(output);
+        console.log(result.output);
       }
     } catch (error) {
-      const err = error as Error;
-      log.error(`Bundle error: ${err.message}`);
-      if (options.verbose) {
-        console.error(err.stack);
-      }
+      log.error(`Bundle error: ${formatError(error, options.verbose)}`);
       process.exit(1);
     }
   });
@@ -197,6 +185,7 @@ program
   .option("--mode <name>", "Mode modifier to apply")
   .option("-o, --output <path>", "Output file path (default: stdout)")
   .option("--pretty", "Pretty print JSON output", true)
+  .option("-v, --verbose", "Show detailed error output")
   .action(async (options) => {
     const log: Logger = {
       info: (msg: string) => console.log(pc.blue(msg)),
@@ -207,42 +196,21 @@ program
     try {
       log.info(`🌲 Generating AST from ${options.manifest}`);
 
-      // Use our API to bundle and generate AST
-      const result = await bundleWithMetadata({
+      const result = await executeAST({
         manifest: options.manifest,
         theme: options.theme,
         mode: options.mode,
-        format: "preserve",
-        includeMetadata: true,
+        output: options.output,
+        pretty: options.pretty,
       });
 
-      const ast = result.getAST();
-
-      // Add metadata to AST output
-      const astOutput = {
-        ast,
-        metadata: {
-          generated: new Date().toISOString(),
-          manifest: options.manifest,
-          theme: options.theme || null,
-          mode: options.mode || null,
-          stats: result.metadata ? result.metadata.stats : undefined,
-        },
-      };
-
-      const output = options.pretty
-        ? JSON.stringify(astOutput, null, 2)
-        : JSON.stringify(astOutput);
-
       if (options.output) {
-        await writeFile(options.output, output);
         log.success(`✅ AST written to ${options.output}`);
       } else {
-        console.log(output);
+        console.log(result.output);
       }
     } catch (error) {
-      const err = error as Error;
-      log.error(`AST generation error: ${err.message}`);
+      log.error(`AST generation error: ${formatError(error, options.verbose)}`);
       process.exit(1);
     }
   });
