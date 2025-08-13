@@ -48,6 +48,8 @@ jobs:
       
       - name: Build schemas with new version
         run: npm run build:schemas
+        env:
+          RELEASE_BUILD: true
       
       - name: Run validation
         run: |
