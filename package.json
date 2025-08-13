@@ -1,6 +1,6 @@
 {
   "name": "@unpunnyfuns/tokens",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "JSON Schema for DTCG-style design tokens with resolver manifest and JSON pointer aliases",
   "repository": {
     "type": "git",
