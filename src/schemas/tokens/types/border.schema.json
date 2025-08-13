@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/border.schema.json",
+  "title": "Border Token Schema",
+  "description": "Schema for border composite tokens",
+  "allOf": [
+    {
+      "$ref": "../base.schema.json#/$defs/leaf"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "const": "border"
+        },
+        "$value": {
+          "oneOf": [
+            {
+              "$ref": "../value-types.schema.json#/$defs/dtcgReference"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "color": {
+                  "$ref": "../value-types.schema.json#/$defs/colorValueOrRef",
+                  "description": "Border color"
+                },
+                "width": {
+                  "$ref": "../value-types.schema.json#/$defs/dimensionValueOrRef",
+                  "description": "Border width"
+                },
+                "style": {
+                  "oneOf": [
+                    {
+                      "$ref": "../value-types.schema.json#/$defs/borderStyleEnum"
+                    },
+                    {
+                      "$ref": "../value-types.schema.json#/$defs/strokeStyleObject"
+                    },
+                    {
+                      "$ref": "../base.schema.json#/$defs/$ref"
+                    }
+                  ],
+                  "description": "Border style"
+                }
+              },
+              "required": ["color", "width", "style"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": ["$type"]
+    }
+  ]
+}

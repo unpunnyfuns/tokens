@@ -1,0 +1,17 @@
+{
+  "color": {
+    "primary": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [1, 0, 0],
+        "alpha": 1
+      },
+      "$type": "color",
+      "$description": "This should override the base primary color"
+    },
+    "brand": {
+      "$value": "{color.primary}",
+      "$type": "color"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "$description": "Tokens with references for testing resolution",
+  "color": {
+    "base": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [0, 0.4, 0.8],
+        "alpha": 1
+      }
+    },
+    "primary": {
+      "$type": "color",
+      "$value": "{color.base}"
+    }
+  },
+  "spacing": {
+    "base": {
+      "$type": "dimension",
+      "$value": {
+        "value": 8,
+        "unit": "px"
+      }
+    },
+    "button": {
+      "$type": "dimension",
+      "$value": "{spacing.base}"
+    }
+  }
+}

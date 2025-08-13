@@ -1,0 +1,9 @@
+{
+  "sets": [{ "values": ["input/colors-base.json"] }],
+  "modifiers": {},
+  "generate": [
+    {
+      "output": "output/test-format.json"
+    }
+  ]
+}

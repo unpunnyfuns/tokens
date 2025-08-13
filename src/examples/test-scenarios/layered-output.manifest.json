@@ -1,0 +1,94 @@
+{
+  "$schema": "https://tokens.unpunny.fun/schemas/latest/resolver-upft.json",
+  "name": "Layered Output Example",
+  "description": "Demonstrates generating base tokens separately from theme overlays",
+  "sets": [
+    {
+      "name": "base",
+      "values": [
+        "../../test-fixtures/base.json",
+        "../../test-fixtures/typography.json"
+      ]
+    },
+    {
+      "name": "theme",
+      "values": [
+        "../../test-fixtures/light.json",
+        "../../test-fixtures/dark.json"
+      ]
+    },
+    {
+      "name": "density",
+      "values": [
+        "../../test-fixtures/comfortable.json",
+        "../../test-fixtures/compact.json"
+      ]
+    }
+  ],
+  "modifiers": {
+    "theme": {
+      "oneOf": ["light", "dark"],
+      "values": {
+        "light": ["../../test-fixtures/light.json"],
+        "dark": ["../../test-fixtures/dark.json"]
+      }
+    },
+    "density": {
+      "oneOf": ["comfortable", "compact"],
+      "values": {
+        "comfortable": ["../../test-fixtures/comfortable.json"],
+        "compact": ["../../test-fixtures/compact.json"]
+      }
+    }
+  },
+  "generate": [
+    {
+      "output": "dist/base.json",
+      "mode": "base-only"
+    },
+    {
+      "theme": "light",
+      "output": "dist/overlays/light.json",
+      "mode": "overlay"
+    },
+    {
+      "theme": "dark",
+      "output": "dist/overlays/dark.json",
+      "mode": "overlay"
+    },
+    {
+      "density": "comfortable",
+      "output": "dist/overlays/comfortable.json",
+      "mode": "overlay"
+    },
+    {
+      "density": "compact",
+      "output": "dist/overlays/compact.json",
+      "mode": "overlay"
+    },
+    {
+      "theme": "light",
+      "density": "comfortable",
+      "output": "dist/full/light-comfortable.json",
+      "mode": "full"
+    },
+    {
+      "theme": "light",
+      "density": "compact",
+      "output": "dist/full/light-compact.json",
+      "mode": "full"
+    },
+    {
+      "theme": "dark",
+      "density": "comfortable",
+      "output": "dist/full/dark-comfortable.json",
+      "mode": "full"
+    },
+    {
+      "theme": "dark",
+      "density": "compact",
+      "output": "dist/full/dark-compact.json",
+      "mode": "full"
+    }
+  ]
+}

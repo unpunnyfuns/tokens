@@ -1,0 +1,84 @@
+{
+  "color": {
+    "primary": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [0, 0.498, 1],
+        "alpha": 1
+      },
+      "$type": "color"
+    },
+    "secondary": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [0.498, 0, 1],
+        "alpha": 1
+      },
+      "$type": "color"
+    },
+    "neutral": {
+      "100": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.961, 0.961, 0.961],
+          "alpha": 1
+        },
+        "$type": "color"
+      },
+      "900": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.129, 0.129, 0.129],
+          "alpha": 1
+        },
+        "$type": "color"
+      }
+    },
+    "background": {
+      "primary": {
+        "$value": "{color.neutral.900}",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "{color.neutral.900}",
+        "$type": "color"
+      }
+    },
+    "text": {
+      "primary": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      },
+      "link": {
+        "$value": "{color.primary}",
+        "$type": "color"
+      }
+    },
+    "button": {
+      "primary": {
+        "background": {
+          "$value": "{color.primary}",
+          "$type": "color"
+        },
+        "text": {
+          "$value": "{color.neutral.100}",
+          "$type": "color"
+        }
+      },
+      "secondary": {
+        "background": {
+          "$value": "{color.secondary}",
+          "$type": "color"
+        },
+        "text": {
+          "$value": "{color.neutral.100}",
+          "$type": "color"
+        }
+      }
+    }
+  }
+}

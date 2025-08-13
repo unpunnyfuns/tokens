@@ -1,0 +1,12 @@
+{
+  "sets": [
+    { "values": ["input/colors-base.json"] },
+    { "values": ["input/typography-base.json"] }
+  ],
+  "modifiers": {},
+  "generate": [
+    {
+      "output": "output/simple-bundle.json"
+    }
+  ]
+}

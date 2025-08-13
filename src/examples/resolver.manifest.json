@@ -1,0 +1,64 @@
+{
+  "$schema": "../schemas/resolver-upft.json",
+  "name": "Design System Resolver",
+  "description": "Manages token resolution across themes and modes",
+  "sets": [
+    {
+      "name": "primitives",
+      "values": [
+        "tokens/primitives/colors.json",
+        "tokens/primitives/dimensions.json",
+        "tokens/primitives/typography.json",
+        "tokens/primitives/borders.json"
+      ]
+    },
+    {
+      "name": "semantic",
+      "values": [
+        "tokens/semantic/colors.json",
+        "tokens/semantic/spacing.json",
+        "tokens/semantic/typography.json"
+      ]
+    }
+  ],
+  "modifiers": {
+    "theme": {
+      "oneOf": ["light", "dark"],
+      "values": {
+        "light": ["tokens/themes/light.json"],
+        "dark": ["tokens/themes/dark.json"]
+      },
+      "default": "light"
+    },
+    "contrast": {
+      "oneOf": ["normal", "high"],
+      "values": {
+        "normal": [],
+        "high": ["tokens/modes/high-contrast.json"]
+      },
+      "default": "normal"
+    }
+  },
+  "generate": [
+    {
+      "theme": "light",
+      "contrast": "normal",
+      "output": "generated/light.json"
+    },
+    {
+      "theme": "dark",
+      "contrast": "normal",
+      "output": "generated/dark.json"
+    },
+    {
+      "theme": "light",
+      "contrast": "high",
+      "output": "generated/light-high-contrast.json"
+    },
+    {
+      "theme": "dark",
+      "contrast": "high",
+      "output": "generated/dark-high-contrast.json"
+    }
+  ]
+}

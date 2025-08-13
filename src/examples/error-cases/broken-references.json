@@ -1,0 +1,43 @@
+{
+  "$schema": "../../schemas/tokens/base.schema.json",
+  "$description": "Intentional broken references for error testing",
+  "tokens": {
+    "external": {
+      "nonexistent-file": {
+        "$type": "color",
+        "$value": {
+          "$ref": "./does-not-exist.json#/colors/primary"
+        },
+        "$description": "Reference to a file that doesn't exist"
+      },
+      "outside-directory": {
+        "$type": "color",
+        "$value": {
+          "$ref": "../../../outside/colors.json#/colors/primary"
+        },
+        "$description": "Reference that goes outside the project directory"
+      },
+      "missing-fragment": {
+        "$type": "dimension",
+        "$value": {
+          "$ref": "../tokens/primitives/dimensions.json#/nonexistent/value"
+        },
+        "$description": "Reference to a path that doesn't exist in the target file"
+      }
+    },
+    "internal": {
+      "nonexistent-token": {
+        "$type": "color",
+        "$value": {
+          "$ref": "#/does/not/exist"
+        },
+        "$description": "Internal reference to non-existent token"
+      },
+      "dtcg-alias-broken": {
+        "$type": "color",
+        "$value": "{tokens.that.dont.exist}",
+        "$description": "DTCG alias to non-existent token"
+      }
+    }
+  }
+}

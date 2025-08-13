@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/full.schema.json",
+  "title": "Strict Full Design Tokens Schema",
+  "description": "Complete schema with strict validation for all defined token types",
+  "$ref": "./base.schema.json#/$defs/root",
+
+  "$defs": {
+    "leaf": {
+      "oneOf": [
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/color.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/dimension.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/font-family.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/font-weight.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/duration.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/number.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/shadow.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/typography.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/cubic-bezier.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/stroke-style.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/border.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/transition.schema.json"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/gradient.schema.json"
+        }
+      ]
+    }
+  }
+}

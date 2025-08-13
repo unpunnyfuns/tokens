@@ -25,10 +25,36 @@
           "options": {
             "ignoreRestSiblings": true
           }
-        },
-        "noUnusedImports": {
-          "level": "error"
         }
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": {
+            "maxAllowedComplexity": 15
+          }
+        },
+        "noForEach": "warn",
+        "useOptionalChain": "warn",
+        "useSimplifiedLogicExpression": "warn"
+      },
+      "style": {
+        "noNegationElse": "warn",
+        "noParameterAssign": "warn",
+        "noUselessElse": "warn",
+        "useCollapsedElseIf": "warn",
+        "useConst": "warn",
+        "useShorthandAssign": "warn",
+        "useSingleVarDeclarator": "warn",
+        "useTemplate": "warn"
+      },
+      "suspicious": {
+        "noEmptyBlockStatements": "warn",
+        "noExplicitAny": "warn"
+      },
+      "performance": {
+        "noAccumulatingSpread": "warn",
+        "noDelete": "warn"
       }
     }
   },

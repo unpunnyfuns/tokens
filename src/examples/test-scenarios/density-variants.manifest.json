@@ -1,0 +1,14 @@
+{
+  "sets": [{ "values": ["base-tokens.json"] }],
+  "modifiers": {
+    "density": {
+      "oneOf": ["base", "comfortable", "compact"],
+      "values": {
+        "base": ["density-base.json"],
+        "comfortable": ["density-comfortable.json"],
+        "compact": ["density-compact.json"]
+      },
+      "default": "base"
+    }
+  }
+}

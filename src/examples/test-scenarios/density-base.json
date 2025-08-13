@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/tokens/full.schema.json",
+  "font": {
+    "family": {
+      "$value": "Arial, sans-serif",
+      "$type": "fontFamily"
+    }
+  },
+  "border": {
+    "radius": {
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      },
+      "$type": "dimension"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "color": {
+    "background": {
+      "primary": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "{color.neutral.900}",
+        "$type": "color"
+      }
+    },
+    "text": {
+      "primary": {
+        "$value": "{color.neutral.900}",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      },
+      "link": {
+        "$value": "{color.primary}",
+        "$type": "color"
+      }
+    },
+    "button": {
+      "primary": {
+        "background": {
+          "$value": "{color.primary}",
+          "$type": "color"
+        },
+        "text": {
+          "$value": "{color.neutral.100}",
+          "$type": "color"
+        }
+      },
+      "secondary": {
+        "background": {
+          "$value": "{color.secondary}",
+          "$type": "color"
+        },
+        "text": {
+          "$value": "{color.neutral.100}",
+          "$type": "color"
+        }
+      }
+    }
+  }
+}

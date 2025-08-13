@@ -1,0 +1,73 @@
+{
+  "$schema": "../schemas/tokens/full.schema.json",
+  "$description": "Demo of selective resolution for DTCG aliases vs JSON $refs",
+
+  "primitives": {
+    "colors": {
+      "blue": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.47, 1],
+          "hex": "#0078ff"
+        }
+      },
+      "red": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 0, 0],
+          "hex": "#ff0000"
+        }
+      }
+    }
+  },
+
+  "semantic": {
+    "colors": {
+      "$description": "Semantic color tokens using different reference types",
+
+      "primary-dtcg": {
+        "$type": "color",
+        "$value": "{primitives.colors.blue}",
+        "$description": "Uses DTCG alias syntax"
+      },
+
+      "primary-ref": {
+        "$type": "color",
+        "$value": { "$ref": "#/primitives/colors/blue/$value" },
+        "$description": "Uses JSON Schema $ref syntax"
+      },
+
+      "error-dtcg": {
+        "$type": "color",
+        "$value": "{primitives.colors.red}",
+        "$description": "Uses DTCG alias syntax"
+      },
+
+      "error-ref": {
+        "$type": "color",
+        "$value": { "$ref": "#/primitives/colors/red/$value" },
+        "$description": "Uses JSON Schema $ref syntax"
+      }
+    }
+  },
+
+  "components": {
+    "button": {
+      "$description": "Component tokens with mixed reference types",
+
+      "primary": {
+        "$type": "color",
+        "$value": "{semantic.colors.primary-dtcg}",
+        "$description": "Chain: DTCG -> DTCG -> value"
+      },
+
+      "danger": {
+        "$type": "color",
+        "$value": { "$ref": "#/semantic/colors/error-ref/$value" },
+        "$description": "Chain: $ref -> $ref -> value"
+      }
+    }
+  }
+}

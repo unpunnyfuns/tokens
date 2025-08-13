@@ -10,7 +10,7 @@ logs/
 
 # Build files
 build/
-dist/schema/*-dev/
+dist/
 
 # Environment variables
 .env
@@ -19,6 +19,7 @@ dist/schema/*-dev/
 
 # Claude configuration
 CLAUDE.md
+.claude/
 
 # IDE files
 .vscode/

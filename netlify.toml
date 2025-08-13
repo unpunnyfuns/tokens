@@ -1,26 +1,20 @@
 [build]
-  publish = "dist"
+  publish = "dist-web"
 
 # Serve schemas with proper headers
 [[headers]]
-  for = "/schema/*"
+  for = "/schemas/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Content-Type = "application/schema+json"
     Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
-  for = "/schema/latest/*"
+  for = "/schemas/latest/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Content-Type = "application/schema+json"
     Cache-Control = "public, max-age=3600"  # Shorter cache for latest
-
-# Schema redirects - allow accessing without .json extension
-[[redirects]]
-  from = "/schema/:version/:name"
-  to = "/schema/:version/:name.json"
-  status = 200
 
 # Root redirect to GitHub
 [[redirects]]

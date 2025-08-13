@@ -1,241 +1,173 @@
-import { promises as fs } from "node:fs";
-import { join } from "node:path";
-import Ajv from "ajv/dist/2020.js";
-import type { ValidationResult } from "./types.ts";
-import { getProjectRoot } from "./utils.ts";
-
-// Track registered schemas
-const _registeredResolverSchemas = new Set<string>();
+import type { UPFTResolverManifest } from "../resolver/upft-types.js";
+import type { ValidationError, ValidationResult } from "../types.js";
 
 /**
- * Validates a resolver manifest file against the resolver schema.
- * Checks manifest structure and verifies that referenced token files exist.
- * @param filePath - Path to the manifest.json file to validate
- * @returns Validation result with errors and warnings
- * @example
- * const result = await validateResolverManifest("/project/manifest.json")
- * if (result.valid) {
- *   console.log("Manifest is valid")
- * }
+ * Validator specifically for UPFT resolver manifests
  */
-interface ResolverManifest {
-  sets?: Array<{ values: string[] }>;
-  modifiers?: Array<{
-    name?: string;
-    values?: Array<{
-      name?: string;
-      values?: string[];
-    }>;
-  }>;
-}
+export class ManifestValidator {
+  private validateSet(
+    set: unknown,
+    index: number,
+    errors: ValidationError[],
+  ): void {
+    const s = set as Record<string, unknown>;
 
-export async function validateResolverManifest(
-  filePath: string,
-): Promise<ValidationResult> {
-  const errors: string[] = [];
-  const warnings: string[] = [];
-
-  try {
-    console.log(`Validating resolver manifest: ${filePath}`);
-
-    // Read the manifest file
-    const content = await fs.readFile(filePath, "utf8");
-    const manifest = JSON.parse(content) as ResolverManifest;
-
-    // Load the resolver schema
-    const schemaPath = join(getProjectRoot(), "schemas/resolver.schema.json");
-    const schemaContent = await fs.readFile(schemaPath, "utf8");
-    const schema = JSON.parse(schemaContent);
-
-    // Create AJV instance and validate
-    const ajv = new Ajv({ strict: false, allErrors: true });
-    const validate = ajv.compile(schema);
-    const valid = validate(manifest);
-
-    if (valid) {
-      console.log(`✅ Valid resolver manifest: ${filePath}`);
-
-      // Validate that referenced token files exist
-      const allTokenFiles = [];
-
-      // Validate sets exist
-      if (!manifest.sets || manifest.sets.length === 0) {
-        errors.push("Manifest must have at least one set");
-      } else {
-        // Collect token files from sets
-        for (const set of manifest.sets) {
-          allTokenFiles.push(...set.values);
-        }
-      }
-
-      // Collect token files from modifiers
-      if (manifest.modifiers) {
-        for (const modifier of manifest.modifiers) {
-          if (!modifier.name) {
-            errors.push("Modifier must have a name property");
-          }
-          for (const value of modifier.values || []) {
-            allTokenFiles.push(...(value.values || []));
-          }
-        }
-      }
-
-      // Check if files exist (relative to manifest location)
-      const manifestDir = join(filePath, "..");
-      const missingFiles = [];
-
-      for (const tokenFile of allTokenFiles) {
-        const fullPath = join(manifestDir, tokenFile);
-        try {
-          await fs.access(fullPath);
-        } catch {
-          missingFiles.push(tokenFile);
-        }
-      }
-
-      if (missingFiles.length > 0) {
-        for (const file of missingFiles) {
-          warnings.push(`Referenced file does not exist: ${file}`);
-        }
-      }
-
-      return {
-        valid: errors.length === 0,
-        errors,
-        warnings,
-      };
+    if (!(s.values && Array.isArray(s.values))) {
+      errors.push({
+        path: `sets[${index}].values`,
+        message: "Set must have a values array",
+        severity: "error",
+      });
+      return;
     }
 
-    console.log(`❌ Invalid resolver manifest: ${filePath}`);
-
-    // Convert AJV errors to strings
-    if (validate.errors) {
-      for (const error of validate.errors) {
-        const path = error.instancePath || "";
-        const msg = `${path ? `${path}: ` : ""}${error.message}`;
-        errors.push(msg);
+    (s.values as unknown[]).forEach((value: unknown, vIndex: number) => {
+      if (typeof value !== "string") {
+        errors.push({
+          path: `sets[${index}].values[${vIndex}]`,
+          message: "Value must be a string (file path)",
+          severity: "error",
+        });
       }
+    });
+  }
+
+  private validateSets(
+    manifest: Record<string, unknown>,
+    errors: ValidationError[],
+  ): void {
+    if (!(manifest.sets && Array.isArray(manifest.sets))) {
+      errors.push({
+        path: "sets",
+        message: "Missing or invalid sets array",
+        severity: "error",
+      });
+      return;
+    }
+
+    manifest.sets.forEach((set: unknown, index: number) => {
+      this.validateSet(set, index, errors);
+    });
+  }
+
+  private validateModifierOptions(
+    name: string,
+    mod: Record<string, unknown>,
+    options: unknown,
+    errors: ValidationError[],
+  ): void {
+    if (!Array.isArray(options)) return;
+
+    for (const option of options as string[]) {
+      if (!(mod.values as Record<string, unknown>)?.[option]) {
+        errors.push({
+          path: `modifiers.${name}.values.${option}`,
+          message: `Missing values for option '${option}'`,
+          severity: "error",
+        });
+      }
+    }
+  }
+
+  private validateModifier(
+    name: string,
+    modifier: unknown,
+    errors: ValidationError[],
+  ): void {
+    const mod = modifier as Record<string, unknown>;
+    const hasOneOf = mod?.oneOf;
+    const hasAnyOf = mod?.anyOf;
+
+    if (!(hasOneOf || hasAnyOf)) {
+      errors.push({
+        path: `modifiers.${name}`,
+        message: "Modifier must have either oneOf or anyOf",
+        severity: "error",
+      });
+    }
+
+    if (!mod.values || typeof mod.values !== "object") {
+      errors.push({
+        path: `modifiers.${name}.values`,
+        message: "Modifier must have a values object",
+        severity: "error",
+      });
+    }
+
+    if (hasOneOf && hasAnyOf) {
+      errors.push({
+        path: `modifiers.${name}`,
+        message: "Modifier cannot have both oneOf and anyOf",
+        severity: "error",
+      });
+      return;
+    }
+
+    const options = hasOneOf ? mod.oneOf : hasAnyOf ? mod.anyOf : [];
+    this.validateModifierOptions(name, mod, options, errors);
+  }
+
+  private validateModifiers(
+    manifest: Record<string, unknown>,
+    errors: ValidationError[],
+  ): void {
+    if (!manifest.modifiers || typeof manifest.modifiers !== "object") {
+      errors.push({
+        path: "modifiers",
+        message: "Missing or invalid modifiers object",
+        severity: "error",
+      });
+      return;
+    }
+
+    for (const [name, modifier] of Object.entries(
+      manifest.modifiers as Record<string, unknown>,
+    )) {
+      this.validateModifier(name, modifier, errors);
+    }
+  }
+  /**
+   * Validate a manifest structure
+   */
+  validateManifest(manifest: unknown): ValidationResult {
+    const errors: ValidationError[] = [];
+
+    if (!manifest || typeof manifest !== "object") {
+      errors.push({
+        path: "",
+        message: "Manifest must be an object",
+        severity: "error",
+      });
+      return { valid: false, errors, warnings: [] };
+    }
+
+    const m = manifest as Record<string, unknown>;
+
+    // Validate structure
+    this.validateSets(m, errors);
+    this.validateModifiers(m, errors);
+
+    // Check for generate field if present
+    if (m.generate !== undefined && !Array.isArray(m.generate)) {
+      errors.push({
+        path: "generate",
+        message: "Generate field must be an array",
+        severity: "error",
+      });
     }
 
     return {
-      valid: false,
+      valid: errors.length === 0,
       errors,
-      warnings,
-    };
-  } catch (error) {
-    const err = error as Error;
-    console.error(`Error validating resolver manifest: ${err.message}`);
-
-    if (err.message.includes("JSON")) {
-      errors.push(`Invalid JSON: ${err.message}`);
-    } else {
-      errors.push(err.message);
-    }
-
-    return {
-      valid: false,
-      errors,
-      warnings,
+      warnings: [],
     };
   }
-}
 
-/**
- * Resolves and merges tokens from a manifest file based on selected modifiers.
- * Loads base sets first, then applies modifier-specific token overrides.
- * @param manifestPath - Path to the manifest.json file
- * @param modifiers - Object mapping modifier names to selected values (e.g., { theme: "dark", mode: "compact" })
- * @returns Merged token structure or null if resolution fails
- * @example
- * const tokens = await resolveTokens("/project/manifest.json", { theme: "dark" })
- * // Returns base tokens merged with dark theme overrides
- */
-export async function resolveTokens(
-  manifestPath: string,
-  modifiers: Record<string, string> = {},
-): Promise<Record<string, unknown> | null> {
-  try {
-    // Read the manifest
-    const content = await fs.readFile(manifestPath, "utf8");
-    const manifest = JSON.parse(content) as ResolverManifest;
-    const manifestDir = join(manifestPath, "..");
-
-    // Start with base sets
-    let resolvedTokens: Record<string, unknown> = {};
-
-    // Load and merge base sets
-    if (manifest.sets) {
-      for (const set of manifest.sets) {
-        for (const tokenFile of set.values) {
-          const filePath = join(manifestDir, tokenFile);
-          const fileContent = await fs.readFile(filePath, "utf8");
-          const tokens = JSON.parse(fileContent);
-          resolvedTokens = mergeDeep(resolvedTokens, tokens);
-        }
-      }
-    }
-
-    // Apply modifiers
-    if (manifest.modifiers) {
-      for (const modifier of manifest.modifiers) {
-        if (!modifier.name || !modifier.values) continue;
-        const modifierValue = modifiers[modifier.name];
-        if (!modifierValue) continue;
-
-        const matchingValue = modifier.values.find(
-          (v) => v?.name === modifierValue,
-        );
-        if (!matchingValue || !matchingValue.values) continue;
-
-        for (const tokenFile of matchingValue.values) {
-          const filePath = join(manifestDir, tokenFile);
-          const fileContent = await fs.readFile(filePath, "utf8");
-          const tokens = JSON.parse(fileContent);
-          resolvedTokens = mergeDeep(resolvedTokens, tokens);
-        }
-      }
-    }
-
-    return resolvedTokens;
-  } catch (error) {
-    console.error("Error resolving tokens:", error);
-    return null;
+  /**
+   * Type guard to check if object is a valid manifest
+   */
+  isValidManifest(obj: unknown): obj is UPFTResolverManifest {
+    const result = this.validateManifest(obj);
+    return result.valid;
   }
-}
-
-/**
- * Deep merges two token objects, with source values overriding target values.
- * @param target - The base object to merge into
- * @param source - The object to merge from (overrides target values)
- * @returns New merged object
- * @private
- */
-function mergeDeep(
-  target: Record<string, unknown>,
-  source: Record<string, unknown>,
-): Record<string, unknown> {
-  const result = { ...target };
-
-  for (const key in source) {
-    const sourceValue = source[key];
-    const targetValue = result[key];
-
-    if (
-      targetValue &&
-      typeof targetValue === "object" &&
-      !Array.isArray(targetValue) &&
-      sourceValue &&
-      typeof sourceValue === "object" &&
-      !Array.isArray(sourceValue)
-    ) {
-      result[key] = mergeDeep(
-        targetValue as Record<string, unknown>,
-        sourceValue as Record<string, unknown>,
-      );
-    } else {
-      result[key] = sourceValue;
-    }
-  }
-
-  return result;
 }

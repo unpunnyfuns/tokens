@@ -1,0 +1,57 @@
+{
+  "sets": [
+    {
+      "name": "core-tokens",
+      "values": [
+        "input/colors-base.json",
+        "input/typography-base.json",
+        "input/spacing-base.json"
+      ]
+    },
+    {
+      "name": "semantic-tokens",
+      "values": ["input/colors-semantic.json", "input/spacing-semantic.json"]
+    }
+  ],
+  "modifiers": {
+    "theme": {
+      "oneOf": ["light", "dark"],
+      "values": {
+        "light": ["input/theme-light.json"],
+        "dark": ["input/theme-dark.json"]
+      }
+    },
+    "density": {
+      "oneOf": ["comfortable", "compact"],
+      "values": {
+        "comfortable": [],
+        "compact": []
+      }
+    }
+  },
+  "options": {
+    "resolveReferences": false
+  },
+  "generate": [
+    {
+      "theme": "light",
+      "density": "comfortable",
+      "output": "output/light-comfortable.json"
+    },
+    {
+      "theme": "light",
+      "density": "compact",
+      "output": "output/light-compact.json"
+    },
+    {
+      "theme": "dark",
+      "density": "comfortable",
+      "output": "output/dark-comfortable.json"
+    },
+    {
+      "theme": "dark",
+      "density": "compact",
+      "output": "output/dark-compact.json"
+    }
+  ]
+}
