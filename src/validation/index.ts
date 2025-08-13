@@ -1,11 +1,6 @@
-/**
- * Public validation API for token files
- * This module exports functions for validating design tokens against schemas
- */
-
-// Export public validation functions
-export { validateFiles } from "./cli-validator.ts";
+export { ManifestValidator } from "./manifest-validator.js";
 export {
-  resolveTokens,
-  validateResolverManifest as validateResolver,
-} from "./manifest-validator.ts";
+  TokenValidator,
+  type ValidationResult,
+  type ValidatorOptions,
+} from "./validator.js";

@@ -1,0 +1,25 @@
+{
+  "sets": [
+    { "values": ["input/colors-base.json"] },
+    { "values": ["input/colors-semantic.json"] }
+  ],
+  "modifiers": {
+    "theme": {
+      "oneOf": ["light", "dark"],
+      "values": {
+        "light": ["input/theme-light.json"],
+        "dark": ["input/theme-dark.json"]
+      }
+    }
+  },
+  "generate": [
+    {
+      "theme": "light",
+      "output": "output/theme-light.json"
+    },
+    {
+      "theme": "dark",
+      "output": "output/theme-dark.json"
+    }
+  ]
+}

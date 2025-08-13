@@ -1,0 +1,46 @@
+{
+  "$schema": "../../schemas/tokens/base.schema.json",
+  "$description": "Examples of non-compliant legacy color formats that should fail strict DTCG validation",
+  "colors": {
+    "hex-string": {
+      "$type": "color",
+      "$value": "#ff0000",
+      "$description": "Hex string - not DTCG compliant"
+    },
+    "hex-short": {
+      "$type": "color",
+      "$value": "#f00",
+      "$description": "Short hex string - not DTCG compliant"
+    },
+    "hex-with-alpha": {
+      "$type": "color",
+      "$value": "#ff0000cc",
+      "$description": "Hex with alpha - not DTCG compliant"
+    },
+    "named-color": {
+      "$type": "color",
+      "$value": "red",
+      "$description": "Named color - not DTCG compliant"
+    },
+    "rgb-function": {
+      "$type": "color",
+      "$value": "rgb(255, 0, 0)",
+      "$description": "RGB function string - not DTCG compliant"
+    },
+    "hsl-function": {
+      "$type": "color",
+      "$value": "hsl(0, 100%, 50%)",
+      "$description": "HSL function string - not DTCG compliant"
+    },
+    "correct-format": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [1, 0, 0],
+        "alpha": 1,
+        "hex": "#ff0000"
+      },
+      "$description": "This is the correct DTCG format and should pass"
+    }
+  }
+}

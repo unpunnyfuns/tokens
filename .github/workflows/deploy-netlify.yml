@@ -10,22 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Build schemas
-        run: npm run build:schemas
-      
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2
         with:
-          publish-dir: './dist'
+          publish-dir: './dist-web'
           production-branch: main
           production-deploy: true
           deploy-message: "Deploy from GitHub Actions"

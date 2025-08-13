@@ -1,0 +1,12 @@
+{
+  "color": {
+    "primary": {
+      "$value": "#007bff",
+      "$type": "color"
+    },
+    "background": {
+      "$value": "{color.primary}",
+      "$type": "color"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/font-weight.schema.json",
+  "title": "Font Weight Token Schema",
+  "description": "Schema for font weight tokens",
+  "allOf": [
+    {
+      "$ref": "../base.schema.json#/$defs/leaf"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "const": "fontWeight"
+        },
+        "$value": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 1000,
+              "description": "Numeric font weight value"
+            },
+            {
+              "type": "string",
+              "enum": [
+                "thin",
+                "hairline",
+                "extra-light",
+                "ultra-light",
+                "light",
+                "normal",
+                "regular",
+                "medium",
+                "semi-bold",
+                "demi-bold",
+                "bold",
+                "extra-bold",
+                "ultra-bold",
+                "black",
+                "heavy",
+                "extra-black",
+                "ultra-black"
+              ],
+              "description": "Named font weight value"
+            }
+          ]
+        }
+      },
+      "required": ["$type"]
+    }
+  ]
+}

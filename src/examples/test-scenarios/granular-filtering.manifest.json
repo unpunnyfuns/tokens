@@ -1,0 +1,62 @@
+{
+  "$schema": "https://tokens.unpunny.fun/schemas/latest/resolver-upft.json",
+  "name": "Granular Filtering Example",
+  "description": "Demonstrates granular set/modifier filtering with multi-file generation",
+  "sets": [
+    {
+      "name": "base",
+      "values": ["../../test-fixtures/base.json"]
+    },
+    {
+      "name": "components",
+      "values": ["../../test-fixtures/components.json"]
+    }
+  ],
+  "modifiers": {
+    "theme": {
+      "oneOf": ["light", "dark"],
+      "values": {
+        "light": ["../../test-fixtures/light.json"],
+        "dark": ["../../test-fixtures/dark.json"]
+      }
+    },
+    "density": {
+      "oneOf": ["comfortable", "compact"],
+      "values": {
+        "comfortable": ["../../test-fixtures/comfortable.json"],
+        "compact": ["../../test-fixtures/compact.json"]
+      }
+    }
+  },
+  "generate": [
+    {
+      "output": "dist/base-only.json",
+      "includeSets": ["base"]
+    },
+    {
+      "output": "dist/components-only.json",
+      "includeSets": ["components"]
+    },
+    {
+      "output": "dist/themes.json",
+      "includeSets": ["base"],
+      "includeModifiers": ["theme"]
+    },
+    {
+      "output": "dist/full.json",
+      "includeSets": ["base", "components"],
+      "includeModifiers": ["theme", "density"]
+    },
+    {
+      "output": "dist/light-compact.json",
+      "includeSets": ["base"],
+      "includeModifiers": ["theme:light", "density:compact"]
+    },
+    {
+      "output": "dist/without-density.json",
+      "includeSets": ["*"],
+      "includeModifiers": ["theme"],
+      "excludeModifiers": ["density"]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "color": {
+    "background": {
+      "primary": {
+        "$value": "{color.neutral.100}",
+        "$type": "color"
+      }
+    },
+    "text": {
+      "primary": {
+        "$value": "{color.neutral.900}",
+        "$type": "color"
+      }
+    }
+  }
+}

@@ -21,76 +21,96 @@
     "resolver"
   ],
   "type": "module",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
-    "upft": "./src/cli.ts"
+    "upft": "./dist/cli/cli.js"
   },
   "engines": {
     "node": ">=22.6.0"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./schemas/latest/*": "./dist/schema/latest/*",
-    "./schemas/*": "./dist/schema/*",
-    "./validators": "./src/validation/index.ts",
-    "./bundler": "./src/bundler/index.ts",
-    "./bundler/api": "./src/bundler/api.ts",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schemas/*": "./dist/schemas/*",
+    "./validators": {
+      "types": "./dist/validation/index.d.ts",
+      "import": "./dist/validation/index.js"
+    },
+    "./bundler": {
+      "types": "./dist/bundler/index.d.ts",
+      "import": "./dist/bundler/index.js"
+    },
+    "./bundler/api": {
+      "types": "./dist/bundler/api.d.ts",
+      "import": "./dist/bundler/api.js"
+    },
+    "./resolver": {
+      "types": "./dist/resolver/index.d.ts",
+      "import": "./dist/resolver/index.js"
+    },
+    "./api": {
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api/index.js"
+    },
+    "./api/workflows": {
+      "types": "./dist/api/workflows.d.ts",
+      "import": "./dist/api/workflows.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
     "dist/",
-    "src/",
-    "schemas/",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "// Code Quality": "",
     "format": "biome format --write .",
-    "lint": "biome lint .",
+    "lint": "biome lint --write .",
     "lint:fix": "biome lint --write .",
     "check": "biome check --write .",
     "typecheck": "tsc --noEmit",
-    "// Testing": "",
-    "test": "vitest",
-    "test:run": "vitest run",
+    "depcheck": "dependency-cruiser src --config .dependency-cruiser.cjs",
+    "validate:examples": "npx tsx scripts/validate-examples.ts",
+    "test:bundler": "npx tsx scripts/test-bundler.ts",
+    "validate:bundler-output": "npx tsx scripts/validate-bundler-output.ts",
+    "quality": "npm run format && npm run lint && npm run typecheck && npm run depcheck && npm run test && npm run validate:examples && npm run test:bundler && npm run validate:bundler-output",
+    "quality:parallel": "node scripts/quality-parallel.js",
+    "test": "vitest run",
+    "test:unit": "vitest run --exclude='**/*.e2e.test.ts'",
+    "test:e2e": "vitest run '**/*.e2e.test.ts'",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "// Development & Validation": "",
-    "dev": "node --experimental-strip-types scripts/dev-cli.ts",
-    "dev:schemas": "npm run dev validate-schemas",
-    "dev:examples": "npm run dev test",
-    "dev:full": "npm run dev:schemas && npm run dev:examples && npm run test:run",
-    "validate": "node --experimental-strip-types src/cli.ts validate",
-    "validate:examples": "npm run validate ./examples",
-    "bundle": "node --experimental-strip-types src/cli.ts bundle",
-    "// Watch Scripts": "",
-    "watch": "npm run watch:test",
-    "watch:test": "vitest",
-    "watch:examples": "nodemon --watch schemas --watch examples --watch src --ext json,ts --exec \"npm run validate:examples\"",
-    "watch:schemas": "nodemon --watch schemas --watch src --ext json,ts --exec \"npm run dev:schemas\"",
-    "watch:all": "nodemon --watch schemas --watch examples --watch src --ext json,ts --exec \"npm run dev:full\"",
-    "// Build": "",
-    "build": "npm run build:schemas",
-    "build:schemas": "node --experimental-strip-types scripts/build-schemas.ts",
-    "// CI/CD Workflows": "",
-    "ci:check": "npm run check && npm run typecheck",
-    "ci:test": "npm run test:run",
-    "ci:validate": "npm run dev:schemas && npm run validate:examples",
-    "ci:build": "npm run build",
-    "ci:full": "npm run ci:check && npm run ci:test && npm run ci:validate && npm run ci:build"
+    "// Build Scripts": "",
+    "clean": "rm -rf dist",
+    "build:tsc": "node_modules/.bin/tsc -p tsconfig.build.json",
+    "build:schemas:npm": "node scripts/copy-schemas-npm.js",
+    "build:schemas:web": "node scripts/version-schemas.js",
+    "build:npm": "npm run build:tsc && npm run build:schemas:npm",
+    "build:web": "npm run build:schemas:web",
+    "build": "npm run clean && npm run build:npm && npm run build:web"
   },
   "dependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
+    "chokidar": "^4.0.3",
     "commander": "^14.0.0",
-    "picocolors": "^1.1.1"
+    "json5": "^2.2.3",
+    "lru-cache": "^11.1.0",
+    "picocolors": "^1.1.1",
+    "yaml": "^2.8.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.4",
+    "@types/glob": "^8.1.0",
     "@types/node": "^24.2.1",
     "@vitest/coverage-v8": "^3.2.4",
+    "dependency-cruiser": "^17.0.1",
     "glob": "^11.0.3",
+    "memfs": "^4.36.0",
     "nodemon": "3.1.9",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

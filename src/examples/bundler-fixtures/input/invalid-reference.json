@@ -1,0 +1,16 @@
+{
+  "color": {
+    "invalid": {
+      "$value": "{color.nonexistent}",
+      "$type": "color"
+    },
+    "circular1": {
+      "$value": "{color.circular2}",
+      "$type": "color"
+    },
+    "circular2": {
+      "$value": "{color.circular1}",
+      "$type": "color"
+    }
+  }
+}

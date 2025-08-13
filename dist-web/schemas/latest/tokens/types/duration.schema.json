@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.2.1/tokens/types/duration.schema.json",
+  "title": "Duration Token Schema",
+  "description": "Schema for duration tokens (animations, transitions)",
+  "allOf": [
+    {
+      "$ref": "../base.schema.json#/$defs/leaf"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "const": "duration"
+        },
+        "$value": {
+          "$ref": "../value-types.schema.json#/$defs/durationValue"
+        }
+      },
+      "required": ["$type"]
+    }
+  ]
+}
