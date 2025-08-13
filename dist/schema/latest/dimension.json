@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.1/dimension",
+  "$id": "https://tokens.unpunny.fun/schema/0.2.0-dev/dimension",
   "title": "Dimension Token Schema",
   "description": "Schema for dimension tokens (spacing, sizing, etc)",
   "allOf": [
     {
-      "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/leaf"
+      "$ref": "https://tokens.unpunny.fun/schema/0.2.0-dev/base#/$defs/leaf"
     },
     {
       "type": "object",
@@ -15,7 +15,7 @@
           "const": "dimension"
         },
         "$value": {
-          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValue"
+          "$ref": "https://tokens.unpunny.fun/schema/0.2.0-dev/value-types#/$defs/dimensionValue"
         }
       },
       "required": [

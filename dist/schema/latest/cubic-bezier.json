@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.1/cubic-bezier",
+  "$id": "https://tokens.unpunny.fun/schema/0.2.0-dev/cubic-bezier",
   "title": "Cubic Bezier Token Schema",
   "description": "Schema for cubic bezier tokens (animation timing functions)",
   "allOf": [
     {
-      "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/leaf"
+      "$ref": "https://tokens.unpunny.fun/schema/0.2.0-dev/base#/$defs/leaf"
     },
     {
       "type": "object",

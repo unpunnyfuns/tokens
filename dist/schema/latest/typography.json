@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schema/0.1.1/typography",
+  "$id": "https://tokens.unpunny.fun/schema/0.2.0-dev/typography",
   "title": "Typography Token Schema",
   "description": "Schema for typography composite tokens",
   "allOf": [
     {
-      "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/leaf"
+      "$ref": "https://tokens.unpunny.fun/schema/0.2.0-dev/base#/$defs/leaf"
     },
     {
       "type": "object",
@@ -30,26 +30,26 @@
                   }
                 },
                 {
-                  "$ref": "https://tokens.unpunny.fun/schema/0.1.1/base#/$defs/$ref"
+                  "$ref": "https://tokens.unpunny.fun/schema/0.2.0-dev/base#/$defs/$ref"
                 }
               ],
               "description": "Font family name or stack"
             },
             "fontSize": {
-              "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValueOrRef",
+              "$ref": "https://tokens.unpunny.fun/schema/0.2.0-dev/value-types#/$defs/dimensionValueOrRef",
               "description": "Font size in px or rem"
             },
             "fontWeight": {
-              "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/fontWeightValueOrRef",
+              "$ref": "https://tokens.unpunny.fun/schema/0.2.0-dev/value-types#/$defs/fontWeightValueOrRef",
               "description": "Font weight (numeric 1-1000 or keyword)"
             },
             "lineHeight": {
-              "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/lineHeightValueOrRef",
+              "$ref": "https://tokens.unpunny.fun/schema/0.2.0-dev/value-types#/$defs/lineHeightValueOrRef",
               "$comment": "DTCG spec: lineHeight is a multiplier of fontSize, not a dimension",
               "description": "Line height as multiplier of font size (typically 0.5-3)"
             },
             "letterSpacing": {
-              "$ref": "https://tokens.unpunny.fun/schema/0.1.1/value-types#/$defs/dimensionValueOrRef",
+              "$ref": "https://tokens.unpunny.fun/schema/0.2.0-dev/value-types#/$defs/dimensionValueOrRef",
               "description": "Horizontal spacing between characters"
             }
           },
