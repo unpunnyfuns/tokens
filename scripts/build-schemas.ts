@@ -19,8 +19,7 @@ const pkg = JSON.parse(
 ) as PackageJson;
 
 // Use dev version for local builds, actual version for releases
-const isRelease =
-  process.env.CI === "true" && process.env.GITHUB_REF?.startsWith("refs/tags/");
+const isRelease = process.env.RELEASE_BUILD === "true";
 const VERSION = isRelease ? pkg.version : `${pkg.version}-dev`;
 
 const SCHEMA_BASE_URL = `https://tokens.unpunny.fun/schema/${VERSION}`;
@@ -29,12 +28,21 @@ const DIST_DIR = path.join(ROOT, "dist", "schema");
 
 console.log(`Building schemas for version ${VERSION}`);
 
-// Clean and create dist directory
-if (fs.existsSync(DIST_DIR)) {
-  fs.rmSync(DIST_DIR, { recursive: true });
+// Create dist directories (preserve released versions)
+const versionDir = path.join(DIST_DIR, VERSION);
+const latestDir = path.join(DIST_DIR, "latest");
+
+// Clean latest and any -dev directories
+if (fs.existsSync(latestDir)) {
+  fs.rmSync(latestDir, { recursive: true });
 }
-fs.mkdirSync(path.join(DIST_DIR, VERSION), { recursive: true });
-fs.mkdirSync(path.join(DIST_DIR, "latest"), { recursive: true });
+// For dev builds, clean the dev version directory
+if (VERSION.endsWith("-dev") && fs.existsSync(versionDir)) {
+  fs.rmSync(versionDir, { recursive: true });
+}
+
+fs.mkdirSync(versionDir, { recursive: true });
+fs.mkdirSync(latestDir, { recursive: true });
 
 // Process each schema file
 const schemaFiles = globSync("**/*.json", { cwd: SOURCE_DIR });

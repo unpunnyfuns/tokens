@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schema/0.1.1/full",
+  "title": "Full Design Tokens Schema",
+  "description": "Complete schema with all token types for full validation",
+  "$ref": "#/$defs/root",
+  "$defs": {
+    "root": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "Reference to the JSON schema"
+        },
+        "$description": {
+          "type": "string",
+          "description": "Description of the token file"
+        },
+        "$extensions": {
+          "type": "object",
+          "description": "Custom extensions",
+          "additionalProperties": true
+        }
+      },
+      "patternProperties": {
+        "^[^$].*": {
+          "$ref": "#/$defs/groupOrToken"
+        }
+      },
+      "additionalProperties": false
+    },
+    "group": {
+      "type": "object",
+      "properties": {
+        "$description": {
+          "type": "string",
+          "description": "Description of this group"
+        },
+        "$extensions": {
+          "type": "object",
+          "description": "Custom extensions",
+          "additionalProperties": true
+        }
+      },
+      "patternProperties": {
+        "^[^$].*": {
+          "$ref": "#/$defs/groupOrToken"
+        }
+      },
+      "additionalProperties": false
+    },
+    "groupOrToken": {
+      "anyOf": [
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/color"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/dimension"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/font-family"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/font-weight"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/duration"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/number"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/shadow"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/typography"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/cubic-bezier"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/stroke-style"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/border"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/transition"
+        },
+        {
+          "$ref": "https://tokens.unpunny.fun/schema/0.1.1/gradient"
+        },
+        {
+          "$ref": "#/$defs/genericToken"
+        },
+        {
+          "$ref": "#/$defs/group"
+        }
+      ]
+    },
+    "genericToken": {
+      "type": "object",
+      "description": "Generic token for types not yet defined",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "description": "Token type"
+        },
+        "$value": {
+          "description": "Token value"
+        },
+        "$ref": {
+          "type": "string",
+          "pattern": "^(#(/[^/]+)*|[^#]+#(/[^/]+)*|\\./[^#]+#(/[^/]+)*)$",
+          "description": "Reference to another token"
+        },
+        "$description": {
+          "type": "string"
+        },
+        "$extensions": {
+          "type": "object"
+        },
+        "$deprecated": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "$value"
+          ],
+          "not": {
+            "required": [
+              "$ref"
+            ]
+          }
+        },
+        {
+          "required": [
+            "$ref"
+          ],
+          "not": {
+            "required": [
+              "$value"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}
