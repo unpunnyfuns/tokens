@@ -45,13 +45,19 @@
                   "description": "Border style"
                 }
               },
-              "required": ["color", "width", "style"],
+              "required": [
+                "color",
+                "width",
+                "style"
+              ],
               "additionalProperties": false
             }
           ]
         }
       },
-      "required": ["$type"]
+      "required": [
+        "$type"
+      ]
     }
   ]
 }

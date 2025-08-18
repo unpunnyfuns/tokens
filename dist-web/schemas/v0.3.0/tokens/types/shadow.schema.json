@@ -42,7 +42,13 @@
                 }
               },
               "$comment": "Per DTCG spec: color, offsetX, offsetY, blur, spread are required. inset is optional (defaults to false)",
-              "required": ["color", "offsetX", "offsetY", "blur", "spread"],
+              "required": [
+                "color",
+                "offsetX",
+                "offsetY",
+                "blur",
+                "spread"
+              ],
               "additionalProperties": false
             },
             {
@@ -70,14 +76,22 @@
                   }
                 },
                 "$comment": "Per DTCG spec: color, offsetX, offsetY, blur, spread are required. inset is optional (defaults to false)",
-                "required": ["color", "offsetX", "offsetY", "blur", "spread"],
+                "required": [
+                  "color",
+                  "offsetX",
+                  "offsetY",
+                  "blur",
+                  "spread"
+                ],
                 "additionalProperties": false
               }
             }
           ]
         }
       },
-      "required": ["$type"]
+      "required": [
+        "$type"
+      ]
     }
   ]
 }

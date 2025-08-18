@@ -1,8 +1,9 @@
+// Functional bundler API
 export {
   type Bundle,
+  type BundlerOptions,
   type BundleWriteResult,
-  TokenBundler,
-  TokenBundler as Bundler, // Alias for backward compatibility
-  type TokenBundlerOptions,
+  bundle,
+  writeBundles,
   type TokenTransform,
-} from "./bundler.js";
+} from "./bundler-functional.js";

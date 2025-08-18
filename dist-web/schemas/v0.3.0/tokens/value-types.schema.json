@@ -38,7 +38,10 @@
     },
     "dimensionUnits": {
       "description": "Valid DTCG dimension units per spec",
-      "enum": ["px", "rem"]
+      "enum": [
+        "px",
+        "rem"
+      ]
     },
     "dimensionValue": {
       "description": "A dimension value with unit per DTCG spec",
@@ -51,7 +54,10 @@
           "$ref": "#/$defs/dimensionUnits"
         }
       },
-      "required": ["value", "unit"],
+      "required": [
+        "value",
+        "unit"
+      ],
       "additionalProperties": false
     },
     "dimensionValueOrRef": {
@@ -70,14 +76,19 @@
               "$ref": "#/$defs/$ref"
             }
           },
-          "required": ["$ref"],
+          "required": [
+            "$ref"
+          ],
           "additionalProperties": false
         }
       ]
     },
     "durationUnits": {
       "description": "Time units for durations",
-      "enum": ["ms", "s"]
+      "enum": [
+        "ms",
+        "s"
+      ]
     },
     "durationValue": {
       "description": "A duration value with unit",
@@ -97,7 +108,10 @@
               "$ref": "#/$defs/durationUnits"
             }
           },
-          "required": ["value", "unit"],
+          "required": [
+            "value",
+            "unit"
+          ],
           "additionalProperties": false
         }
       ]
@@ -115,7 +129,9 @@
               "$ref": "#/$defs/$ref"
             }
           },
-          "required": ["$ref"],
+          "required": [
+            "$ref"
+          ],
           "additionalProperties": false
         },
         {
@@ -135,7 +151,10 @@
               "type": "string"
             }
           },
-          "required": ["colorSpace", "components"],
+          "required": [
+            "colorSpace",
+            "components"
+          ],
           "additionalProperties": false
         }
       ]
@@ -153,7 +172,9 @@
               "$ref": "#/$defs/$ref"
             }
           },
-          "required": ["$ref"],
+          "required": [
+            "$ref"
+          ],
           "additionalProperties": false
         }
       ]
@@ -173,7 +194,9 @@
               "$ref": "#/$defs/$ref"
             }
           },
-          "required": ["$ref"],
+          "required": [
+            "$ref"
+          ],
           "additionalProperties": false
         }
       ]
@@ -223,7 +246,9 @@
               "$ref": "#/$defs/$ref"
             }
           },
-          "required": ["$ref"],
+          "required": [
+            "$ref"
+          ],
           "additionalProperties": false
         }
       ]
@@ -248,7 +273,9 @@
               "$ref": "#/$defs/$ref"
             }
           },
-          "required": ["$ref"],
+          "required": [
+            "$ref"
+          ],
           "additionalProperties": false
         }
       ]
@@ -266,7 +293,9 @@
               "$ref": "#/$defs/$ref"
             }
           },
-          "required": ["$ref"],
+          "required": [
+            "$ref"
+          ],
           "additionalProperties": false
         }
       ]
@@ -284,7 +313,9 @@
               "$ref": "#/$defs/$ref"
             }
           },
-          "required": ["$ref"],
+          "required": [
+            "$ref"
+          ],
           "additionalProperties": false
         }
       ]
@@ -304,7 +335,11 @@
     },
     "lineCapEnum": {
       "description": "Line cap styles for strokes",
-      "enum": ["round", "butt", "square"]
+      "enum": [
+        "round",
+        "butt",
+        "square"
+      ]
     },
     "strokeStyleObject": {
       "description": "Custom stroke style with dash pattern",
@@ -321,7 +356,9 @@
           "$ref": "#/$defs/lineCapEnum"
         }
       },
-      "required": ["dashArray"],
+      "required": [
+        "dashArray"
+      ],
       "additionalProperties": false
     }
   }

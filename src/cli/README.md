@@ -1,90 +1,167 @@
 # CLI
 
-The CLI module provides command-line interface for the token platform, enabling validation, resolution, building, and analysis from the terminal.
+Command-line interface providing comprehensive access to token operations through an intuitive terminal experience. This module exposes validation, bundling, resolution, and analysis capabilities with support for both human-readable output and machine-parseable formats, enabling seamless integration into development workflows and CI/CD pipelines.
 
-## Structure
+## Table of Contents
 
-| File | Purpose |
-|------|---------|
-| `cli.ts` | Main CLI entry point and command router |
-| `commands.ts` | Command implementations (TokenCLI class) |
-| `index.ts` | Module exports |
+- [Overview](#overview)
+- [Usage](#usage)
+- [API Reference](#api-reference)
+- [Structure](#structure)
+- [Performance Notes](#performance-notes)
+- [Integration Points](#integration-points)
 
-## Commands
+## Overview
 
-### validate
-Validates resolver manifests or token documents.
+The CLI module provides a comprehensive command-line interface for working with design tokens. It offers commands for validation, bundling, resolution, comparison, and analysis operations. The CLI is built with Commander.js and provides both human-readable and machine-readable output formats.
+
+The module includes command implementations that orchestrate operations across other modules, output formatting utilities for consistent display, and configuration management for customizable behavior. Commands support various output formats including JSON for automation and integration into CI/CD pipelines.
+
+## Usage
+
+### Basic Commands
+
+Validate tokens and manifests:
 
 ```bash
-upft validate resolver.json
+# Validate individual files
+upft validate tokens.json
 upft validate tokens.json --strict
+
+# Validate directories
+upft validate ./tokens --recursive
+
+# Validate manifests with all permutations
+upft validate manifest.json --all-permutations
 ```
 
-### resolve
-Resolves tokens for specific modifier combinations.
+Build and bundle tokens:
 
 ```bash
-upft resolve --manifest resolver.json --theme dark --mode compact
-upft resolve -m resolver.json --modifiers '{"theme":"dark","density":"tight"}'
+# Build from manifest
+upft bundle manifest.json
+upft bundle manifest.json --output ./dist
+
+# Build with specific format
+upft bundle manifest.json --output ./dist --format dtcg --prettify
 ```
 
-### build
-Generates all token bundles from a manifest.
+Resolve tokens for specific configurations:
 
 ```bash
-upft build --manifest resolver.json --output ./dist
-upft build -m resolver.json -o ./dist --format dtcg
+# Resolve with modifiers
+upft preview manifest.json --theme dark --mode compact
+
+# Output as JSON
+upft preview manifest.json --theme light --json > tokens.json
+
+# Resolve with complex modifiers
+upft preview manifest.json --modifiers '{"theme":"dark","density":"tight"}'
 ```
 
-### list
-Lists all available permutations from a manifest.
+### Information and Analysis
+
+List available permutations:
 
 ```bash
-upft list --manifest resolver.json
-upft list -m resolver.json --json  # Machine-readable output
+# Show all possible permutations
+upft permutations manifest.json
+
+# Filter permutations
+upft permutations manifest.json --filter "theme:*"
+
+# JSON output for automation
+upft permutations manifest.json --json
 ```
 
-### info
-Displays manifest information and statistics.
+Get manifest information:
 
 ```bash
-upft info --manifest resolver.json
-upft info -m resolver.json --verbose
+# Basic info
+upft info manifest.json
+
+# Detailed information
+upft info manifest.json --verbose
+
+# Machine-readable format
+upft info manifest.json --json
 ```
 
-### diff
-Compares two token permutations.
+Compare token configurations:
 
 ```bash
-upft diff --manifest resolver.json --from "theme:light" --to "theme:dark"
+# Compare files directly
+upft diff old.json new.json
+
+# Compare manifest permutations
+upft diff --manifest manifest.json --from "theme:light" --to "theme:dark"
+
+# Detailed comparison
+upft diff old.json new.json --detailed
 ```
 
-## Core Class: TokenCLI
+### Linting and Analysis
 
-### Methods
+Lint token files:
 
-| Method | Parameters | Returns |
-|--------|------------|---------|
-| `validate(manifest)` | Unknown manifest object | `ValidationResult` |
-| `resolve(manifest, input)` | Manifest + modifiers | `ResolvedPermutation` |
-| `build(manifest)` | Manifest object | `BundleWriteResult[]` |
-| `list(manifest)` | Manifest object | `ResolvedPermutation[]` |
-| `info(manifest)` | Manifest object | `ManifestInfo` |
-| `diff(manifest, options)` | Manifest + comparison options | `TokenDiff` |
+```bash
+# Lint directory
+upft lint ./tokens
 
-### Configuration
+# Lint with auto-fix
+upft lint ./tokens --fix
 
-```typescript
-const cli = new TokenCLI({
-  fileReader: customReader,  // Custom file reader
-  fileWriter: customWriter,  // Custom file writer
-  basePath: './tokens'       // Base path for files
-});
+# Apply specific rules
+upft lint tokens.json --rules no-missing-type,consistent-naming
 ```
 
-## Interfaces
+List and analyze tokens:
 
-### ManifestInfo
+```bash
+# List all tokens
+upft list tokens.json
+
+# Filter by type
+upft list tokens.json --type color
+
+# Tree format
+upft list tokens.json --format tree
+```
+
+## API Reference
+
+### Main CLI Functions
+
+| Function | Type | Description |
+|----------|------|-------------|
+| `createCLI` | `() => Command` | Create Commander.js instance |
+
+### Available Types
+
+| Type | Description |
+|------|-------------|
+| `CommandOptions` | Base command options |
+| `ManifestInfo` | Manifest information structure |
+| `TokenDiff` | Token comparison result |
+| `ValidationResult` | Validation result structure |
+
+## CLI Commands
+
+The CLI provides the following commands accessible via `upft`:
+
+- `validate` - Validate token files and manifests
+- `bundle` - Bundle tokens from manifest
+- `resolve` - Resolve tokens with specific modifiers
+- `diff` - Compare token documents
+- `list` - List tokens in documents
+- `info` - Show manifest information
+
+Use `upft --help` or `upft <command> --help` for detailed usage information.
+
+### Type Definitions
+
+#### ManifestInfo
+
 ```typescript
 interface ManifestInfo {
   name?: string;
@@ -103,7 +180,8 @@ interface ManifestInfo {
 }
 ```
 
-### TokenDiff
+#### TokenDiff
+
 ```typescript
 interface TokenDiff {
   differences: Array<{
@@ -120,86 +198,101 @@ interface TokenDiff {
 }
 ```
 
-## Output Formats
+### Exit Codes
 
-Commands support multiple output formats:
-
-| Flag | Format | Use Case |
-|------|--------|----------|
-| (default) | Human-readable | Terminal use |
-| `--json` | JSON | Machine processing |
-| `--quiet` | Minimal | Scripts |
-| `--verbose` | Detailed | Debugging |
-
-## Error Codes
-
-| Code | Meaning |
-|------|---------|
+| Code | Description |
+|------|-------------|
 | 0 | Success |
 | 1 | General error |
-| 2 | Validation error |
+| 2 | Invalid arguments |
 | 3 | File not found |
-| 4 | Invalid configuration |
-| 5 | Resolution error |
+| 4 | Validation failed |
+| 5 | Bundle operation failed |
 
-## Usage Examples
+## Structure
 
-### Validate and Build Pipeline
-```bash
-# Validate first
-upft validate resolver.json --strict
+| File | Purpose |
+|------|---------|
+| `cli.ts` | Main CLI entry point and command router |
+| `commands.ts` | Command factory and setup functions |
+| `commands/bundle.ts` | Bundle command implementation |
+| `commands/validate.ts` | Validate command implementation |
+| `commands/diff.ts` | Diff command implementation |
+| `commands/info.ts` | Info command implementation |
+| `commands/list.ts` | List command implementation |
+| `commands/resolve.ts` | Resolve command implementation |
+| `utils/output.ts` | Output formatting utilities |
+| `utils/config.ts` | CLI configuration management |
+| `index.ts` | Module exports |
 
-# If valid, build all permutations
-upft build --manifest resolver.json --output ./dist
+## Performance Notes
 
-# Check what was generated
-ls ./dist/
-```
-
-### Compare Themes
-```bash
-# See differences between light and dark themes
-upft diff --manifest resolver.json \
-  --from "theme:light" \
-  --to "theme:dark" \
-  --verbose
-```
-
-### CI/CD Integration
-```bash
-# Machine-readable validation for CI
-upft validate resolver.json --json --exit-code
-
-# Generate for specific environment
-upft resolve --manifest resolver.json \
-  --theme production \
-  --format json > tokens.json
-```
-
-## Global Options
-
-Available on most commands:
-
-| Option | Description |
-|--------|-------------|
-| `--help, -h` | Show command help |
-| `--version, -v` | Show version |
-| `--verbose` | Detailed output |
-| `--quiet` | Minimal output |
-| `--json` | JSON output format |
+- Commands use streaming output for large datasets to avoid memory issues
+- File operations are cached where appropriate to improve repeated command performance
+- JSON output mode bypasses formatting overhead for better automation performance
+- Watch mode uses efficient file system monitoring for continuous operations
 
 ## Integration Points
 
-- **API** - Commands use high-level API functions
-- **Bundler** - Build command orchestrates bundling
-- **Resolver** - Resolution commands use resolver
-- **Validator** - Validation commands use validators
+### CI/CD Integration
 
-## Future Considerations
+Use JSON output for automation and scripting:
 
-- Interactive mode for guided operations
-- Shell completion (bash/zsh)
-- Plugin system for custom commands
-- Configuration file support
-- Watch mode for continuous operations
-- Progress bars for long operations
+```bash
+# Validate in CI pipeline
+upft validate manifest.json --json --exit-code
+
+# Generate tokens for deployment
+upft bundle manifest.json --output ./dist --json
+
+# Compare versions for change detection
+upft diff old-tokens.json new-tokens.json --json
+```
+
+### API Module Integration
+
+Commands leverage high-level API functions:
+
+```typescript
+// CLI commands use API module for core operations
+import { bundleWithMetadata, validateManifest } from '@unpunnyfuns/tokens';
+
+// Bundle command implementation
+await bundleWithMetadata({ manifest: manifestPath });
+
+// Validate command implementation  
+await validateManifest(manifestPath, options);
+```
+
+### Configuration Integration
+
+```typescript
+// Load and use configuration
+const config = await loadConfig();
+
+const cli = new TokenCLI({
+  fileReader: config.fileReader,
+  fileWriter: config.fileWriter,
+  basePath: config.basePath
+});
+```
+
+### Programmatic Usage
+
+Use CLI functions in other applications:
+
+```typescript
+import { validateCommand, bundleCommand } from '@unpunnyfuns/tokens';
+
+// Use commands programmatically
+await validateCommand({
+  file: 'tokens.json',
+  strict: true,
+  references: true
+});
+
+await bundleCommand('manifest.json', {
+  output: './dist',
+  prettify: true
+});
+```

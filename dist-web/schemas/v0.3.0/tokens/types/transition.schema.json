@@ -59,11 +59,17 @@
               "description": "Transition timing function"
             }
           },
-          "required": ["duration", "delay", "timingFunction"],
+          "required": [
+            "duration",
+            "delay",
+            "timingFunction"
+          ],
           "additionalProperties": false
         }
       },
-      "required": ["$type"]
+      "required": [
+        "$type"
+      ]
     }
   ]
 }

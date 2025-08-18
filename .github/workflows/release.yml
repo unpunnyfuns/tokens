@@ -1,4 +1,4 @@
-name: Release
+name: Prepare Release
 
 on:
   workflow_dispatch:
@@ -14,11 +14,10 @@ on:
           - major
 
 jobs:
-  release:
+  prepare-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
     
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +29,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
       
       - name: Configure Git
@@ -41,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
+      - name: Run quality checks
+        run: npm run quality
+      
       - name: Bump version
         run: |
           npm version ${{ github.event.inputs.version }} --no-git-tag-version
@@ -48,13 +49,8 @@ jobs:
       
       - name: Build for release
         run: |
-          # Build npm package (TypeScript + schemas for dist/)
           npm run build:npm
-          # Build web schemas (versioned schemas for dist-web/)
           npm run build:web
-      
-      - name: Run tests
-        run: npm test
       
       - name: Commit version bump and web schemas
         run: |
@@ -66,11 +62,6 @@ jobs:
         run: |
           git push origin main
           git push origin "v${{ env.NEW_VERSION }}"
-      
-      - name: Publish to npm
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1

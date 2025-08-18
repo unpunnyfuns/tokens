@@ -1,62 +1,6 @@
 import type { TokenDocument, TokenOrGroup } from "../../types.js";
 
 /**
- * Deep merge two token documents
- * Overlay tokens override base tokens
- */
-export function mergeTokens(
-  base: TokenDocument,
-  overlay: TokenDocument,
-): TokenDocument {
-  const merged: TokenDocument = {};
-
-  // Add all base tokens
-  for (const [key, value] of Object.entries(base)) {
-    if (shouldSkipField(key, value)) continue;
-    merged[key] = cloneToken(value as TokenOrGroup);
-  }
-
-  // Overlay tokens, merging groups recursively
-  for (const [key, value] of Object.entries(overlay)) {
-    if (shouldSkipField(key, value)) continue;
-    merged[key] = mergeTokenOrGroup(merged[key], value as TokenOrGroup);
-  }
-
-  return merged;
-}
-
-// Helper to check if a field should be skipped
-function shouldSkipField(key: string, value: unknown): boolean {
-  return key.startsWith("$") || !value || typeof value === "string";
-}
-
-// Helper to merge a single token or group
-function mergeTokenOrGroup(
-  baseValue: unknown,
-  overlayValue: TokenOrGroup,
-): TokenOrGroup {
-  if (!baseValue) {
-    return cloneToken(overlayValue);
-  }
-
-  if (
-    baseValue &&
-    typeof baseValue === "object" &&
-    isGroup(baseValue) &&
-    isGroup(overlayValue)
-  ) {
-    // Both are groups, merge recursively
-    return mergeTokens(
-      baseValue as TokenDocument,
-      overlayValue as TokenDocument,
-    );
-  }
-
-  // Override with overlay value
-  return cloneToken(overlayValue);
-}
-
-/**
  * Create a deep copy of a token or token group
  */
 export function cloneToken<T extends TokenOrGroup>(token: T): T {

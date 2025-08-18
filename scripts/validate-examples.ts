@@ -6,9 +6,8 @@
 
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { TokenFileReader } from "../src/filesystem/file-reader.js";
-import { ManifestValidator } from "../src/validation/manifest-validator.js";
-import { TokenValidator } from "../src/validation/validator.js";
+import { TokenFileReader } from "../src/io/file-reader.js";
+import { validateManifest, validateTokens } from "../src/validation/index.js";
 
 const EXAMPLES_DIR = "src/examples";
 
@@ -21,15 +20,13 @@ const colors = {
   cyan: "\x1b[36m",
 };
 
-// Initialize validators
-const tokenValidator = new TokenValidator();
-const manifestValidator = new ManifestValidator();
+// Initialize file reader
 const fileReader = new TokenFileReader();
 
 async function validateFile(filePath: string) {
   try {
     const tokens = await fileReader.readFile(filePath);
-    const result = await tokenValidator.validateDocument(tokens.tokens);
+    const result = validateTokens(tokens.tokens);
     if (!result.valid) {
       return { success: false, error: JSON.stringify(result.errors, null, 2) };
     }
@@ -46,7 +43,7 @@ async function validateDirectory(dirPath: string) {
   try {
     const files = await fileReader.readDirectory(dirPath);
     for (const file of files) {
-      const result = await tokenValidator.validateDocument(file.tokens);
+      const result = validateTokens(file.tokens);
       if (!result.valid) {
         return {
           success: false,
@@ -63,12 +60,12 @@ async function validateDirectory(dirPath: string) {
   }
 }
 
-async function validateManifest(manifestPath: string) {
+async function validateManifestFile(manifestPath: string) {
   try {
     const { readFile } = await import("node:fs/promises");
     const content = await readFile(manifestPath, "utf-8");
     const manifest = JSON.parse(content);
-    const result = manifestValidator.validateManifest(manifest);
+    const result = validateManifest(manifest);
     if (!result.valid) {
       return { success: false, error: JSON.stringify(result.errors, null, 2) };
     }
@@ -174,7 +171,7 @@ async function validateDirectories() {
 
 async function validateManifests() {
   const manifests = [
-    join(EXAMPLES_DIR, "resolver.manifest.json"),
+    join(EXAMPLES_DIR, "manifest.json"),
     join(EXAMPLES_DIR, "test-scenarios/simple.manifest.json"),
     join(EXAMPLES_DIR, "test-scenarios/density-variants.manifest.json"),
     join(EXAMPLES_DIR, "test-scenarios/group-mode.manifest.json"),
@@ -190,7 +187,7 @@ async function validateManifests() {
   for (const manifest of manifests) {
     if (existsSync(manifest)) {
       totalFiles++;
-      const result = await validateManifest(manifest);
+      const result = await validateManifestFile(manifest);
 
       if (result.success) {
         console.log(`  ${colors.green}✓${colors.reset} ${manifest}`);

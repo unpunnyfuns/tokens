@@ -1,243 +1,115 @@
 # Bundler
 
-The bundler module transforms and packages design tokens for distribution, supporting multiple output formats, transformation pipelines, and **granular filtering with multi-file generation**.
+Functional API for transforming and packaging design tokens for distribution.
 
 ## Structure
 
 | File | Purpose |
 |------|---------|
-| `bundler.ts` | Main bundling engine |
-| `api.ts` | High-level bundling API |
-| `bundler.test.ts` | Core bundler tests |
-| `bundler-filtering.test.ts` | Filtering and multi-file generation tests |
+| `bundler-functional.ts` | Core bundling functions |
 | `index.ts` | Public exports |
 
-## Core Class: TokenBundler
+## Key Functions
 
-### Configuration
+### bundle
+
+Bundles tokens from a manifest into structured output.
 
 ```typescript
-const bundler = new TokenBundler({
-  fileReader?: TokenFileReader,  // Custom file reader (supports memfs for testing)
-  fileWriter?: TokenFileWriter,  // Custom file writer
-  outputFormat: 'dtcg',          // or 'custom'
-  transforms: [/* transforms */], // Token transformation pipeline
-  prettify: true,                 // Format output for humans
-  basePath: './tokens'            // Base path for relative files
+import { bundle } from '@unpunnyfuns/tokens/bundler';
+
+const bundles = await bundle(manifest, {
+  fileReader?: TokenFileReader,
+  fileWriter?: TokenFileWriter,
+  basePath?: './tokens',
+  outputFormat?: 'dtcg',
+  prettify?: true,
+  transforms?: [/* transform functions */]
 });
 ```
 
-### Methods
+### writeBundles
 
-| Method | Purpose |
-|--------|---------|
-| `bundle(manifest)` | Generate bundles from resolver manifest |
-| `bundleToFiles(manifest)` | Bundle and write to filesystem |
-
-## Bundling Process
-
-1. **Resolve permutations** - Use resolver to generate all specified outputs
-2. **Apply transforms** - Run transformation pipeline on each bundle
-3. **Format output** - Convert to target format (DTCG or custom)
-4. **Write files** - Save bundles to specified locations
+Bundles tokens and writes them to the filesystem.
 
 ```typescript
-// Bundle from manifest
-const bundles = await bundler.bundle(manifest);
+import { writeBundles } from '@unpunnyfuns/tokens/bundler';
 
-// Bundle and write to files
-const results = await bundler.bundleToFiles(manifest);
-```
+const results = await writeBundles(manifest, {
+  basePath: './tokens',
+  prettify: true
+});
 
-## Filtering and Multi-File Generation
-
-The bundler leverages the resolver's filtering capabilities to provide granular control over which tokens are included in each output file.
-
-### Set Filtering
-
-Control which named sets contribute to the output:
-
-```typescript
-{
-  "sets": [
-    { "name": "base", "values": ["base.json"] },
-    { "name": "components", "values": ["components.json"] }
-  ],
-  "generate": [
-    {
-      "output": "base-only.json",
-      "includeSets": ["base"]  // Only include base set
-    },
-    {
-      "output": "no-components.json", 
-      "excludeSets": ["components"]  // Exclude components set
-    }
-  ]
-}
-```
-
-### Modifier Filtering
-
-Control which modifiers contribute to the output:
-
-```typescript
-{
-  "modifiers": {
-    "theme": { "oneOf": ["light", "dark"], /* ... */ },
-    "density": { "oneOf": ["comfortable", "compact"], /* ... */ }
-  },
-  "generate": [
-    {
-      "output": "theme-only.json",
-      "includeModifiers": ["theme:light"]  // Only light theme
-    },
-    {
-      "output": "all-themes.json",
-      "includeModifiers": ["theme"]  // Expands to multiple files!
-    }
-  ]
-}
-```
-
-### Automatic Multi-File Generation
-
-When you include a `oneOf` modifier without specifying a value, the bundler automatically generates separate files for each value:
-
-```typescript
-// Input:
-{
-  "output": "tokens.json",
-  "includeModifiers": ["theme", "density"]
-}
-
-// Output files:
-// - tokens-light-comfortable.json
-// - tokens-light-compact.json  
-// - tokens-dark-comfortable.json
-// - tokens-dark-compact.json
-```
-
-### File Naming Convention
-
-Generated filenames follow a systematic pattern:
-- Base name from `output` field
-- Modifier values appended with hyphens
-- Order matches declaration order
-- Always `.json` extension
-
-## Output Formats
-
-### DTCG Format (Default)
-Standard DTCG JSON with full metadata:
-```json
-{
-  "color": {
-    "primary": {
-      "$value": "#007acc",
-      "$type": "color"
-    }
+// Check results
+results.forEach(result => {
+  if (result.success) {
+    console.log(`✓ ${result.filePath}`);
+  } else {
+    console.error(`✗ ${result.filePath}: ${result.error}`);
   }
-}
+});
 ```
 
-### Custom Format
-Allows for custom serialization logic while maintaining DTCG structure.
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `fileReader` | `TokenFileReader` | Custom file reader instance |
+| `fileWriter` | `TokenFileWriter` | Custom file writer instance |
+| `basePath` | `string` | Base path for relative file resolution |
+| `outputFormat` | `'json' \| 'yaml' \| 'json5'` | Output format (default: 'json') |
+| `prettify` | `boolean` | Format output for readability |
+| `transforms` | `TokenTransform[]` | Transform pipeline functions |
+| `validate` | `boolean` | Validate tokens before writing |
+| `backup` | `boolean` | Create backup of existing files |
+| `atomic` | `boolean` | Use atomic writes for safety |
 
 ## Transform Pipeline
 
-Transforms are applied in sequence to each bundle:
+Transforms are functions that modify token documents before output:
 
 ```typescript
-const bundler = new TokenBundler({
-  transforms: [
-    (tokens) => flattenTokens(tokens),      // Flatten nested structure
-    (tokens) => resolveReferences(tokens),  // Resolve all references
-    (tokens) => convertColors(tokens),      // Convert color formats
-    (tokens) => addPrefixes(tokens)         // Add platform prefixes
-  ]
-});
-```
+type TokenTransform = (tokens: TokenDocument) => TokenDocument;
 
-Transforms receive and return `TokenDocument` objects and are applied after merging but before serialization.
+const transforms = [
+  flattenTokens,      // Flatten nested structure
+  resolveReferences,  // Resolve all references
+  convertColors,      // Convert color formats
+  addPrefixes        // Add platform prefixes
+];
+
+const bundles = await bundle(manifest, { transforms });
+```
 
 ## Bundle Results
 
 ```typescript
 interface Bundle {
-  id: string;                    // Unique bundle identifier
-  tokens: TokenDocument;          // Merged token document
-  resolvedTokens?: TokenDocument; // If reference resolution enabled
+  id: string;                    // Unique identifier
+  tokens: TokenDocument;          // Merged tokens
+  resolvedTokens?: TokenDocument; // If references resolved
   files: string[];               // Source files included
-  output?: string;               // Output file path
+  output?: string;               // Output path
   format: string;                // Output format
 }
 
 interface BundleWriteResult {
   filePath: string;    // Output file path
-  success: boolean;    // Whether write succeeded
-  error?: string;      // Error message if failed
+  success: boolean;    // Write succeeded
+  error?: string;      // Error if failed
 }
 ```
 
-## Integration with Resolver
+## Manifest Integration
 
-The bundler works closely with the `UPFTResolver` to:
-1. Process manifest `generate` specifications
-2. Apply filtering rules (includeSets, excludeSets, includeModifiers, excludeModifiers)
-3. Handle multi-file expansion for modifier combinations
-4. Merge token files according to DTCG rules
-5. Optionally resolve references
+The bundler processes manifest specifications:
 
-## Testing
-
-The bundler supports dependency injection for testing:
-
-```typescript
-import { memfs } from 'memfs';
-
-// Create in-memory filesystem for tests
-const { fs } = memfs({
-  '/tokens.json': JSON.stringify(tokens)
-});
-
-const fileReader = new TokenFileReader({
-  fs: { 
-    readFile: async (path, encoding) => 
-      fs.promises.readFile(path, encoding) 
-  }
-});
-
-const bundler = new TokenBundler({ fileReader });
-```
-
-## Error Handling
-
-```typescript
-try {
-  const results = await bundler.bundleToFiles(manifest);
-  results.forEach(result => {
-    if (!result.success) {
-      console.error(`Failed to write ${result.filePath}: ${result.error}`);
-    }
-  });
-} catch (error) {
-  console.error('Bundling failed:', error);
-}
-```
-
-## Performance Notes
-
-- File operations are async and parallelizable
-- Transforms are applied sequentially per bundle
-- Multi-file generation creates bundles in parallel
-- File reading is cached by default in the resolver
-
-## Examples
-
-### Basic Bundling
 ```typescript
 const manifest = {
-  sets: [{ values: ["core.json"] }],
+  sets: [
+    { name: "core", values: ["core.json"] },
+    { name: "theme", values: ["theme.json"] }
+  ],
   modifiers: {
     theme: {
       oneOf: ["light", "dark"],
@@ -246,40 +118,128 @@ const manifest = {
         dark: ["dark.json"]
       }
     }
-  }
-};
-
-const bundles = await bundler.bundle(manifest);
-// Creates 2 bundles: theme-light and theme-dark
-```
-
-### Filtered Output
-```typescript
-const manifest = {
-  // ... sets and modifiers ...
+  },
   generate: [
     {
-      output: "base.json",
-      includeSets: ["base"],
-      excludeModifiers: ["*"]  // No modifiers
-    },
-    {
-      output: "themed.json",
-      includeModifiers: ["theme"],
-      excludeSets: ["experimental"]
+      output: "bundle.json",
+      includeSets: ["core"],
+      includeModifiers: ["theme:light"]
     }
   ]
 };
 
-await bundler.bundleToFiles(manifest);
-// Creates base.json and themed-{light|dark}.json files
+await bundleToFiles(manifest);
 ```
 
-## Future Considerations
+## Filtering
 
-- Incremental bundling for changed files only
-- Parallel transform processing
-- Custom format plugins  
-- Source maps for token origins
-- Bundle splitting for large outputs
-- Watch mode with hot reload
+Control which tokens are included in bundles:
+
+### Set Filtering
+
+```typescript
+{
+  generate: [
+    {
+      output: "core-only.json",
+      includeSets: ["core"]        // Only core tokens
+    },
+    {
+      output: "no-experimental.json",
+      excludeSets: ["experimental"] // Exclude experimental
+    }
+  ]
+}
+```
+
+### Modifier Filtering
+
+```typescript
+{
+  generate: [
+    {
+      output: "light-theme.json",
+      includeModifiers: ["theme:light"] // Only light theme
+    },
+    {
+      output: "all-themes.json",
+      includeModifiers: ["theme"]       // Expands to all theme values
+    }
+  ]
+}
+```
+
+## Multi-File Generation
+
+When including modifiers without specific values, the bundler generates multiple files:
+
+```typescript
+// Input
+{
+  output: "tokens.json",
+  includeModifiers: ["theme", "density"]
+}
+
+// Output files
+// - tokens-light-comfortable.json
+// - tokens-light-compact.json
+// - tokens-dark-comfortable.json
+// - tokens-dark-compact.json
+```
+
+## Testing
+
+Use dependency injection for testing:
+
+```typescript
+import { createMemoryFileSystem } from '../test/helpers';
+
+const { fileReader, fileWriter } = createMemoryFileSystem({
+  '/tokens.json': tokens,
+  '/manifest.json': manifest
+});
+
+const bundles = await bundle(manifest, { 
+  fileReader, 
+  fileWriter 
+});
+```
+
+## Error Handling
+
+```typescript
+try {
+  const results = await bundleToFiles(manifest);
+  
+  const failed = results.filter(r => !r.success);
+  if (failed.length > 0) {
+    console.error('Failed bundles:', failed);
+  }
+} catch (error) {
+  console.error('Bundling failed:', error);
+}
+```
+
+## Performance
+
+| Operation | Complexity |
+|-----------|------------|
+| Bundle creation | O(n) where n = number of files |
+| Token merging | O(m) where m = total tokens |
+| Transform pipeline | O(t × m) where t = transforms |
+| File writing | O(b) where b = bundles |
+
+## Design Principles
+
+1. **Functional composition** - Transforms are composable functions
+2. **Dependency injection** - File I/O is injectable for testing
+3. **Efficient processing** - Optimized bundle generation
+4. **Type safety** - Full TypeScript support
+5. **Error recovery** - Partial failures don't stop all bundles
+
+## Module Dependencies
+
+- `manifest` - For processing manifest specifications
+- `core/merge` - For DTCG-aware token merging
+- `io` - For file reading and writing
+- `references` - For optional reference resolution

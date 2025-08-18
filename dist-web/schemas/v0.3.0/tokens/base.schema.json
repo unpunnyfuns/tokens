@@ -77,15 +77,23 @@
       },
       "oneOf": [
         {
-          "required": ["$value"],
+          "required": [
+            "$value"
+          ],
           "not": {
-            "required": ["$ref"]
+            "required": [
+              "$ref"
+            ]
           }
         },
         {
-          "required": ["$ref"],
+          "required": [
+            "$ref"
+          ],
           "not": {
-            "required": ["$value"]
+            "required": [
+              "$value"
+            ]
           }
         }
       ],

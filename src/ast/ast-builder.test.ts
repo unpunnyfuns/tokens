@@ -4,13 +4,13 @@ import {
   loadTokenFile,
 } from "../../test/helpers/load-examples.js";
 import type { TokenDocument } from "../types.js";
-import { buildAST, buildASTFromDocument } from "./ast-builder.js";
+import { createAST, loadAST } from "./ast-builder.js";
 import type { GroupNode, TokenNode } from "./types.js";
 
 describe("AST Builder", () => {
-  describe("buildAST", () => {
+  describe("loadAST", () => {
     it("should build AST from token file path", async () => {
-      const ast = await buildAST("src/examples/tokens/full-example.json");
+      const ast = await loadAST("src/examples/tokens/full-example.json");
 
       expect(ast).toBeDefined();
       expect(ast.type).toBe("group");
@@ -24,7 +24,7 @@ describe("AST Builder", () => {
     });
 
     it("should handle nested token structures", async () => {
-      const ast = await buildAST("src/examples/tokens/composite-tokens.json");
+      const ast = await loadAST("src/examples/tokens/composite-tokens.json");
 
       const borders = ast.groups.get("borders");
       expect(borders).toBeDefined();
@@ -40,7 +40,7 @@ describe("AST Builder", () => {
     });
 
     it("should track token metadata", async () => {
-      const ast = await buildAST("src/examples/tokens/full-example.json");
+      const ast = await loadAST("src/examples/tokens/full-example.json");
 
       const colors = ast.groups.get("colors");
       if (colors && colors.type === "group") {
@@ -53,10 +53,10 @@ describe("AST Builder", () => {
     });
   });
 
-  describe("buildASTFromDocument", () => {
+  describe("createAST", () => {
     it("should build AST from token document", async () => {
       const doc = await loadTokenFile<TokenDocument>("full-example.json");
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       expect(ast.type).toBe("group");
       expect(ast.groups.size).toBeGreaterThan(0);
@@ -70,7 +70,7 @@ describe("AST Builder", () => {
         small: { $value: "4px", $type: "dimension" },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       expect(ast.tokens.size).toBe(3);
       expect(ast.groups.size).toBe(0);
@@ -93,7 +93,7 @@ describe("AST Builder", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       // Navigate through the tree
       const colors = ast.groups.get("colors") as GroupNode;
@@ -118,7 +118,7 @@ describe("AST Builder", () => {
         button: { $value: "{primary}" },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       const primary = ast.tokens.get("primary");
       expect(primary?.references).toContain("base");
@@ -133,7 +133,7 @@ describe("AST Builder", () => {
         primary: { $value: { $ref: "#/base/$value" } },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       const primary = ast.tokens.get("primary");
       expect(primary?.references).toContain("#/base/$value");
@@ -151,7 +151,7 @@ describe("AST Builder", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       const primary = ast.tokens.get("primary");
       expect(primary?.metadata?.description).toBe("Primary brand color");
@@ -171,7 +171,7 @@ describe("AST Builder", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       expect(ast.tokens.has("baseColor")).toBe(true);
       expect(ast.groups.has("colors")).toBe(true);
@@ -188,7 +188,7 @@ describe("AST Builder", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
       const colors = ast.groups.get("colors") as GroupNode;
       const primary = colors.tokens.get("primary") as TokenNode;
 
@@ -197,7 +197,7 @@ describe("AST Builder", () => {
     });
 
     it("should handle empty documents", () => {
-      const ast = buildASTFromDocument({});
+      const ast = createAST({});
 
       expect(ast.type).toBe("group");
       expect(ast.tokens.size).toBe(0);
@@ -212,7 +212,7 @@ describe("AST Builder", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       expect(ast.tokens.size).toBe(0);
       expect(ast.groups.size).toBe(0);
@@ -223,7 +223,7 @@ describe("AST Builder", () => {
   describe("error handling", () => {
     it("should handle invalid token structures gracefully", async () => {
       const doc = await loadErrorCase<TokenDocument>("broken-references.json");
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       // Should still build AST even with broken references
       expect(ast).toBeDefined();
@@ -235,7 +235,7 @@ describe("AST Builder", () => {
         primary: { $value: "{nonexistent}" },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
       const primary = ast.tokens.get("primary");
 
       expect(primary?.references).toContain("nonexistent");

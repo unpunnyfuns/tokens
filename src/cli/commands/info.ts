@@ -2,7 +2,7 @@
  * Info command implementation
  */
 
-import type { UPFTResolverManifest } from "../../resolver/upft-types.js";
+import type { UPFTResolverManifest } from "../../manifest/upft-types.js";
 
 export interface ManifestInfo {
   name?: string;

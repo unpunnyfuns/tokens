@@ -121,6 +121,13 @@ export function setDefaultConfig(config: LoggerConfig): void {
   defaultConfig = { ...defaultConfig, ...config };
 }
 
+export function resetDefaultConfig(): void {
+  defaultConfig = {
+    level: LogLevel.INFO,
+    colors: process.stdout.isTTY,
+  };
+}
+
 // Convenience functions using default config
 export const error = (message: string, ...args: unknown[]) =>
   log(LogLevel.ERROR, message, defaultConfig, ...args);

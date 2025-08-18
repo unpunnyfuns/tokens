@@ -1,5 +1,5 @@
 {
-  "$schema": "https://tokens.unpunny.fun/schemas/latest/resolver-upft.json",
+  "$schema": "https://tokens.unpunny.fun/schemas/latest/manifest-upft.json",
   "name": "Layered Output Example",
   "description": "Demonstrates generating base tokens separately from theme overlays",
   "sets": [

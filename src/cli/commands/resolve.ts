@@ -2,15 +2,16 @@
  * Resolve/Preview command implementation
  */
 
-// Use the core API instead of direct imports
 import {
+  generateAll as generateAllPermutations,
   resolvePermutation,
-  generateAllPermutations,
-  type ResolutionInput,
-  type ResolvedPermutation,
-  type UPFTResolverManifest,
-  type ResolverOptions,
-} from "../../public-core.js";
+} from "../../manifest/manifest-core.js";
+import type {
+  ResolutionInput,
+  ResolvedPermutation,
+  UPFTResolverManifest,
+} from "../../manifest/upft-types.js";
+import type { ResolverOptions } from "../../types/options.js";
 import type { BaseFileSystemOptions } from "../../types/options.js";
 
 export type ResolveCommandOptions = BaseFileSystemOptions;

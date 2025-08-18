@@ -4,21 +4,17 @@
 
 import { promises as fs } from "node:fs";
 import { join } from "node:path";
-import {
-  ManifestValidator,
-  TokenValidator,
-  validateResolver,
-} from "../../api/index.js";
+import { validateManifestWithPermutations } from "../../api/index.js";
 import type { ValidationResult } from "../../types.js";
+import { validateManifest, validateTokens } from "../../validation/index.js";
 
 /**
- * Validate a resolver manifest
+ * Validate a manifest object structure
  */
-export async function validateManifest(
+export async function validateManifestObject(
   manifest: unknown,
 ): Promise<ValidationResult> {
-  const manifestValidator = new ManifestValidator();
-  return manifestValidator.validateManifest(manifest);
+  return validateManifest(manifest);
 }
 
 /**
@@ -30,8 +26,7 @@ export async function validateTokenFile(
   try {
     const content = await fs.readFile(filePath, "utf-8");
     const data = JSON.parse(content);
-    const tokenValidator = new TokenValidator();
-    return tokenValidator.validateDocument(data);
+    return validateTokens(data);
   } catch (error) {
     return {
       valid: false,
@@ -88,11 +83,11 @@ export async function validateDirectory(
 }
 
 /**
- * Validate using API function for resolver manifests
+ * Validate using API function for manifests with permutations
  */
-export async function validateResolverManifest(
+export async function validateManifestWithOptions(
   manifestPath: string,
   options?: { allPermutations?: boolean },
 ) {
-  return validateResolver(manifestPath, options);
+  return validateManifestWithPermutations(manifestPath, options);
 }

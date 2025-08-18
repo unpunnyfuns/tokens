@@ -1,5 +1,5 @@
 {
-  "$schema": "https://tokens.unpunny.fun/schemas/latest/resolver-upft.json",
+  "$schema": "https://tokens.unpunny.fun/schemas/latest/manifest-upft.json",
   "name": "Granular Filtering Example",
   "description": "Demonstrates granular set/modifier filtering with multi-file generation",
   "sets": [

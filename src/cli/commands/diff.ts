@@ -2,15 +2,14 @@
  * Diff command implementation
  */
 
-// Use the core API instead of direct imports
-import {
-  compareTokenDocumentsDetailed,
-  resolvePermutation,
-  type ResolutionInput,
-  type UPFTResolverManifest,
-  type TokenDocument,
-  type ResolverOptions,
-} from "../../public-core.js";
+import { compareTokenDocumentsDetailed } from "../../analysis/token-comparison.js";
+import { resolvePermutation } from "../../manifest/manifest-core.js";
+import type {
+  ResolutionInput,
+  UPFTResolverManifest,
+} from "../../manifest/upft-types.js";
+import type { TokenDocument } from "../../types.js";
+import type { ResolverOptions } from "../../types/options.js";
 import type { BaseFileSystemOptions } from "../../types/options.js";
 
 export interface TokenDiff {

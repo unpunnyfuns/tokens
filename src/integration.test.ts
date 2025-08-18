@@ -3,11 +3,10 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { TokenBundler } from "./bundler/bundler.js";
-import { TokenCLI } from "./cli/commands.js";
-import { TokenFileReader } from "./filesystem/file-reader.js";
-import { TokenFileWriter } from "./filesystem/file-writer.js";
-import { resolvePermutation } from "./resolver/resolver-core.js";
+import { createCLI } from "./cli/commands.js";
+import { TokenFileReader } from "./io/file-reader.js";
+import { TokenFileWriter } from "./io/file-writer.js";
+import { resolvePermutation } from "./manifest/manifest-core.js";
 
 describe("Integration Tests - Real Components", () => {
   let testDir: string;
@@ -92,12 +91,12 @@ describe("Integration Tests - Real Components", () => {
       );
 
       // 4. Test bundler can generate bundles
-      const bundler = new TokenBundler({
+      const { writeBundles } = await import("./bundler/index.js");
+      const results = await writeBundles(manifest, {
         fileReader,
         fileWriter,
         basePath: testDir,
       });
-      const results = await bundler.bundleToFiles(manifest);
 
       console.log("Bundle results:", results);
 
@@ -140,7 +139,7 @@ describe("Integration Tests - Real Components", () => {
       };
 
       // Test CLI with real filesystem
-      const cli = new TokenCLI({ fileReader, fileWriter, basePath: testDir });
+      const cli = createCLI({ fileReader, fileWriter, basePath: testDir });
 
       // Validate
       const validation = await cli.validate(manifest);
@@ -167,11 +166,11 @@ describe("Integration Tests - Real Components", () => {
   describe("Type safety checks", () => {
     it("should enforce correct interfaces between components", async () => {
       // This test ensures components can work together
-      const bundler = new TokenBundler({ fileReader, fileWriter });
-      const cli = new TokenCLI({ fileReader, fileWriter });
+      const { bundle: bundleFunc } = await import("./bundler/index.js");
+      const cli = createCLI({ fileReader, fileWriter });
 
       // If this compiles, interfaces match
-      expect(bundler).toBeDefined();
+      expect(bundleFunc).toBeDefined();
       expect(cli).toBeDefined();
     });
   });

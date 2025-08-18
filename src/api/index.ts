@@ -3,28 +3,27 @@
  * High-level functions for common token operations
  */
 
-import { buildASTFromDocument } from "../ast/ast-builder.js";
-import { TokenFileWriter } from "../filesystem/file-writer.js";
-import { readManifest } from "../resolver/manifest-reader.js";
-import { resolvePermutation } from "../resolver/resolver-core.js";
+import { createAST } from "../ast/ast-builder.js";
+import { TokenFileWriter } from "../io/file-writer.js";
+import { resolvePermutation } from "../manifest/manifest-core.js";
+import { readManifest } from "../manifest/manifest-reader.js";
 import type { TokenDocument } from "../types.js";
-import { ManifestValidator } from "../validation/manifest-validator.js";
-import { TokenValidator } from "../validation/validator.js";
+import { validateTokens, validateManifest } from "../validation/index.js";
 import {
   buildModifiers,
-  loadFromManifest,
-  loadFromFiles,
   createBundleMetadata,
   createValidationFunction,
   extractASTInfo,
+  loadFromFiles,
+  loadFromManifest,
 } from "./bundle-helpers.js";
-import type { BundleOptions, BundleResult } from "./types.js";
+import type { ApiBundleOptions, BundleResult } from "./types.js";
 
 // Re-export types
 export type {
-  BundleOptions,
-  BundleResult,
+  ApiBundleOptions as BundleOptions,
   BundleMetadata,
+  BundleResult,
   TokenAST,
 } from "./types.js";
 
@@ -32,7 +31,7 @@ export type {
  * Bundle tokens with metadata and validation
  */
 export async function bundleWithMetadata(
-  options: BundleOptions,
+  options: ApiBundleOptions,
 ): Promise<BundleResult> {
   const startTime = Date.now();
   const fileWriter = new TokenFileWriter();
@@ -41,7 +40,7 @@ export async function bundleWithMetadata(
   const { tokens, filePaths } = await loadTokens(options);
 
   // Build AST for analysis
-  const ast = buildASTFromDocument(tokens);
+  const ast = createAST(tokens);
 
   // Create metadata if requested
   const metadata = options.includeMetadata
@@ -69,7 +68,7 @@ export async function bundleWithMetadata(
  * Load tokens based on bundle options
  */
 async function loadTokens(
-  options: BundleOptions,
+  options: ApiBundleOptions,
 ): Promise<{ tokens: TokenDocument; filePaths: string[] }> {
   if (options.manifest) {
     return loadFromManifest(options.manifest, buildModifiers(options));
@@ -94,9 +93,9 @@ export function formatError(error: unknown, verbose = false): string {
 }
 
 /**
- * Validate resolver manifest
+ * Validate manifest with all permutations
  */
-export async function validateResolver(
+export async function validateManifestWithPermutations(
   manifestPath: string,
   options: {
     allPermutations?: boolean;
@@ -111,13 +110,10 @@ export async function validateResolver(
     errors: string[];
   }>;
 }> {
-  const validator = await TokenValidator.create();
-  const manifestValidator = new ManifestValidator();
-
   const manifest = await readManifest(manifestPath);
 
   // Validate manifest structure
-  const manifestValidation = manifestValidator.validateManifest(manifest);
+  const manifestValidation = validateManifest(manifest);
   if (!manifestValidation.valid) {
     return {
       valid: false,
@@ -136,7 +132,7 @@ export async function validateResolver(
         .join(",");
       try {
         const result = await resolvePermutation(manifest, modifiers);
-        const validation = await validator.validateDocument(result.tokens);
+        const validation = validateTokens(result.tokens);
         permutationResults.push({
           permutation: permId,
           valid: validation.valid,
@@ -207,5 +203,27 @@ function generateAllCombinations(
   return combinations;
 }
 
-// Re-export validators for commands
-export { ManifestValidator, TokenValidator };
+// Re-export convenience functions from other modules
+export { loadASTs } from "./workflows.js";
+export { parseManifest } from "./manifest-helpers.js";
+
+// Add resolveManifest function for backwards compatibility
+import type {
+  ResolutionInput,
+  UPFTResolverManifest,
+} from "../manifest/upft-types.js";
+import type { TokenFileReader } from "../io/file-reader.js";
+
+export async function resolveManifest(
+  manifest: UPFTResolverManifest,
+  input: ResolutionInput,
+  options?: { fileReader?: TokenFileReader },
+): Promise<{ id: string; tokens: TokenDocument }> {
+  const { resolvePermutation } = await import("../manifest/manifest-core.js");
+  return resolvePermutation(manifest, input, options);
+}
+
+// Add formatTokens function
+export function formatTokens(tokens: TokenDocument): string {
+  return JSON.stringify(tokens, null, 2);
+}

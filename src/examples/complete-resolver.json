@@ -1,5 +1,5 @@
 {
-  "$schema": "../schemas/resolver-upft.json",
+  "$schema": "../schemas/manifest-upft.json",
   "name": "Complete Design System Resolver",
   "description": "Multi-dimensional resolver supporting themes, brands, and features",
 

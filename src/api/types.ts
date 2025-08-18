@@ -3,10 +3,9 @@
  */
 
 import type { GroupNode, TokenNode } from "../ast/types.js";
-import type { TokenDocument } from "../types.js";
-import type { TokenValidationResult } from "../validation/validator.js";
+import type { TokenDocument, ValidationResult } from "../types.js";
 
-export interface BundleOptions {
+export interface ApiBundleOptions {
   manifest?: string;
   files?: string[];
   modifiers?: Record<string, string>;
@@ -20,7 +19,7 @@ export interface BundleOptions {
 export interface BundleResult {
   tokens: TokenDocument;
   metadata?: BundleMetadata;
-  validate: () => Promise<TokenValidationResult>;
+  validate: () => Promise<ValidationResult>;
   getAST: () => TokenAST;
   write: (path: string) => Promise<void>;
 }

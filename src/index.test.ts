@@ -7,19 +7,19 @@ describe("UPFT Public API", () => {
       expect(UPFT.validateTokens).toBeDefined();
       expect(UPFT.resolveManifest).toBeDefined();
       expect(UPFT.bundleWithMetadata).toBeDefined();
-      expect(UPFT.buildASTFromDocument).toBeDefined();
+      expect(UPFT.createAST).toBeDefined();
     });
 
     it("should export utility functions", () => {
-      expect(UPFT.mergeTokens).toBeDefined();
-      expect(UPFT.buildASTFromDocument).toBeDefined();
+      expect(UPFT.createAST).toBeDefined();
       expect(UPFT.formatTokens).toBeDefined();
       expect(UPFT.parseManifest).toBeDefined();
+      expect(UPFT.mergeTokens).toBeDefined();
     });
 
     it("should export API module functions", () => {
       expect(UPFT.bundleWithMetadata).toBeDefined();
-      expect(UPFT.validateResolver).toBeDefined();
+      expect(UPFT.validateManifestWithPermutations).toBeDefined();
       expect(UPFT.formatError).toBeDefined();
     });
 
@@ -144,7 +144,7 @@ describe("UPFT Public API", () => {
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it("should merge token documents", () => {
+    it("should merge token documents", async () => {
       const a = {
         color: {
           red: { $value: "#ff0000", $type: "color" },
@@ -157,7 +157,8 @@ describe("UPFT Public API", () => {
         },
       };
 
-      const result = UPFT.mergeTokens(a, b);
+      const { mergeTokens } = await import("./core/merge.js");
+      const result = mergeTokens(a, b);
 
       expect((result.color as any)?.red?.$value).toBe("#ff0000");
       expect((result.color as any)?.blue?.$value).toBe("#0000ff");
@@ -170,7 +171,7 @@ describe("UPFT Public API", () => {
         },
       };
 
-      const ast = UPFT.buildASTFromDocument(tokens);
+      const ast = UPFT.createAST(tokens);
 
       expect(ast.type).toBe("group");
       expect(ast.name).toBe("root");

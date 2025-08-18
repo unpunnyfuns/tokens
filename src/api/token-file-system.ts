@@ -2,10 +2,10 @@
  * Token File System for managing multiple token sources and manifests
  */
 
-import { TokenFileReader } from "../filesystem/file-reader.js";
-import { readManifest } from "../resolver/manifest-reader.js";
-import { resolvePermutation } from "../resolver/resolver-core.js";
-import type { UPFTResolverManifest } from "../resolver/upft-types.js";
+import { TokenFileReader } from "../io/file-reader.js";
+import { resolvePermutation } from "../manifest/manifest-core.js";
+import { readManifest } from "../manifest/manifest-reader.js";
+import type { UPFTResolverManifest } from "../manifest/upft-types.js";
 import type { TokenDocument } from "../types.js";
 
 /**

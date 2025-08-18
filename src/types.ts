@@ -42,11 +42,11 @@ export type JSONSchemaReference = string; // #/colors/primary/$value
 
 // Validation types
 export type {
+  ManifestValidationResult,
+  TokenValidationResult,
   ValidationError,
   ValidationResult,
   ValidationResultWithStats,
-  TokenValidationResult,
-  ManifestValidationResult,
 } from "./types/validation.js";
 
 // Type organization:
@@ -55,7 +55,7 @@ export type {
 // - Option types: ./types/options.ts
 // - AST types: ./ast/types.ts
 // - Filesystem types: ./filesystem/types.ts
-// - Resolver types: ./resolver/upft-types.ts
+// - Resolver types: ./manifest/upft-types.ts
 // - All types: ./types/index.ts (centralized exports)
 
 // CLI options (move to options.ts in future)

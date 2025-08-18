@@ -1,13 +1,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { TokenFileReader } from "../filesystem/file-reader.js";
-import { TokenFileWriter } from "../filesystem/file-writer.js";
-import type { UPFTResolverManifest } from "../resolver/upft-types.js";
-import { TokenCLI } from "./commands.js";
+import { TokenFileReader } from "../io/file-reader.js";
+import { TokenFileWriter } from "../io/file-writer.js";
+import type { UPFTResolverManifest } from "../manifest/upft-types.js";
+import { createCLI } from "./commands.js";
 
-describe("TokenCLI", () => {
-  let cli: TokenCLI;
+describe("CLI Commands", () => {
+  let cli: ReturnType<typeof createCLI>;
   let fileReader: TokenFileReader;
   let fileWriter: TokenFileWriter;
   const examplesPath = join(process.cwd(), "src", "examples");
@@ -19,7 +19,7 @@ describe("TokenCLI", () => {
     });
     fileWriter = new TokenFileWriter();
 
-    cli = new TokenCLI({
+    cli = createCLI({
       fileReader,
       fileWriter,
       basePath: examplesPath,
@@ -220,18 +220,20 @@ describe("TokenCLI", () => {
         ],
       };
 
-      const writeSpy = vi.spyOn(fileWriter, "write").mockResolvedValue();
+      const writeSpy = vi.spyOn(fileWriter, "writeFile").mockResolvedValue();
       const results = await cli.build(manifest);
 
       expect(results).toHaveLength(2);
       expect(results.every((r: any) => r.success)).toBe(true);
       expect(writeSpy).toHaveBeenCalledWith(
         join(examplesPath, "dist/light.json"),
-        expect.any(String),
+        expect.any(Object),
+        expect.any(Object),
       );
       expect(writeSpy).toHaveBeenCalledWith(
         join(examplesPath, "dist/dark.json"),
-        expect.any(String),
+        expect.any(Object),
+        expect.any(Object),
       );
     });
   });

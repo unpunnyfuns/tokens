@@ -2,11 +2,12 @@
  * Bundle command implementation
  */
 
-// Use the core API instead of direct imports
-import { TokenBundler } from "../../public-core.js";
-import type { TokenFileReader } from "../../filesystem/file-reader.js";
-import type { TokenFileWriter } from "../../filesystem/file-writer.js";
-import type { UPFTResolverManifest } from "../../resolver/upft-types.js";
+import type { BundleWriteResult } from "../../bundler/bundler-functional.js";
+// Use the functional API
+import { writeBundles } from "../../bundler/index.js";
+import type { TokenFileReader } from "../../io/file-reader.js";
+import type { TokenFileWriter } from "../../io/file-writer.js";
+import type { UPFTResolverManifest } from "../../manifest/upft-types.js";
 
 export interface BundleCommandOptions {
   fileReader?: TokenFileReader;
@@ -14,11 +15,7 @@ export interface BundleCommandOptions {
   basePath?: string;
 }
 
-export interface BundleWriteResult {
-  filePath: string;
-  success: boolean;
-  error?: string;
-}
+export type { BundleWriteResult };
 
 /**
  * Build tokens from a manifest
@@ -27,12 +24,11 @@ export async function buildTokens(
   manifest: UPFTResolverManifest,
   options: BundleCommandOptions = {},
 ): Promise<BundleWriteResult[]> {
-  const bundler = new TokenBundler({
+  return writeBundles(manifest, {
     ...(options.fileReader && { fileReader: options.fileReader }),
     ...(options.fileWriter && { fileWriter: options.fileWriter }),
     ...(options.basePath && { basePath: options.basePath }),
   });
-  return bundler.bundleToFiles(manifest);
 }
 
 /**

@@ -138,13 +138,37 @@ export function isBorderToken(token: unknown): boolean {
 export function isValidTokenDocument(value: unknown): boolean {
   if (!isTokenDocument(value)) return false;
 
+  // Empty object is not a valid token document
+  const entries = Object.entries(value);
+  const nonMetadataEntries = entries.filter(([key]) => !key.startsWith("$"));
+  if (nonMetadataEntries.length === 0) return false;
+
+  // Recursive check for valid structure
+  function isValidNode(node: unknown): boolean {
+    if (!node || typeof node !== "object") return false;
+
+    // Check if it's a token
+    if (isToken(node)) return true;
+
+    // Must be a group - check all children
+    for (const [key, val] of Object.entries(node)) {
+      // Skip metadata fields
+      if (key.startsWith("$")) continue;
+
+      // Each child must be either a token or valid group
+      if (!isValidNode(val)) return false;
+    }
+
+    return true;
+  }
+
   // Check each property
-  for (const [key, val] of Object.entries(value)) {
+  for (const [key, val] of entries) {
     // Skip metadata fields
     if (key.startsWith("$")) continue;
 
-    // Must be either a token or a group
-    if (!(isToken(val) || isTokenGroup(val))) {
+    // Must be either a token or valid group
+    if (!isValidNode(val)) {
       return false;
     }
   }
