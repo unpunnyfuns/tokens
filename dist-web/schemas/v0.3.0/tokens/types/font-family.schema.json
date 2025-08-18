@@ -30,7 +30,9 @@
           ]
         }
       },
-      "required": ["$type"]
+      "required": [
+        "$type"
+      ]
     }
   ]
 }

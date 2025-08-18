@@ -1,10 +1,10 @@
 export {
-  type TokenAnalysis,
   analyzeTokens,
   countGroups,
+  countTokens,
   findTokensByType,
   getTokenTypes,
-  countTokens,
+  type TokenAnalysis,
 } from "./token-analyzer.js";
 export {
   compareTokenDocuments,

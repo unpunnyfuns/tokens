@@ -2,8 +2,8 @@
  * Unified options interfaces to reduce duplication
  */
 
-import type { TokenFileReader } from "../filesystem/file-reader.js";
-import type { TokenFileWriter } from "../filesystem/file-writer.js";
+import type { TokenFileReader } from "../io/file-reader.js";
+import type { TokenFileWriter } from "../io/file-writer.js";
 
 /**
  * Base filesystem options used across many modules
@@ -49,9 +49,3 @@ export interface BundlerOptions extends FileSystemOptionsWithWriter {
 export interface CLICommandOptions extends FileSystemOptionsWithWriter {
   /** Additional command-specific options can extend this */
 }
-
-/**
- * Re-export specific option types for backward compatibility
- */
-export type TokenCLIOptions = CLICommandOptions;
-export type TokenBundlerOptions = BundlerOptions;

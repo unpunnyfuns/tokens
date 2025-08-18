@@ -1,96 +1,77 @@
 /**
  * UPFT (UnPunny Fun Tokens) - Design Token Platform
  *
- * High-level API for working with design tokens.
+ * Main entry point for the token platform.
+ * Import specific functionality from submodules:
  *
- * For advanced use cases requiring direct class access, use:
- * import { TokenBundler, TokenValidator } from '@unpunnyfuns/tokens/core';
+ * @example
+ * ```typescript
+ * // Token operations
+ * import { validate } from '@unpunnyfuns/tokens/validation';
+ * import { bundle } from '@unpunnyfuns/tokens/bundler';
+ * import { resolveReferences } from '@unpunnyfuns/tokens/references';
+ *
+ * // AST operations
+ * import { createAST, loadAST } from '@unpunnyfuns/tokens/ast';
+ *
+ * // I/O operations
+ * import { TokenFileReader, TokenFileWriter } from '@unpunnyfuns/tokens/io';
+ * ```
  *
  * @module @unpunnyfuns/tokens
  */
 
-// ============================================================================
-// High-Level API Functions
-// ============================================================================
+// Re-export all submodules for convenient access
+// Each submodule has its own focused exports
 
-// Bundle and validation operations
-export {
-  bundleWithMetadata,
-  validateResolver,
-  formatError,
-  type BundleOptions,
-  type BundleResult,
-  type BundleMetadata,
-} from "./api/index.js";
+export * from "./ast/index.js";
+export * from "./bundler/index.js";
+export * from "./validation/index.js";
+export * from "./references/index.js";
+export * from "./manifest/index.js";
+export * from "./io/index.js";
+export * from "./api/index.js";
+export * from "./core/index.js";
 
-// Workflow utilities
-export {
-  buildASTFromFileSystem,
-  compare,
-  validateTokens,
-  workflows,
-  type ASTWithMetadata,
-} from "./api/workflows.js";
-
-// Token file system
-export { TokenFileSystem } from "./api/token-file-system.js";
-
-// ============================================================================
-// Convenience Functions
-// ============================================================================
-
-import { dtcgMerge } from "./core/dtcg-merge.js";
-import type { TokenDocument } from "./types.js";
-
-/**
- * Build AST from token document
- */
-export { buildASTFromDocument } from "./ast/ast-builder.js";
-
-/**
- * Resolve a specific permutation from a manifest
- */
-export { resolvePermutation as resolveManifest } from "./resolver/resolver-core.js";
-
-/**
- * Parse and validate a manifest
- */
-export { parseManifest } from "./api/manifest-helpers.js";
-
-/**
- * Merge two token documents using DTCG-aware merging
- */
-export function mergeTokens(a: TokenDocument, b: TokenDocument): TokenDocument {
-  return dtcgMerge(a, b);
-}
-
-/**
- * Format tokens for output
- */
-export function formatTokens(tokens: TokenDocument): string {
-  return JSON.stringify(tokens, null, 2);
-}
-
-// ============================================================================
-// Essential Types
-// ============================================================================
-
-// Core token types
+// Export all types from central location
 export type {
+  // Core token types
   Token,
   TokenDocument,
   TokenGroup,
-  ValidationResult,
+  TokenValue,
+  // Validation types
   ValidationError,
-} from "./types.js";
-
-// Resolver types
-export type {
+  ValidationResult,
+  ValidationResultWithStats,
+  TokenValidationResult,
+  ManifestValidationResult,
+  // Bundle types
+  Bundle,
+  BundleOptions,
+  BundleResult,
+  BundleWriteResult,
+  BundlerOptions,
+  // AST types
+  ASTNode,
+  TokenNode,
+  GroupNode,
+  // Manifest types
   UPFTResolverManifest,
-  ResolutionInput,
   ResolvedPermutation,
   GenerateSpec,
-} from "./resolver/upft-types.js";
-
-// Options
-export type { ResolverOptions } from "./types/options.js";
+  ResolutionInput,
+  // Options
+  ResolverOptions,
+  // Merge types
+  MergeResult,
+  MergeConflict,
+  MergeTokensOptions,
+  // Reference types
+  ResolutionError,
+  ResolveOptions,
+  ResolveResult,
+  CycleDetectionResult,
+  // Path index types
+  PathIndex,
+} from "./types/index.js";

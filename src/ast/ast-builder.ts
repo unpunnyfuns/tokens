@@ -6,19 +6,19 @@ import type { TokenDocument, TokenOrGroup } from "../types.js";
 import type { ASTNode, GroupNode, TokenNode } from "./types.js";
 
 /**
- * Build AST from a token file path
+ * Load AST from a token file path
  */
-export async function buildAST(filePath: string): Promise<GroupNode> {
+export async function loadAST(filePath: string): Promise<GroupNode> {
   const absolutePath = join(process.cwd(), filePath);
   const content = await readFile(absolutePath, "utf-8");
   const document = JSON.parse(content) as TokenDocument;
-  return buildASTFromDocument(document);
+  return createAST(document);
 }
 
 /**
- * Build AST from a token document
+ * Create AST from a token document
  */
-export function buildASTFromDocument(
+export function createAST(
   document: TokenDocument,
   parentPath = "",
   parent?: ASTNode,
@@ -94,7 +94,7 @@ function addChildNode(
     parent.tokens.set(key, token);
     parent.children.set(key, token);
   } else if (isTokenGroup(value)) {
-    const group = buildASTFromDocument(value as TokenDocument, path, parent);
+    const group = createAST(value as TokenDocument, path, parent);
     group.name = key;
     parent.groups.set(key, group);
     parent.children.set(key, group);

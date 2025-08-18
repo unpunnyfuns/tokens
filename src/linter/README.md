@@ -1,6 +1,27 @@
 # Linter
 
-The linter module provides configurable rules for enforcing design token best practices, naming conventions, and organizational standards beyond basic schema validation.
+Configurable rule engine for enforcing design token best practices, naming conventions, and organizational standards beyond basic schema validation. This work-in-progress module will provide customizable linting rules with auto-fix capabilities, enabling teams to maintain consistent token quality through automated checks integrated into development workflows and CI/CD pipelines.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Structure](#structure)
+- [Rule Categories](#rule-categories)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Built-in Rule Sets](#built-in-rule-sets)
+- [Custom Rules](#custom-rules)
+- [Auto-fixing](#auto-fixing)
+- [Performance](#performance)
+- [Future Considerations](#future-considerations)
+
+## Overview
+
+**Note: This module is currently work in progress and not yet available for use.**
+
+The linter module extends the platform's validation capabilities beyond structural correctness to enforce team-specific conventions and best practices. While the validation module ensures tokens conform to the DTCG specification, the linter ensures they conform to your organization's standards.
+
+The design prioritizes configurability and extensibility, recognizing that different teams have different conventions. Rules can be mixed and matched, configured with custom parameters, and extended with project-specific requirements. The auto-fix capability allows many issues to be resolved automatically, reducing the manual burden of maintaining consistency.
 
 ## Structure
 
@@ -8,14 +29,6 @@ The linter module provides configurable rules for enforcing design token best pr
 - **token-linter.ts** - Main linting engine
 - **lint-rules.ts** - Built-in rule definitions
 
-## Purpose
-
-The linter:
-- Enforces naming conventions
-- Ensures organizational standards
-- Detects anti-patterns
-- Maintains consistency
-- Improves token quality
 
 ## Rule Categories
 

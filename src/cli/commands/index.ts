@@ -20,12 +20,12 @@ export { listTokens } from "./list.js";
 
 // Resolve exports
 export type { ResolveCommandOptions } from "./resolve.js";
-export { resolveTokens, listPermutations } from "./resolve.js";
+export { listPermutations, resolveTokens } from "./resolve.js";
 
 // Validate exports
 export {
-  validateManifest,
-  validateTokenFile,
   validateDirectory,
-  validateResolverManifest,
+  validateManifestObject,
+  validateManifestWithOptions,
+  validateTokenFile,
 } from "./validate.js";

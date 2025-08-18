@@ -48,7 +48,9 @@
           ]
         }
       },
-      "required": ["$type"]
+      "required": [
+        "$type"
+      ]
     }
   ]
 }

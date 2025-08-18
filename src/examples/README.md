@@ -1,6 +1,21 @@
 # Examples
 
-The examples directory contains sample token files, resolver manifests, and test fixtures demonstrating various features and patterns of the token platform.
+Comprehensive collection of sample token files, manifest configurations, and test fixtures demonstrating best practices and advanced patterns. This directory serves as both documentation through working examples and a test suite foundation, providing templates for common use cases while validating the platform's capabilities across diverse token scenarios.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Structure](#structure)
+- [Token File Examples](#token-file-examples)
+- [Resolver Manifest Examples](#resolver-manifest-examples)
+- [Usage Patterns](#usage-patterns)
+- [Testing with Examples](#testing-with-examples)
+
+## Overview
+
+The examples directory serves as a living documentation of the token platform's capabilities. Each example is carefully crafted to demonstrate specific features while remaining practical and applicable to real-world scenarios. These examples are actively used in the test suite, ensuring they remain accurate and functional as the platform evolves.
+
+The collection is organized into logical categories that progress from simple demonstrations to complex multi-dimensional token systems. This structure allows developers to start with basic concepts and gradually explore advanced features as their understanding deepens.
 
 ## Structure
 

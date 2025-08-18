@@ -31,20 +31,22 @@ export interface GroupNode extends ASTNode {
 
 // Reference resolution types
 export interface ResolutionError {
-  type: "missing" | "circular" | "invalid";
+  type: "missing" | "circular" | "invalid" | "depth";
   path: string;
   message: string;
   reference?: string;
 }
 
 export interface ReferenceGraph {
-  references: Map<string, string[]>;
-  referencedBy: Map<string, string[]>;
+  nodes: Map<string, TokenNode>;
+  edges: Map<string, Set<string>>;
+  reverseEdges: Map<string, Set<string>>;
 }
 
 export interface ASTStatistics {
   totalTokens: number;
   totalGroups: number;
+  totalNodes: number;
   tokensByType: Record<string, number>;
   maxDepth: number;
   tokensWithReferences: number;

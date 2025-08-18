@@ -2,8 +2,9 @@
  * Shared utilities for token document comparison
  */
 
-import { buildASTFromDocument } from "../ast/ast-builder.js";
-import { ASTQuery } from "../ast/ast-query.js";
+import { createAST } from "../ast/ast-builder.js";
+import { findAllTokens } from "../ast/index.js";
+import type { TokenNode } from "../ast/types.js";
 import type { TokenDocument } from "../types.js";
 
 export interface TokenComparison {
@@ -35,13 +36,15 @@ export function compareTokenDocuments(
   doc1: TokenDocument,
   doc2: TokenDocument,
 ): TokenComparison {
-  const ast1 = buildASTFromDocument(doc1);
-  const ast2 = buildASTFromDocument(doc2);
-  const query1 = new ASTQuery(ast1);
-  const query2 = new ASTQuery(ast2);
+  const ast1 = createAST(doc1);
+  const ast2 = createAST(doc2);
 
-  const tokens1 = new Map(query1.getAllTokens().map((t) => [t.path, t]));
-  const tokens2 = new Map(query2.getAllTokens().map((t) => [t.path, t]));
+  const tokens1 = new Map(
+    findAllTokens(ast1).map((t: TokenNode) => [t.path, t]),
+  );
+  const tokens2 = new Map(
+    findAllTokens(ast2).map((t: TokenNode) => [t.path, t]),
+  );
 
   const added: string[] = [];
   const removed: string[] = [];
@@ -74,13 +77,15 @@ export function compareTokenDocumentsDetailed(
   doc1: TokenDocument,
   doc2: TokenDocument,
 ): DetailedTokenComparison {
-  const ast1 = buildASTFromDocument(doc1);
-  const ast2 = buildASTFromDocument(doc2);
-  const query1 = new ASTQuery(ast1);
-  const query2 = new ASTQuery(ast2);
+  const ast1 = createAST(doc1);
+  const ast2 = createAST(doc2);
 
-  const tokens1 = new Map(query1.getAllTokens().map((t) => [t.path, t]));
-  const tokens2 = new Map(query2.getAllTokens().map((t) => [t.path, t]));
+  const tokens1 = new Map(
+    findAllTokens(ast1).map((t: TokenNode) => [t.path, t]),
+  );
+  const tokens2 = new Map(
+    findAllTokens(ast2).map((t: TokenNode) => [t.path, t]),
+  );
 
   const differences: TokenDifference[] = [];
 

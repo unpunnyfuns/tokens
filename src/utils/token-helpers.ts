@@ -128,52 +128,6 @@ export function filterTokensByType(
 }
 
 /**
- * Merge token documents (right wins on conflicts)
- */
-export function mergeTokenDocuments(...docs: TokenDocument[]): TokenDocument {
-  if (docs.length === 0) return {};
-  if (docs.length === 1) return docs[0] || {};
-
-  return docs.reduce((merged, doc) => {
-    return deepMerge(merged, doc) as TokenDocument;
-  }, {} as TokenDocument);
-}
-
-/**
- * Deep merge objects
- */
-function deepMerge(target: unknown, source: unknown): unknown {
-  if (!source || typeof source !== "object") return source;
-  if (!target || typeof target !== "object") return source;
-
-  const result = { ...(target as Record<string, unknown>) };
-  const sourceObj = source as Record<string, unknown>;
-  const targetObj = target as Record<string, unknown>;
-
-  for (const key in sourceObj) {
-    const sourceValue = sourceObj[key];
-    const targetValue = targetObj[key];
-
-    if (
-      sourceValue &&
-      typeof sourceValue === "object" &&
-      !Array.isArray(sourceValue) &&
-      targetValue &&
-      typeof targetValue === "object" &&
-      !Array.isArray(targetValue)
-    ) {
-      // Both are objects, merge recursively
-      result[key] = deepMerge(targetValue, sourceValue);
-    } else {
-      // Otherwise, source wins
-      result[key] = sourceValue;
-    }
-  }
-
-  return result;
-}
-
-/**
  * Check if a value is a token (has $value property)
  */
 export function isToken(value: unknown): value is TokenValue {

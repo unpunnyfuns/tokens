@@ -34,7 +34,10 @@
                     "description": "Position of the color stop (0-1)"
                   }
                 },
-                "required": ["color", "position"],
+                "required": [
+                  "color",
+                  "position"
+                ],
                 "additionalProperties": false
               },
               "minItems": 2
@@ -42,7 +45,9 @@
           ]
         }
       },
-      "required": ["$type"]
+      "required": [
+        "$type"
+      ]
     }
   ]
 }

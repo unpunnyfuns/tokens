@@ -35,11 +35,11 @@
       "import": "./dist/index.js"
     },
     "./core": {
-      "types": "./dist/public-core.d.ts",
-      "import": "./dist/public-core.js"
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
     },
     "./schemas/*": "./dist/schemas/*",
-    "./validators": {
+    "./validation": {
       "types": "./dist/validation/index.d.ts",
       "import": "./dist/validation/index.js"
     },
@@ -47,21 +47,25 @@
       "types": "./dist/bundler/index.d.ts",
       "import": "./dist/bundler/index.js"
     },
-    "./bundler/api": {
-      "types": "./dist/bundler/api.d.ts",
-      "import": "./dist/bundler/api.js"
+    "./manifest": {
+      "types": "./dist/manifest/index.d.ts",
+      "import": "./dist/manifest/index.js"
     },
-    "./resolver": {
-      "types": "./dist/resolver/index.d.ts",
-      "import": "./dist/resolver/index.js"
+    "./ast": {
+      "types": "./dist/ast/index.d.ts",
+      "import": "./dist/ast/index.js"
+    },
+    "./references": {
+      "types": "./dist/references/index.d.ts",
+      "import": "./dist/references/index.js"
+    },
+    "./io": {
+      "types": "./dist/io/index.d.ts",
+      "import": "./dist/io/index.js"
     },
     "./api": {
       "types": "./dist/api/index.d.ts",
       "import": "./dist/api/index.js"
-    },
-    "./api/workflows": {
-      "types": "./dist/api/workflows.d.ts",
-      "import": "./dist/api/workflows.js"
     },
     "./package.json": "./package.json"
   },
@@ -95,7 +99,9 @@
     "build:schemas:web": "node scripts/version-schemas.js",
     "build:npm": "npm run build:tsc && npm run build:schemas:npm",
     "build:web": "npm run build:schemas:web",
-    "build": "npm run clean && npm run build:npm && npm run build:web"
+    "build": "npm run clean && npm run build:npm && npm run build:web",
+    "// Release Scripts": "",
+    "release": "npm run quality && npm run build"
   },
   "dependencies": {
     "ajv": "^8.17.1",

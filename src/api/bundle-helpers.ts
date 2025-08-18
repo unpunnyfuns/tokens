@@ -3,25 +3,25 @@
  */
 
 import { countGroups } from "../analysis/token-analyzer.js";
-import { buildASTFromDocument } from "../ast/ast-builder.js";
-import { getAllTokens, getASTStatistics } from "../ast/ast-statistics.js";
-import { resolveReferences } from "../ast/reference-resolver.js";
+import { createAST } from "../ast/ast-builder.js";
+import { findAllTokens, getStatistics } from "../ast/query.js";
+import { resolveASTReferences } from "../ast/resolver.js";
 import type { ASTNode, GroupNode, TokenNode } from "../ast/types.js";
-import { dtcgMerge } from "../core/dtcg-merge.js";
-import { TokenFileReader } from "../filesystem/file-reader.js";
-import { readManifest } from "../resolver/manifest-reader.js";
-import { resolvePermutation } from "../resolver/resolver-core.js";
+import { mergeTokens } from "../core/merge.js";
+import { TokenFileReader } from "../io/file-reader.js";
+import { resolvePermutation } from "../manifest/manifest-core.js";
+import { readManifest } from "../manifest/manifest-reader.js";
+import type { TokenValidationResult } from "../types/validation.js";
 import type { TokenDocument } from "../types.js";
-import {
-  TokenValidator,
-  type TokenValidationResult,
-} from "../validation/validator.js";
-import type { BundleMetadata, BundleOptions, TokenAST } from "./types.js";
+import { validateTokens } from "../validation/index.js";
+import type { ApiBundleOptions, BundleMetadata, TokenAST } from "./types.js";
 
 /**
  * Build modifiers from bundle options
  */
-export function buildModifiers(options: BundleOptions): Record<string, string> {
+export function buildModifiers(
+  options: ApiBundleOptions,
+): Record<string, string> {
   const modifiers: Record<string, string> = {};
   if (options.theme) modifiers.theme = options.theme;
   if (options.mode) modifiers.mode = options.mode;
@@ -62,7 +62,7 @@ export async function loadFromFiles(
 
   for (const file of files) {
     const fileData = await fileReader.readFile(file);
-    tokens = dtcgMerge(tokens, fileData.tokens);
+    tokens = mergeTokens(tokens, fileData.tokens);
     filePaths.push(file);
   }
 
@@ -77,9 +77,9 @@ export function createBundleMetadata(
   filePaths: string[],
   startTime: number,
 ): BundleMetadata {
-  const ast = buildASTFromDocument(tokens);
-  const allTokens = getAllTokens(ast);
-  const stats = getASTStatistics(ast);
+  const ast = createAST(tokens);
+  const allTokens = findAllTokens(ast);
+  const stats = getStatistics(ast);
 
   // Count groups using the analyzer for consistency
   const groupCount = countGroups(tokens);
@@ -106,14 +106,15 @@ export function createValidationFunction(
   ast: ASTNode,
 ): () => Promise<TokenValidationResult> {
   return async () => {
-    const validator = await TokenValidator.create({ strict: true });
-    const validationResult = await validator.validateDocument(tokens);
+    const validationResult = validateTokens(tokens, {
+      strict: true,
+    });
 
     // Get reference stats from AST
-    const { errors: resolutionErrors } = resolveReferences(ast);
-    const stats = getASTStatistics(ast);
+    const resolutionErrors = resolveASTReferences(ast);
+    const stats = getStatistics(ast);
 
-    return {
+    const result: TokenValidationResult = {
       valid: validationResult.valid && resolutionErrors.length === 0,
       errors: [
         ...validationResult.errors,
@@ -121,6 +122,7 @@ export function createValidationFunction(
           path: e.path,
           message: e.message,
           severity: "error" as const,
+          rule: "reference",
         })),
       ],
       warnings: validationResult.warnings,
@@ -131,6 +133,8 @@ export function createValidationFunction(
         invalidReferences: resolutionErrors.length,
       },
     };
+
+    return result;
   };
 }
 
@@ -138,7 +142,7 @@ export function createValidationFunction(
  * Extract AST information for bundle
  */
 export function extractASTInfo(tokens: TokenDocument, ast: ASTNode): TokenAST {
-  const allTokens = getAllTokens(ast);
+  const allTokens = findAllTokens(ast);
   const groups: Record<string, unknown>[] = [];
 
   const isGroup = (obj: Record<string, unknown>): boolean => {

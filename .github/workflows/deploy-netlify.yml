@@ -6,14 +6,14 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2
         with:
-          publish-dir: './dist-web'
+          publish-dir: "./dist-web"
           production-branch: main
           production-deploy: true
           deploy-message: "Deploy from GitHub Actions"

@@ -1,6 +1,22 @@
 # Schemas
 
-The schemas directory contains JSON Schema definitions for validating design tokens and resolver manifests according to the DTCG specification and UPFT extensions.
+JSON Schema definitions providing the validation foundation for DTCG-compliant tokens and UPFT manifest specifications. This directory contains modular, composable schemas that enable both strict type validation for production systems and flexible validation for experimental token types, supporting the evolution of design token standards while maintaining backward compatibility.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Schema Types](#schema-types)
+- [Individual Type Schemas](#individual-type-schemas)
+- [Resolver Schema](#resolver-schema)
+- [Usage](#usage)
+- [Design Decisions](#design-decisions)
+- [Migration Guide](#migration-guide)
+
+## Overview
+
+The schemas directory represents a carefully designed validation architecture that balances strictness with flexibility. The modular approach allows teams to choose their validation strategy based on their maturity and requirements, from experimental prototyping to production systems requiring strict type safety.
+
+The schema architecture reflects a key design principle: validation should be composable. Rather than providing a monolithic schema that tries to handle all cases, the system provides building blocks that can be assembled to meet specific needs. This approach supports both the standardization goals of the DTCG specification and the innovation needs of teams pushing the boundaries of design tokens.
 
 ## Schema Types
 
@@ -60,7 +76,7 @@ Each type schema can be used independently or composed into a full schema.
 
 ## Resolver Schema
 
-`resolver.schema.json` defines the structure for resolver manifests, which specify how to compose tokens across themes and modes.
+`manifest.schema.json` defines the structure for resolver manifests, which specify how to compose tokens across themes and modes.
 
 ## Usage
 
@@ -89,6 +105,24 @@ upft validate ./tokens
   }
 }
 ```
+
+## Design Decisions
+
+### Modular Schema Architecture
+
+The decision to split schemas into modular components rather than maintaining a single monolithic schema was driven by several factors. First, it allows teams to compose exactly the validation they need without being forced into an all-or-nothing approach. Second, it enables the community to extend the schemas with custom token types while still benefiting from the standard type definitions. Third, it makes the schemas themselves more maintainable, with each type definition isolated and testable independently.
+
+### Strict vs Permissive Validation
+
+The platform provides both strict (`full.schema.json`) and permissive (`base.schema.json`) validation modes to support different use cases. Strict validation ensures complete DTCG compliance, which is essential for interoperability and tooling compatibility. Permissive validation allows experimentation with new token types and gradual migration from legacy formats. This dual approach recognizes that design token adoption is a journey, not a destination.
+
+### Type-Specific Constraints
+
+Each token type has its own schema file with specific validation rules. For example, color tokens must specify a color space and components array rather than a simple hex string. While this adds complexity, it ensures that tokens contain sufficient information for accurate transformation across different platforms and color spaces. This decision prioritizes correctness and portability over simplicity.
+
+### Reference Validation
+
+The schemas validate reference syntax but not reference resolution. This separation of concerns keeps the schemas focused on structural validation while allowing the references module to handle the complex logic of resolving and validating reference targets. This architectural boundary ensures that schema validation remains fast and predictable.
 
 ## Migration Guide
 

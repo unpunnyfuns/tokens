@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { loadTokenFile } from "../../../test/helpers/load-examples.js";
 import type { TokenDocument, TokenOrGroup } from "../../types.js";
+import { mergeTokens } from "../merge.js";
 import {
   cloneToken,
   extractReferences,
   hasCircularReference,
-  mergeTokens,
   traverseTokens,
 } from "./operations.js";
 
 describe("Token Operations", () => {
-  describe("mergeTokens", () => {
+  describe("mergeTokens (DTCG-aware)", () => {
     it("should merge two token documents", async () => {
       const base = await loadTokenFile<TokenDocument>("primitives/colors.json");
       const overlay = await loadTokenFile<TokenDocument>("themes/dark.json");

@@ -1,0 +1,226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.2.1/manifest/upft.json",
+  "title": "UPFT Manifest Specification",
+  "description": "Clean, explicit, and predictable token resolution",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Schema URL for validation and IDE support"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for the resolver"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the resolver's purpose"
+    },
+    "sets": {
+      "type": "array",
+      "description": "Base token sets that are always included",
+      "items": {
+        "$ref": "#/$defs/tokenSet"
+      },
+      "minItems": 0
+    },
+    "modifiers": {
+      "type": "object",
+      "description": "Modifier definitions with constraints and file mappings",
+      "patternProperties": {
+        "^[a-zA-Z][a-zA-Z0-9_-]*$": {
+          "oneOf": [
+            { "$ref": "#/$defs/oneOfModifier" },
+            { "$ref": "#/$defs/anyOfModifier" }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "generate": {
+      "type": "array",
+      "description": "Specific permutations to generate (optional)",
+      "items": {
+        "$ref": "#/$defs/generateSpec"
+      }
+    },
+    "options": {
+      "type": "object",
+      "description": "Configuration options",
+      "properties": {
+        "resolveReferences": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to resolve {token.reference} patterns"
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["strict", "loose"],
+              "default": "strict",
+              "description": "Validation strictness"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["sets", "modifiers"],
+  "additionalProperties": false,
+  "$defs": {
+    "tokenSet": {
+      "type": "object",
+      "description": "A set of token files",
+      "properties": {
+        "values": {
+          "type": "array",
+          "description": "File paths or glob patterns",
+          "items": {
+            "type": "string",
+            "pattern": "\\.(json|tokens\\.json)$"
+          },
+          "minItems": 1
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name for documentation"
+        }
+      },
+      "required": ["values"],
+      "additionalProperties": false
+    },
+    "oneOfModifier": {
+      "type": "object",
+      "description": "Exactly one value must be selected (mutually exclusive)",
+      "properties": {
+        "oneOf": {
+          "type": "array",
+          "description": "Available options (first is default)",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$"
+          },
+          "minItems": 2,
+          "uniqueItems": true
+        },
+        "values": {
+          "type": "object",
+          "description": "Mapping of option names to file paths",
+          "patternProperties": {
+            "^[a-zA-Z][a-zA-Z0-9_-]*$": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "\\.(json|tokens\\.json)$"
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["oneOf", "values"],
+      "additionalProperties": false
+    },
+    "anyOfModifier": {
+      "type": "object",
+      "description": "Zero or more values can be selected (additive)",
+      "properties": {
+        "anyOf": {
+          "type": "array",
+          "description": "Available options",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "values": {
+          "type": "object",
+          "description": "Mapping of option names to file paths",
+          "patternProperties": {
+            "^[a-zA-Z][a-zA-Z0-9_-]*$": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "\\.(json|tokens\\.json)$"
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["anyOf", "values"],
+      "additionalProperties": false
+    },
+    "generateSpec": {
+      "type": "object",
+      "description": "Specification for generating a specific permutation",
+      "properties": {
+        "output": {
+          "type": "string",
+          "description": "Custom output file path"
+        },
+        "includeSets": {
+          "type": "array",
+          "description": "Include only these named sets",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludeSets": {
+          "type": "array",
+          "description": "Exclude these named sets",
+          "items": {
+            "type": "string"
+          }
+        },
+        "includeModifiers": {
+          "type": "array",
+          "description": "Include modifiers (format: 'modifierName' or 'modifierName:value')",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludeModifiers": {
+          "type": "array",
+          "description": "Exclude modifiers (format: 'modifierName' or 'modifierName:value')",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "patternProperties": {
+        "^[a-zA-Z][a-zA-Z0-9_-]*$": {
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Single value for oneOf modifier"
+            },
+            {
+              "type": "array",
+              "description": "Array of values for anyOf modifier",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string",
+              "const": "*",
+              "description": "Wildcard for all anyOf options"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    }
+  }
+}

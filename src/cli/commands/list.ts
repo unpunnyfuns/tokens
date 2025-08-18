@@ -3,13 +3,9 @@
  */
 
 import { promises as fs } from "node:fs";
-// Use the core API instead of direct imports
-import {
-  buildASTFromDocument,
-  ASTQuery,
-  ReferenceResolver,
-  type TokenNode,
-} from "../../public-core.js";
+import { createAST, findAllTokens, findTokensByType } from "../../ast/index.js";
+import { resolveASTReferences } from "../../ast/resolver.js";
+import type { TokenNode } from "../../ast/types.js";
 
 export interface ListOptions {
   type?: string;
@@ -36,38 +32,36 @@ export async function listTokens(
     const doc = JSON.parse(content);
 
     // Build AST from the document
-    const ast = buildASTFromDocument(doc);
-
-    // Create query instance
-    const query = new ASTQuery(ast);
+    const ast = createAST(doc);
 
     // Query tokens based on options
     let tokens: TokenNode[];
     if (options?.type) {
-      tokens = query.getTokensByType(options.type);
+      tokens = findTokensByType(ast, options.type);
     } else if (options?.group) {
       // For group filtering, get tokens at that path
-      tokens = query
-        .getAllTokens()
-        .filter((t) => t.path.startsWith(`${options.group}.`));
+      tokens = findAllTokens(ast).filter((t: TokenNode) =>
+        t.path.startsWith(`${options.group}.`),
+      );
     } else {
-      tokens = query.getAllTokens();
+      tokens = findAllTokens(ast);
     }
 
-    // Create resolver for reference checking
-    const resolver = new ReferenceResolver(ast);
-    resolver.resolve();
+    // Resolve references
+    resolveASTReferences(ast);
 
     // Map tokens to the expected format
     return tokens.map((token) => {
       // After resolving, the token should have resolved values
-      const tokenValue = token.value as Record<string, unknown>;
-      const hasReference = "$ref" in (tokenValue || {});
+      const tokenValue = token.value;
+      const isObject = tokenValue && typeof tokenValue === "object";
+      const hasReference = !!(isObject && "$ref" in tokenValue);
 
       return {
         path: token.path,
         ...(token.tokenType && { type: token.tokenType }), // Only include type if it exists
-        value: tokenValue?.$value ?? token.value,
+        value:
+          isObject && "$value" in tokenValue ? tokenValue.$value : token.value,
         resolvedValue: token.value, // After resolution, token.value contains resolved value
         hasReference,
       };

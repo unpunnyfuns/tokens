@@ -3,13 +3,13 @@
  */
 
 import { compareTokenDocumentsDetailed } from "../analysis/token-comparison.js";
-import { buildASTFromDocument } from "../ast/ast-builder.js";
-import { ASTQuery } from "../ast/ast-query.js";
+import { createAST } from "../ast/ast-builder.js";
+import { findAllTokens, findTokensByType } from "../ast/query.js";
 import type { ASTNode } from "../ast/types.js";
-import { dtcgMerge } from "../core/dtcg-merge.js";
-import { readManifest } from "../resolver/manifest-reader.js";
-import { resolvePermutation } from "../resolver/resolver-core.js";
-import type { UPFTResolverManifest } from "../resolver/upft-types.js";
+import { mergeTokens } from "../core/merge.js";
+import { resolvePermutation } from "../manifest/manifest-core.js";
+import { readManifest } from "../manifest/manifest-reader.js";
+import type { UPFTResolverManifest } from "../manifest/upft-types.js";
 import type { TokenDocument } from "../types.js";
 import { TokenFileSystem } from "./token-file-system.js";
 
@@ -30,21 +30,22 @@ export interface ASTWithMetadata {
 }
 
 /**
- * Build AST from file system
+ * Load AST from file system
  */
-export async function buildASTFromFileSystem(
-  fs: TokenFileSystem,
-): Promise<ASTWithMetadata> {
+export async function loadASTs(fs: TokenFileSystem): Promise<ASTWithMetadata> {
   const documents = fs.getDocuments();
 
   // Merge all documents
   const bundled: TokenDocument =
     documents.length > 0
-      ? documents.reduce((acc, doc) => dtcgMerge(acc, doc), {} as TokenDocument)
+      ? documents.reduce(
+          (acc, doc) => mergeTokens(acc, doc),
+          {} as TokenDocument,
+        )
       : {};
 
-  // Build AST
-  const ast = buildASTFromDocument(bundled);
+  // Create AST
+  const ast = createAST(bundled);
 
   // Build result with optional resolver metadata
   const result: ASTWithMetadata = { ast };
@@ -163,12 +164,10 @@ export async function compare(
   }));
 
   // Get token counts for stats
-  const ast1 = buildASTFromDocument(result1.tokens);
-  const ast2 = buildASTFromDocument(result2.tokens);
-  const query1 = new ASTQuery(ast1);
-  const query2 = new ASTQuery(ast2);
-  const tokens1 = query1.getAllTokens();
-  const tokens2 = query2.getAllTokens();
+  const ast1 = createAST(result1.tokens);
+  const ast2 = createAST(result2.tokens);
+  const tokens1 = findAllTokens(ast1);
+  const tokens2 = findAllTokens(ast2);
 
   return {
     differences,
@@ -182,40 +181,18 @@ export async function compare(
 }
 
 /**
- * Validate tokens in a document
- */
-export async function validateTokens(document: TokenDocument): Promise<{
-  valid: boolean;
-  errors: string[];
-  warnings: string[];
-}> {
-  const { TokenValidator } = await import("../validation/validator.js");
-  const validator = await TokenValidator.create({ strict: true });
-  const result = await validator.validateDocument(document);
-
-  return {
-    valid: result.valid,
-    errors: result.errors.map((e) => `${e.path}: ${e.message}`),
-    warnings: result.warnings.map((w) => `${w.path}: ${w.message}`),
-  };
-}
-
-/**
  * Workflow utilities collection
  */
 export const workflows = {
   compare,
-  validateTokens,
-  buildASTFromFileSystem,
+  loadASTs,
 
   /**
    * Extract tokens by type
    */
   extractByType(document: TokenDocument, type: string): TokenDocument {
-    const ast = buildASTFromDocument(document);
-    const query = new ASTQuery(ast);
-
-    const tokens = query.getTokensByType(type);
+    const ast = createAST(document);
+    const tokens = findTokensByType(ast, type);
     const result: TokenDocument = {};
 
     // Rebuild document with only matching tokens

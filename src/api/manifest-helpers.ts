@@ -2,8 +2,8 @@
  * Manifest helper functions
  */
 
-import { ManifestValidator } from "../validation/manifest-validator.js";
-import type { UPFTResolverManifest } from "../resolver/upft-types.js";
+import type { UPFTResolverManifest } from "../manifest/upft-types.js";
+import { validateManifest } from "../validation/index.js";
 
 export interface ParsedManifest {
   valid: boolean;
@@ -17,10 +17,8 @@ export interface ParsedManifest {
 export async function parseManifest(
   manifest: unknown,
 ): Promise<ParsedManifest> {
-  const validator = new ManifestValidator();
-
   try {
-    const validation = validator.validateManifest(manifest);
+    const validation = validateManifest(manifest);
 
     const result: ParsedManifest = {
       valid: validation.valid,

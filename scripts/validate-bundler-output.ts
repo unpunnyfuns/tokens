@@ -7,8 +7,8 @@
 import { execSync } from "node:child_process";
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { TokenFileReader } from "../src/filesystem/file-reader.js";
-import { TokenValidator } from "../src/validation/validator.js";
+import { TokenFileReader } from "../src/io/file-reader.js";
+import { validateTokens } from "../src/validation/index.js";
 
 const BUNDLER_FIXTURES = join(process.cwd(), "src/examples/bundler-fixtures");
 const OUTPUT_DIR = join(BUNDLER_FIXTURES, "output");
@@ -71,12 +71,13 @@ async function generateBundlerOutputs() {
 
 async function validateSingleFile(
   file: string,
-  validator: TokenValidator,
   fileReader: TokenFileReader,
 ): Promise<{ valid: boolean; errors?: unknown }> {
   try {
     const tokenFile = await fileReader.readFile(file);
-    const result = await validator.validateDocument(tokenFile.tokens);
+    const result = validateTokens(tokenFile.tokens, {
+      strict: true,
+    });
     return {
       valid: result.valid,
       errors: result.valid ? undefined : result.errors,
@@ -92,7 +93,6 @@ async function validateSingleFile(
 async function validateOutputFiles() {
   console.log(`\n${colors.yellow}Validating output files...${colors.reset}`);
 
-  const validator = new TokenValidator();
   const fileReader = new TokenFileReader({ basePath: OUTPUT_DIR });
 
   let totalFiles = 0;
@@ -112,7 +112,7 @@ async function validateOutputFiles() {
 
       totalFiles++;
 
-      const result = await validateSingleFile(file, validator, fileReader);
+      const result = await validateSingleFile(file, fileReader);
 
       if (result.valid) {
         console.log(`  ${colors.green}✓${colors.reset} ${file}`);

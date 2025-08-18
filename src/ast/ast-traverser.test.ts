@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { loadTokenFile } from "../../test/helpers/load-examples.js";
 import type { TokenDocument } from "../types.js";
-import { buildASTFromDocument } from "./ast-builder.js";
+import { createAST } from "./ast-builder.js";
 import {
   findAllNodes,
   findNode,
@@ -18,7 +18,7 @@ describe("AST Traverser", () => {
   describe("traverseAST", () => {
     it("should traverse all nodes in pre-order", async () => {
       const doc = await loadTokenFile<TokenDocument>("full-example.json");
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       const visited: string[] = [];
       traverseAST(ast, (node) => {
@@ -40,7 +40,7 @@ describe("AST Traverser", () => {
         c: { $value: "3" },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
       const visited: string[] = [];
 
       traverseAST(ast, (node) => {
@@ -68,7 +68,7 @@ describe("AST Traverser", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
       const visited: string[] = [];
 
       traverseAST(
@@ -93,7 +93,7 @@ describe("AST Traverser", () => {
   describe("visitTokens", () => {
     it("should visit only token nodes", async () => {
       const doc = await loadTokenFile<TokenDocument>("full-example.json");
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       const tokens: string[] = [];
       visitTokens(ast, (token) => {
@@ -119,7 +119,7 @@ describe("AST Traverser", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       visitTokens(ast, (token) => {
         expect(token.type).toBe("token");
@@ -137,7 +137,7 @@ describe("AST Traverser", () => {
   describe("visitGroups", () => {
     it("should visit only group nodes", async () => {
       const doc = await loadTokenFile<TokenDocument>("full-example.json");
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       const groups: string[] = [];
       visitGroups(ast, (group) => {
@@ -173,7 +173,7 @@ describe("AST Traverser", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       visitGroups(ast, (group) => {
         if (group.name === "colors") {
@@ -201,7 +201,7 @@ describe("AST Traverser", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
       const events: string[] = [];
 
       walkAST(ast, {
@@ -236,7 +236,7 @@ describe("AST Traverser", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
       const visited: string[] = [];
 
       walkAST(ast, {
@@ -259,7 +259,7 @@ describe("AST Traverser", () => {
   describe("findNode", () => {
     it("should find node by path", async () => {
       const doc = await loadTokenFile<TokenDocument>("full-example.json");
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       const node = findNode(ast, "colors.primary");
       expect(node).toBeDefined();
@@ -275,7 +275,7 @@ describe("AST Traverser", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       const node = findNode(
         ast,
@@ -287,7 +287,7 @@ describe("AST Traverser", () => {
     });
 
     it("should return undefined for non-existent path", () => {
-      const ast = buildASTFromDocument({});
+      const ast = createAST({});
       const node = findNode(ast, "does.not.exist");
       expect(node).toBeUndefined();
     });
@@ -305,7 +305,7 @@ describe("AST Traverser", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
 
       const colorTokens = findAllNodes(
         ast,
@@ -318,7 +318,7 @@ describe("AST Traverser", () => {
     });
 
     it("should return empty array when no matches", () => {
-      const ast = buildASTFromDocument({});
+      const ast = createAST({});
       const nodes = findAllNodes(ast, () => false);
       expect(nodes).toEqual([]);
     });
@@ -334,7 +334,7 @@ describe("AST Traverser", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
       const primary = findNode(ast, "colors.brand.primary");
 
       if (primary) {
@@ -347,7 +347,7 @@ describe("AST Traverser", () => {
     });
 
     it("should return empty array for root node", () => {
-      const ast = buildASTFromDocument({});
+      const ast = createAST({});
       const ancestors = getAncestors(ast);
       expect(ancestors).toEqual([]);
     });
@@ -363,7 +363,7 @@ describe("AST Traverser", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
       const primary = findNode(ast, "colors.primary");
 
       if (primary) {
@@ -376,7 +376,7 @@ describe("AST Traverser", () => {
     });
 
     it("should return empty array for root node", () => {
-      const ast = buildASTFromDocument({});
+      const ast = createAST({});
       const siblings = getSiblings(ast);
       expect(siblings).toEqual([]);
     });
@@ -392,7 +392,7 @@ describe("AST Traverser", () => {
         },
       };
 
-      const ast = buildASTFromDocument(doc);
+      const ast = createAST(doc);
       const colors = findNode(ast, "colors");
 
       if (colors) {

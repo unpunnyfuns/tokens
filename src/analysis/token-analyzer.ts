@@ -1,6 +1,10 @@
-import { buildASTFromDocument } from "../ast/ast-builder.js";
-import { ASTQuery } from "../ast/ast-query.js";
-import { ReferenceResolver } from "../ast/reference-resolver.js";
+import { createAST } from "../ast/ast-builder.js";
+import {
+  findCircularReferences,
+  findTokensByType as findTokensByTypeInAST,
+  getStatistics,
+  resolveASTReferences,
+} from "../ast/index.js";
 import type { TokenDocument } from "../types.js";
 
 /**
@@ -21,13 +25,11 @@ export interface TokenAnalysis {
  * Analyze a token document
  */
 export function analyzeTokens(document: TokenDocument): TokenAnalysis {
-  const ast = buildASTFromDocument(document);
-  const query = new ASTQuery(ast);
-  const stats = query.getStatistics();
+  const ast = createAST(document);
+  const stats = getStatistics(ast);
 
-  const referenceResolver = new ReferenceResolver(ast);
-  const resolutionErrors = referenceResolver.resolve();
-  const circularRefs = query.getCircularReferences();
+  const resolutionErrors = resolveASTReferences(ast);
+  const circularRefs = findCircularReferences(ast);
 
   return {
     tokenCount: stats.totalTokens,
@@ -77,9 +79,8 @@ export function findTokensByType(
   document: TokenDocument,
   type: string,
 ): Array<{ path: string; value: unknown }> {
-  const ast = buildASTFromDocument(document);
-  const query = new ASTQuery(ast);
-  const tokens = query.getTokensByType(type);
+  const ast = createAST(document);
+  const tokens = findTokensByTypeInAST(ast, type);
 
   return tokens.map((token) => ({
     path: token.path,
@@ -91,9 +92,8 @@ export function findTokensByType(
  * Get all unique token types in document
  */
 export function getTokenTypes(document: TokenDocument): string[] {
-  const ast = buildASTFromDocument(document);
-  const query = new ASTQuery(ast);
-  const stats = query.getStatistics();
+  const ast = createAST(document);
+  const stats = getStatistics(ast);
 
   return Object.keys(stats.tokensByType);
 }
