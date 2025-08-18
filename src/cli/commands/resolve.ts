@@ -2,47 +2,50 @@
  * Resolve/Preview command implementation
  */
 
-import type { TokenFileReader } from "../../filesystem/file-reader.js";
-import { UPFTResolver } from "../../resolver/upft-resolver.js";
-import type {
-  ResolutionInput,
-  ResolvedPermutation,
-  UPFTResolverManifest,
-} from "../../resolver/upft-types.js";
+// Use the core API instead of direct imports
+import {
+  resolvePermutation,
+  generateAllPermutations,
+  type ResolutionInput,
+  type ResolvedPermutation,
+  type UPFTResolverManifest,
+  type ResolverOptions,
+} from "../../public-core.js";
+import type { BaseFileSystemOptions } from "../../types/options.js";
 
-export interface ResolveCommandOptions {
-  fileReader?: TokenFileReader;
-  basePath?: string;
+export type ResolveCommandOptions = BaseFileSystemOptions;
+
+/**
+ * Resolve tokens with specific modifiers
+ */
+export async function resolveTokens(
+  manifest: UPFTResolverManifest,
+  modifiers: ResolutionInput = {},
+  options: ResolveCommandOptions = {},
+): Promise<ResolvedPermutation> {
+  const resolverOptions: ResolverOptions = {};
+  if (options.fileReader) {
+    resolverOptions.fileReader = options.fileReader;
+  }
+  if (options.basePath) {
+    resolverOptions.basePath = options.basePath;
+  }
+  return resolvePermutation(manifest, modifiers, resolverOptions);
 }
 
-export class ResolveCommand {
-  private resolver: UPFTResolver;
-
-  constructor(options: ResolveCommandOptions = {}) {
-    this.resolver = new UPFTResolver(
-      options.fileReader || options.basePath
-        ? {
-            ...(options.fileReader && { fileReader: options.fileReader }),
-            ...(options.basePath && { basePath: options.basePath }),
-          }
-        : {},
-    );
+/**
+ * List all possible permutations from a manifest
+ */
+export async function listPermutations(
+  manifest: UPFTResolverManifest,
+  options: ResolveCommandOptions = {},
+): Promise<ResolvedPermutation[]> {
+  const resolverOptions: ResolverOptions = {};
+  if (options.fileReader) {
+    resolverOptions.fileReader = options.fileReader;
   }
-
-  /**
-   * Resolve tokens with specific modifiers
-   */
-  async resolve(
-    manifest: UPFTResolverManifest,
-    modifiers: ResolutionInput = {},
-  ): Promise<ResolvedPermutation> {
-    return this.resolver.resolvePermutation(manifest, modifiers);
+  if (options.basePath) {
+    resolverOptions.basePath = options.basePath;
   }
-
-  /**
-   * List all possible permutations from a manifest
-   */
-  async list(manifest: UPFTResolverManifest): Promise<ResolvedPermutation[]> {
-    return this.resolver.generateAll(manifest);
-  }
+  return generateAllPermutations(manifest, resolverOptions);
 }

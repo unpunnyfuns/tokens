@@ -18,9 +18,7 @@
           "$ref": "../value-types.schema.json#/$defs/durationValue"
         }
       },
-      "required": [
-        "$type"
-      ]
+      "required": ["$type"]
     }
   ]
 }

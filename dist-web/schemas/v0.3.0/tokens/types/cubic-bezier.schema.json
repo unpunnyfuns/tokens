@@ -26,9 +26,7 @@
           "maxItems": 4
         }
       },
-      "required": [
-        "$type"
-      ]
+      "required": ["$type"]
     }
   ]
 }

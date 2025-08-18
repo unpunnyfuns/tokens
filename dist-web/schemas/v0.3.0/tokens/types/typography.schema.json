@@ -63,9 +63,7 @@
           "additionalProperties": false
         }
       },
-      "required": [
-        "$type"
-      ]
+      "required": ["$type"]
     }
   ]
 }

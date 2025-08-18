@@ -3,31 +3,30 @@ import * as UPFT from "./index.js";
 
 describe("UPFT Public API", () => {
   describe("exports", () => {
-    it("should export core modules", () => {
-      expect(UPFT.TokenValidator).toBeDefined();
-      expect(UPFT.UPFTResolver).toBeDefined();
-      expect(UPFT.TokenBundler).toBeDefined();
-      expect(UPFT.TokenCLI).toBeDefined();
-    });
-
-    it("should export utilities", () => {
+    it("should export high-level functions", () => {
+      expect(UPFT.validateTokens).toBeDefined();
+      expect(UPFT.resolveManifest).toBeDefined();
+      expect(UPFT.bundleWithMetadata).toBeDefined();
       expect(UPFT.buildASTFromDocument).toBeDefined();
-      expect(UPFT.resolveReferences).toBeDefined();
-      expect(UPFT.dtcgMerge).toBeDefined();
     });
 
-    it("should export type guards", () => {
-      expect(UPFT.isToken).toBeDefined();
-      expect(UPFT.isGroup).toBeDefined();
-      expect(UPFT.isUPFTManifest).toBeDefined();
-      expect(UPFT.isOneOfModifier).toBeDefined();
-      expect(UPFT.isAnyOfModifier).toBeDefined();
+    it("should export utility functions", () => {
+      expect(UPFT.mergeTokens).toBeDefined();
+      expect(UPFT.buildASTFromDocument).toBeDefined();
+      expect(UPFT.formatTokens).toBeDefined();
+      expect(UPFT.parseManifest).toBeDefined();
     });
 
-    it("should export filesystem utilities", () => {
-      expect(UPFT.FileCache).toBeDefined();
-      expect(UPFT.FileReader).toBeDefined();
-      expect(UPFT.FileWriter).toBeDefined();
+    it("should export API module functions", () => {
+      expect(UPFT.bundleWithMetadata).toBeDefined();
+      expect(UPFT.validateResolver).toBeDefined();
+      expect(UPFT.formatError).toBeDefined();
+    });
+
+    it("should export helper functions", () => {
+      expect(UPFT.validateTokens).toBeDefined();
+      expect(UPFT.parseManifest).toBeDefined();
+      expect(UPFT.resolveManifest).toBeDefined();
     });
   });
 
@@ -108,36 +107,8 @@ describe("UPFT Public API", () => {
       });
     });
 
-    it("should build bundles with convenience function", async () => {
-      const mockFileWriter = vi.mocked({
-        write: vi.fn().mockResolvedValue(undefined),
-        writeFile: vi.fn(),
-      } as any);
-
-      const manifest = {
-        sets: [{ values: ["core.json"] }],
-        modifiers: {
-          theme: {
-            oneOf: ["light"],
-            values: {
-              light: ["light.json"],
-            },
-          },
-        },
-        generate: [{ theme: "light", output: "dist/light.json" }],
-      };
-
-      const results = await UPFT.buildBundles(manifest, {
-        fileReader: mockFileReader,
-        fileWriter: mockFileWriter,
-      });
-
-      expect(results).toHaveLength(1);
-      expect((results[0] as { success: boolean }).success).toBe(true);
-      expect(mockFileWriter.write).toHaveBeenCalledWith(
-        expect.stringContaining("dist/light.json"),
-        expect.any(String),
-      );
+    it.skip("should build bundles with convenience function", async () => {
+      // buildBundles was removed from public API
     });
 
     it("should parse and validate manifest", async () => {
@@ -199,7 +170,7 @@ describe("UPFT Public API", () => {
         },
       };
 
-      const ast = await UPFT.createAST(tokens);
+      const ast = UPFT.buildASTFromDocument(tokens);
 
       expect(ast.type).toBe("group");
       expect(ast.name).toBe("root");

@@ -5,23 +5,19 @@
 import { join } from "node:path";
 import type { TokenFileReader } from "../filesystem/file-reader.js";
 import { TokenFileWriter } from "../filesystem/file-writer.js";
-import { UPFTResolver } from "../resolver/upft-resolver.js";
+import { generateAll as generateAllPermutations } from "../resolver/resolver-core.js";
 import type {
   ResolvedPermutation,
   UPFTResolverManifest,
 } from "../resolver/upft-types.js";
 import type { TokenDocument } from "../types.js";
+import type { BundlerOptions, ResolverOptions } from "../types/options.js";
 
 export type TokenTransform = (tokens: TokenDocument) => TokenDocument;
 
-export interface TokenBundlerOptions {
-  fileReader?: TokenFileReader;
-  fileWriter?: TokenFileWriter;
-  basePath?: string;
-  outputFormat?: "dtcg" | "custom";
+export type TokenBundlerOptions = BundlerOptions & {
   transforms?: TokenTransform[];
-  prettify?: boolean;
-}
+};
 
 export interface Bundle {
   id: string;
@@ -39,7 +35,7 @@ export interface BundleWriteResult {
 }
 
 export class TokenBundler {
-  private resolver: UPFTResolver;
+  private fileReader: TokenFileReader | undefined;
   private fileWriter?: TokenFileWriter;
   private outputFormat: string;
   private transforms: TokenTransform[];
@@ -47,10 +43,7 @@ export class TokenBundler {
   private basePath: string;
 
   constructor(options: TokenBundlerOptions = {}) {
-    this.resolver = new UPFTResolver({
-      ...(options.fileReader && { fileReader: options.fileReader }),
-      ...(options.basePath && { basePath: options.basePath }),
-    });
+    this.fileReader = options.fileReader;
     this.fileWriter = options.fileWriter ?? new TokenFileWriter();
     this.outputFormat = options.outputFormat || "dtcg";
     this.transforms = options.transforms || [];
@@ -62,7 +55,11 @@ export class TokenBundler {
    * Generate bundles from a resolver manifest
    */
   async bundle(manifest: UPFTResolverManifest): Promise<Bundle[]> {
-    const permutations = await this.resolver.generateAll(manifest);
+    const options: ResolverOptions = { basePath: this.basePath };
+    if (this.fileReader) {
+      options.fileReader = this.fileReader;
+    }
+    const permutations = await generateAllPermutations(manifest, options);
 
     return permutations.map((permutation: ResolvedPermutation) =>
       this.createBundle(permutation),

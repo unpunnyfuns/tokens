@@ -1,4 +1,11 @@
-export { type TokenAnalysis, TokenAnalyzer } from "./token-analyzer.js";
+export {
+  type TokenAnalysis,
+  analyzeTokens,
+  countGroups,
+  findTokensByType,
+  getTokenTypes,
+  countTokens,
+} from "./token-analyzer.js";
 export {
   compareTokenDocuments,
   compareTokenDocumentsDetailed,

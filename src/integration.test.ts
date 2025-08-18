@@ -7,7 +7,7 @@ import { TokenBundler } from "./bundler/bundler.js";
 import { TokenCLI } from "./cli/commands.js";
 import { TokenFileReader } from "./filesystem/file-reader.js";
 import { TokenFileWriter } from "./filesystem/file-writer.js";
-import { UPFTResolver } from "./resolver/upft-resolver.js";
+import { resolvePermutation } from "./resolver/resolver-core.js";
 
 describe("Integration Tests - Real Components", () => {
   let testDir: string;
@@ -76,10 +76,11 @@ describe("Integration Tests - Real Components", () => {
       };
 
       // 3. Test resolver can read real files
-      const resolver = new UPFTResolver({ fileReader, basePath: testDir });
-      const resolved = await resolver.resolvePermutation(manifest, {
-        theme: "light",
-      });
+      const resolved = await resolvePermutation(
+        manifest,
+        { theme: "light" },
+        { fileReader, basePath: testDir },
+      );
 
       expect((resolved.tokens.color as any)?.primary?.$value).toEqual({
         colorSpace: "srgb",
@@ -166,12 +167,10 @@ describe("Integration Tests - Real Components", () => {
   describe("Type safety checks", () => {
     it("should enforce correct interfaces between components", async () => {
       // This test ensures components can work together
-      const resolver = new UPFTResolver({ fileReader });
       const bundler = new TokenBundler({ fileReader, fileWriter });
       const cli = new TokenCLI({ fileReader, fileWriter });
 
       // If this compiles, interfaces match
-      expect(resolver).toBeDefined();
       expect(bundler).toBeDefined();
       expect(cli).toBeDefined();
     });
@@ -189,10 +188,12 @@ describe("Integration Tests - Real Components", () => {
         },
       };
 
-      const resolver = new UPFTResolver({ fileReader, basePath: testDir });
-
       await expect(
-        resolver.resolvePermutation(manifest, { theme: "light" }),
+        resolvePermutation(
+          manifest,
+          { theme: "light" },
+          { fileReader, basePath: testDir },
+        ),
       ).rejects.toThrow();
     });
   });

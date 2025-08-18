@@ -41,72 +41,24 @@ export type DTCGReference = string; // {colors.primary}
 export type JSONSchemaReference = string; // #/colors/primary/$value
 
 // Validation types
-export interface ValidationError {
-  path: string;
-  message: string;
-  severity: "error" | "warning";
-  rule?: string;
-}
+export type {
+  ValidationError,
+  ValidationResult,
+  ValidationResultWithStats,
+  TokenValidationResult,
+  ManifestValidationResult,
+} from "./types/validation.js";
 
-export interface ValidationResult {
-  valid: boolean;
-  errors: ValidationError[];
-  warnings: ValidationError[];
-}
+// Type organization:
+// - Core token types: This file
+// - Validation types: ./types/validation.ts
+// - Option types: ./types/options.ts
+// - AST types: ./ast/types.ts
+// - Filesystem types: ./filesystem/types.ts
+// - Resolver types: ./resolver/upft-types.ts
+// - All types: ./types/index.ts (centralized exports)
 
-// Manifest types (used by filesystem and resolver layers)
-export interface OneOfModifier {
-  oneOf: string[];
-  values: Record<string, string[]>;
-  default?: string;
-}
-
-export interface AnyOfModifier {
-  anyOf: string[];
-  values: Record<string, string[]>;
-}
-
-export interface TokenSet {
-  values: string[];
-  name?: string;
-}
-
-export interface GenerateSpec {
-  [modifierName: string]: string | string[] | "*";
-  output?: string;
-  includeSets?: string[]; // Include only these named sets
-  excludeSets?: string[]; // Exclude these named sets
-  includeModifiers?: string[]; // Include modifiers (name or name:value)
-  excludeModifiers?: string[]; // Exclude modifiers (name or name:value)
-}
-
-export interface UPFTResolverManifest {
-  $schema?: string;
-  name?: string;
-  description?: string;
-  sets: TokenSet[];
-  modifiers: Record<string, OneOfModifier | AnyOfModifier>;
-  generate?: GenerateSpec[];
-  options?: {
-    resolveReferences?: boolean;
-    validation?: {
-      mode?: "strict" | "loose";
-    };
-  };
-}
-
-// Note: AST types are in ./ast/types.js
-// Note: Filesystem types are in ./filesystem/types.js
-
-// Bundle options
-export interface BundleOptions {
-  resolveReferences?: boolean;
-  format?: "dtcg" | "json-schema";
-  validate?: boolean;
-  optimize?: boolean;
-}
-
-// CLI options
+// CLI options (move to options.ts in future)
 export interface CLIOptions {
   verbose?: boolean;
   quiet?: boolean;

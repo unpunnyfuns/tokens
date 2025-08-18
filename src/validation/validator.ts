@@ -3,24 +3,16 @@
  */
 
 import Ajv from "ajv/dist/2020.js";
+import type { TokenDocument } from "../types.js";
 import type {
-  ValidationResult as BaseValidationResult,
-  TokenDocument,
+  ValidationResult,
   ValidationError,
-} from "../types.js";
+  TokenValidationResult,
+} from "../types/validation.js";
+import { createLogger, LogLevel } from "../utils/logger.js";
 
-// Token-specific validation result with reference stats
-export interface TokenValidationResult extends BaseValidationResult {
-  stats?: {
-    totalTokens: number;
-    tokensWithReferences: number;
-    validReferences: number;
-    invalidReferences: number;
-  };
-}
-
-// For backward compatibility within this module
-export type ValidationResult = BaseValidationResult;
+// Re-export for backward compatibility
+export type { TokenValidationResult, ValidationResult, ValidationError };
 
 import baseSchema from "../schemas/tokens/base.schema.json" with {
   type: "json",
@@ -110,10 +102,15 @@ export class TokenValidator {
   private validateTokenDoc: ReturnType<Ajv.default["compile"]> | null = null;
   private strict: boolean;
   private useRegistry: boolean;
+  private logger: ReturnType<typeof createLogger>;
 
   constructor(options: ValidatorOptions = {}) {
     this.strict = options.strict ?? true;
     this.useRegistry = options.useRegistry ?? true; // Default to true for proper schema loading
+    this.logger = createLogger({
+      level: this.strict ? LogLevel.WARN : LogLevel.ERROR,
+      prefix: "validator",
+    });
 
     // Create schema registry
     const registryOptions: SchemaRegistryOptions = {
@@ -194,8 +191,8 @@ export class TokenValidator {
         // Now compile the main validator
         this.validateTokenDoc = this.ajv.compile(tokenSchema);
       } catch (error) {
-        console.warn(
-          "Failed to compile schemas, falling back to basic validation:",
+        this.logger.warn(
+          "Failed to compile schemas, falling back to basic validation",
           error,
         );
         this.strict = false;
@@ -308,8 +305,8 @@ export class TokenValidator {
         this.initializeWithoutRegistry();
       }
     } catch (error) {
-      console.warn(
-        "Failed to compile schemas, falling back to basic validation:",
+      this.logger.warn(
+        "Failed to compile schemas, falling back to basic validation",
         error,
       );
       this.strict = false;

@@ -7,8 +7,8 @@ import { buildASTFromDocument } from "../ast/ast-builder.js";
 import { ASTQuery } from "../ast/ast-query.js";
 import type { ASTNode } from "../ast/types.js";
 import { dtcgMerge } from "../core/dtcg-merge.js";
-import { ManifestReader } from "../filesystem/manifest-reader.js";
-import { UPFTResolver } from "../resolver/upft-resolver.js";
+import { readManifest } from "../resolver/manifest-reader.js";
+import { resolvePermutation } from "../resolver/resolver-core.js";
 import type { UPFTResolverManifest } from "../resolver/upft-types.js";
 import type { TokenDocument } from "../types.js";
 import { TokenFileSystem } from "./token-file-system.js";
@@ -143,13 +143,11 @@ export async function compare(
     removedTokens: number;
   };
 }> {
-  const resolver = new UPFTResolver();
-  const manifestReader = new ManifestReader();
-  const manifest = await manifestReader.readManifest(manifestPath);
+  const manifest = await readManifest(manifestPath);
 
   // Resolve both permutations
-  const result1 = await resolver.resolvePermutation(manifest, modifiers1);
-  const result2 = await resolver.resolvePermutation(manifest, modifiers2);
+  const result1 = await resolvePermutation(manifest, modifiers1);
+  const result2 = await resolvePermutation(manifest, modifiers2);
 
   // Use shared comparison utility
   const comparison = compareTokenDocumentsDetailed(

@@ -22,30 +22,19 @@
       "properties": {
         "grouping": {
           "type": "string",
-          "enum": [
-            "explicit",
-            "auto",
-            "none"
-          ],
+          "enum": ["explicit", "auto", "none"],
           "default": "explicit",
           "description": "How to handle grouping: explicit (use group property), auto (infer from usage), none (no grouping)"
         },
         "ungrouped": {
           "type": "string",
-          "enum": [
-            "inline",
-            "standalone",
-            "error"
-          ],
+          "enum": ["inline", "standalone", "error"],
           "default": "inline",
           "description": "How to handle sets without explicit groups"
         },
         "format": {
           "type": "string",
-          "enum": [
-            "json",
-            "nested-json"
-          ],
+          "enum": ["json", "nested-json"],
           "default": "json",
           "description": "Output format for tokens"
         }
@@ -75,10 +64,7 @@
             "description": "Group identifier for output organization (e.g., 'base', 'theme-dark')"
           }
         },
-        "required": [
-          "name",
-          "files"
-        ],
+        "required": ["name", "files"],
         "additionalProperties": false
       },
       "minItems": 1
@@ -111,10 +97,7 @@
                   }
                 }
               },
-              "required": [
-                "name",
-                "values"
-              ],
+              "required": ["name", "values"],
               "additionalProperties": false
             },
             "minItems": 1
@@ -125,9 +108,7 @@
             "additionalProperties": true
           }
         },
-        "required": [
-          "values"
-        ],
+        "required": ["values"],
         "additionalProperties": false
       }
     }
@@ -146,9 +127,6 @@
     },
     "additionalProperties": true
   },
-  "required": [
-    "sets",
-    "modifiers"
-  ],
+  "required": ["sets", "modifiers"],
   "additionalProperties": false
 }

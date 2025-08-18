@@ -7,6 +7,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type Ajv from "ajv/dist/2020.js";
 import { glob } from "glob";
+import { createLogger, LogLevel } from "../utils/logger.js";
 
 type JSONSchema = Parameters<Ajv.default["compile"]>[0];
 
@@ -52,6 +53,7 @@ export class SchemaRegistry {
   private packageBasePath: string;
   private baseUrl = "https://tokens.unpunny.fun/schemas";
   private cache: boolean;
+  private logger: ReturnType<typeof createLogger>;
 
   constructor(options: SchemaRegistryOptions = {}) {
     // Get version from package.json or use provided
@@ -62,6 +64,10 @@ export class SchemaRegistry {
       "url",
     ];
     this.cache = options.cache ?? true;
+    this.logger = createLogger({
+      level: LogLevel.WARN,
+      prefix: "schema-registry",
+    });
 
     // Set base paths
     this.localBasePath = options.localBasePath ?? join(__dirname, "../schemas");
@@ -207,7 +213,7 @@ export class SchemaRegistry {
           this.schemas.set(schema.$id, schema);
         }
       } catch (error) {
-        console.warn(`Failed to preload schema ${file}:`, error);
+        this.logger.warn(`Failed to preload schema ${file}`, error);
       }
     }
   }

@@ -34,6 +34,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./core": {
+      "types": "./dist/public-core.d.ts",
+      "import": "./dist/public-core.js"
+    },
     "./schemas/*": "./dist/schemas/*",
     "./validators": {
       "types": "./dist/validation/index.d.ts",
@@ -98,6 +102,7 @@
     "ajv-formats": "^3.0.1",
     "chokidar": "^4.0.3",
     "commander": "^14.0.0",
+    "glob": "^11.0.3",
     "json5": "^2.2.3",
     "lru-cache": "^11.1.0",
     "picocolors": "^1.1.1",
@@ -109,9 +114,9 @@
     "@types/node": "^24.2.1",
     "@vitest/coverage-v8": "^3.2.4",
     "dependency-cruiser": "^17.0.1",
-    "glob": "^11.0.3",
     "memfs": "^4.36.0",
     "nodemon": "3.1.9",
+    "tsx": "^4.20.4",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }

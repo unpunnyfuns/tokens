@@ -20,79 +20,74 @@ export interface ManifestInfo {
   generateCount?: number;
 }
 
-export class InfoCommand {
-  /**
-   * Get information about a manifest
-   */
-  async info(manifest: UPFTResolverManifest): Promise<ManifestInfo> {
-    const info: ManifestInfo = {
-      ...(manifest.name && { name: manifest.name }),
-      ...(manifest.description && { description: manifest.description }),
-      sets: this.extractSets(manifest),
-      modifiers: [],
-      possiblePermutations: 1,
-      ...(manifest.generate?.length && {
-        generateCount: manifest.generate.length,
-      }),
-    };
+/**
+ * Get information about a manifest
+ */
+export async function getManifestInfo(
+  manifest: UPFTResolverManifest,
+): Promise<ManifestInfo> {
+  const modifierInfo = extractModifiers(manifest);
 
-    // Process modifiers
-    const modifierInfo = this.extractModifiers(manifest);
-    info.modifiers = modifierInfo.modifiers;
-    info.possiblePermutations = modifierInfo.permutations;
+  return {
+    ...(manifest.name && { name: manifest.name }),
+    ...(manifest.description && { description: manifest.description }),
+    sets: extractSets(manifest),
+    modifiers: modifierInfo.modifiers,
+    possiblePermutations: modifierInfo.permutations,
+    ...(manifest.generate?.length && {
+      generateCount: manifest.generate.length,
+    }),
+  };
+}
 
-    return info;
-  }
+function extractSets(manifest: UPFTResolverManifest): ManifestInfo["sets"] {
+  if (!manifest.sets) return [];
 
-  private extractSets(manifest: UPFTResolverManifest): ManifestInfo["sets"] {
-    if (!manifest.sets) return [];
-
-    if (Array.isArray(manifest.sets)) {
-      return manifest.sets.map((set) => ({
-        ...(set.name && { name: set.name }),
-        fileCount: set.values?.length || 0,
-      }));
-    }
-
-    // Handle object format for sets (if supported)
-    return Object.entries(manifest.sets).map(([name, values]) => ({
-      name,
-      fileCount: Array.isArray(values) ? values.length : 1,
+  if (Array.isArray(manifest.sets)) {
+    return manifest.sets.map((set) => ({
+      ...(set.name && { name: set.name }),
+      fileCount: set.values?.length || 0,
     }));
   }
 
-  private extractModifiers(manifest: UPFTResolverManifest): {
-    modifiers: ManifestInfo["modifiers"];
-    permutations: number;
-  } {
-    const modifiers: ManifestInfo["modifiers"] = [];
-    let permutations = 1;
+  // Handle object format for sets (if supported)
+  return Object.entries(manifest.sets).map(([name, values]) => ({
+    name,
+    fileCount: Array.isArray(values) ? values.length : 1,
+  }));
+}
 
-    if (!manifest.modifiers) {
-      return { modifiers, permutations };
-    }
+function extractModifiers(manifest: UPFTResolverManifest): {
+  modifiers: ManifestInfo["modifiers"];
+  permutations: number;
+} {
+  const modifiers: ManifestInfo["modifiers"] = [];
+  let permutations = 1;
 
-    for (const [name, modifier] of Object.entries(manifest.modifiers)) {
-      if (typeof modifier !== "object" || modifier === null) continue;
-
-      if ("oneOf" in modifier && Array.isArray(modifier.oneOf)) {
-        modifiers.push({
-          name,
-          type: "oneOf",
-          options: modifier.oneOf,
-        });
-        permutations *= modifier.oneOf.length;
-      } else if ("anyOf" in modifier && Array.isArray(modifier.anyOf)) {
-        modifiers.push({
-          name,
-          type: "anyOf",
-          options: modifier.anyOf,
-        });
-        // anyOf creates 2^n permutations (all subsets including empty)
-        permutations *= 2 ** modifier.anyOf.length;
-      }
-    }
-
+  if (!manifest.modifiers) {
     return { modifiers, permutations };
   }
+
+  for (const [name, modifier] of Object.entries(manifest.modifiers)) {
+    if (typeof modifier !== "object" || modifier === null) continue;
+
+    if ("oneOf" in modifier && Array.isArray(modifier.oneOf)) {
+      modifiers.push({
+        name,
+        type: "oneOf",
+        options: modifier.oneOf,
+      });
+      permutations *= modifier.oneOf.length;
+    } else if ("anyOf" in modifier && Array.isArray(modifier.anyOf)) {
+      modifiers.push({
+        name,
+        type: "anyOf",
+        options: modifier.anyOf,
+      });
+      // anyOf creates 2^n permutations (all subsets including empty)
+      permutations *= 2 ** modifier.anyOf.length;
+    }
+  }
+
+  return { modifiers, permutations };
 }

@@ -2,14 +2,16 @@
  * Diff command implementation
  */
 
-import { compareTokenDocumentsDetailed } from "../../analysis/token-comparison.js";
-import type { TokenFileReader } from "../../filesystem/file-reader.js";
-import { UPFTResolver } from "../../resolver/upft-resolver.js";
-import type {
-  ResolutionInput,
-  UPFTResolverManifest,
-} from "../../resolver/upft-types.js";
-import type { TokenDocument } from "../../types.js";
+// Use the core API instead of direct imports
+import {
+  compareTokenDocumentsDetailed,
+  resolvePermutation,
+  type ResolutionInput,
+  type UPFTResolverManifest,
+  type TokenDocument,
+  type ResolverOptions,
+} from "../../public-core.js";
+import type { BaseFileSystemOptions } from "../../types/options.js";
 
 export interface TokenDiff {
   differences: Array<{
@@ -25,64 +27,57 @@ export interface TokenDiff {
   };
 }
 
-export interface DiffCommandOptions {
-  fileReader?: TokenFileReader;
-  basePath?: string;
+export type DiffCommandOptions = BaseFileSystemOptions;
+
+/**
+ * Compare two token documents directly
+ */
+export async function diffDocuments(
+  leftDoc: TokenDocument,
+  rightDoc: TokenDocument,
+): Promise<TokenDiff> {
+  const comparison = compareTokenDocumentsDetailed(leftDoc, rightDoc);
+  return {
+    differences: comparison.differences,
+    summary: comparison.summary,
+  };
 }
 
-export class DiffCommand {
-  private resolver: UPFTResolver;
-
-  constructor(options: DiffCommandOptions = {}) {
-    this.resolver = new UPFTResolver(
-      options.fileReader || options.basePath
-        ? {
-            ...(options.fileReader && { fileReader: options.fileReader }),
-            ...(options.basePath && { basePath: options.basePath }),
-          }
-        : {},
-    );
+/**
+ * Compare two permutations from a manifest
+ */
+export async function diffPermutations(
+  manifest: UPFTResolverManifest,
+  leftModifiers: ResolutionInput = {},
+  rightModifiers: ResolutionInput = {},
+  options: DiffCommandOptions = {},
+): Promise<TokenDiff> {
+  const resolverOptions: ResolverOptions = {};
+  if (options.fileReader) {
+    resolverOptions.fileReader = options.fileReader;
+  }
+  if (options.basePath) {
+    resolverOptions.basePath = options.basePath;
   }
 
-  /**
-   * Compare two token documents directly
-   */
-  async diffDocuments(
-    leftDoc: TokenDocument,
-    rightDoc: TokenDocument,
-  ): Promise<TokenDiff> {
-    const comparison = compareTokenDocumentsDetailed(leftDoc, rightDoc);
-    return {
-      differences: comparison.differences,
-      summary: comparison.summary,
-    };
-  }
+  const leftResolved = await resolvePermutation(
+    manifest,
+    leftModifiers,
+    resolverOptions,
+  );
+  const rightResolved = await resolvePermutation(
+    manifest,
+    rightModifiers,
+    resolverOptions,
+  );
 
-  /**
-   * Compare two permutations from a manifest
-   */
-  async diff(
-    manifest: UPFTResolverManifest,
-    leftModifiers: ResolutionInput = {},
-    rightModifiers: ResolutionInput = {},
-  ): Promise<TokenDiff> {
-    const leftResolved = await this.resolver.resolvePermutation(
-      manifest,
-      leftModifiers,
-    );
-    const rightResolved = await this.resolver.resolvePermutation(
-      manifest,
-      rightModifiers,
-    );
+  const comparison = compareTokenDocumentsDetailed(
+    leftResolved.tokens,
+    rightResolved.tokens,
+  );
 
-    const comparison = compareTokenDocumentsDetailed(
-      leftResolved.tokens,
-      rightResolved.tokens,
-    );
-
-    return {
-      differences: comparison.differences,
-      summary: comparison.summary,
-    };
-  }
+  return {
+    differences: comparison.differences,
+    summary: comparison.summary,
+  };
 }

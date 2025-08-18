@@ -63,10 +63,7 @@
           "properties": {
             "mode": {
               "type": "string",
-              "enum": [
-                "strict",
-                "loose"
-              ],
+              "enum": ["strict", "loose"],
               "default": "strict",
               "description": "Validation strictness"
             }
@@ -77,10 +74,7 @@
       "additionalProperties": false
     }
   },
-  "required": [
-    "sets",
-    "modifiers"
-  ],
+  "required": ["sets", "modifiers"],
   "additionalProperties": false,
   "$defs": {
     "tokenSet": {
@@ -101,9 +95,7 @@
           "description": "Optional name for documentation"
         }
       },
-      "required": [
-        "values"
-      ],
+      "required": ["values"],
       "additionalProperties": false
     },
     "oneOfModifier": {
@@ -136,10 +128,7 @@
           "additionalProperties": false
         }
       },
-      "required": [
-        "oneOf",
-        "values"
-      ],
+      "required": ["oneOf", "values"],
       "additionalProperties": false
     },
     "anyOfModifier": {
@@ -172,10 +161,7 @@
           "additionalProperties": false
         }
       },
-      "required": [
-        "anyOf",
-        "values"
-      ],
+      "required": ["anyOf", "values"],
       "additionalProperties": false
     },
     "generateSpec": {
