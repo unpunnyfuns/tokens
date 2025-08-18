@@ -25,9 +25,7 @@
           ]
         }
       },
-      "required": [
-        "$type"
-      ]
+      "required": ["$type"]
     }
   ]
 }

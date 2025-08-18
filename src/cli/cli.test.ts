@@ -43,7 +43,7 @@ describe("CLI Integration Tests", () => {
     it("should show help for validate command", () => {
       const result = runCLI(`npx tsx ${CLI_PATH} validate --help`);
 
-      expect(result).toContain("Validate tokens or manifest");
+      expect(result).toContain("Validate token files or manifests");
       expect(result).toContain("-f, --file");
       expect(result).toContain("-d, --directory");
       expect(result).toContain("-m, --manifest");
@@ -88,8 +88,9 @@ describe("CLI Integration Tests", () => {
       );
       const result = runCLI(`npx tsx ${CLI_PATH} info ${manifestPath}`);
 
-      expect(result).toContain("Sets: 1");
-      expect(result).toContain("Modifiers: 1");
+      expect(result).toContain("Sets:");
+      expect(result).toContain("(unnamed): 1 files");
+      expect(result).toContain("Modifiers:");
       expect(result).toContain("theme (oneOf): light, dark");
       expect(result).toContain("Possible permutations: 2");
     });

@@ -18,5 +18,5 @@ export {
   type WriteOptions,
   type WriteResult,
 } from "./file-writer.js";
-export { ManifestReader } from "./manifest-reader.js";
+// ManifestReader moved to resolver module
 export * from "./types.js";

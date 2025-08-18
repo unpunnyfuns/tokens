@@ -57,10 +57,7 @@
           "$ref": "#/$defs/hex"
         }
       },
-      "required": [
-        "colorSpace",
-        "components"
-      ],
+      "required": ["colorSpace", "components"],
       "additionalProperties": false
     },
     "srgb": {
@@ -238,10 +235,7 @@
           "$ref": "#/$defs/hex"
         }
       },
-      "required": [
-        "colorSpace",
-        "components"
-      ],
+      "required": ["colorSpace", "components"],
       "additionalProperties": false
     },
     "hwb": {
@@ -305,10 +299,7 @@
           "$ref": "#/$defs/hex"
         }
       },
-      "required": [
-        "colorSpace",
-        "components"
-      ],
+      "required": ["colorSpace", "components"],
       "additionalProperties": false
     },
     "lab": {
@@ -372,10 +363,7 @@
           "$ref": "#/$defs/hex"
         }
       },
-      "required": [
-        "colorSpace",
-        "components"
-      ],
+      "required": ["colorSpace", "components"],
       "additionalProperties": false
     },
     "lch": {
@@ -439,10 +427,7 @@
           "$ref": "#/$defs/hex"
         }
       },
-      "required": [
-        "colorSpace",
-        "components"
-      ],
+      "required": ["colorSpace", "components"],
       "additionalProperties": false
     },
     "oklab": {
@@ -506,10 +491,7 @@
           "$ref": "#/$defs/hex"
         }
       },
-      "required": [
-        "colorSpace",
-        "components"
-      ],
+      "required": ["colorSpace", "components"],
       "additionalProperties": false
     },
     "oklch": {
@@ -573,10 +555,7 @@
           "$ref": "#/$defs/hex"
         }
       },
-      "required": [
-        "colorSpace",
-        "components"
-      ],
+      "required": ["colorSpace", "components"],
       "additionalProperties": false
     },
     "xyz-d65": {
@@ -610,10 +589,7 @@
           "$ref": "#/$defs/hex"
         }
       },
-      "required": [
-        "colorSpace",
-        "components"
-      ],
+      "required": ["colorSpace", "components"],
       "additionalProperties": false
     },
     "xyz-d50": {
@@ -647,10 +623,7 @@
           "$ref": "#/$defs/hex"
         }
       },
-      "required": [
-        "colorSpace",
-        "components"
-      ],
+      "required": ["colorSpace", "components"],
       "additionalProperties": false
     }
   },
@@ -721,9 +694,7 @@
           ]
         }
       },
-      "required": [
-        "$type"
-      ]
+      "required": ["$type"]
     }
   ]
 }

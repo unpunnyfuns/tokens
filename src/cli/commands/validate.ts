@@ -4,94 +4,95 @@
 
 import { promises as fs } from "node:fs";
 import { join } from "node:path";
+import {
+  ManifestValidator,
+  TokenValidator,
+  validateResolver,
+} from "../../api/index.js";
 import type { ValidationResult } from "../../types.js";
-import { ManifestValidator } from "../../validation/manifest-validator.js";
-import { TokenValidator } from "../../validation/validator.js";
 
-export class ValidateCommand {
-  private manifestValidator: ManifestValidator;
-  private tokenValidator: TokenValidator;
+/**
+ * Validate a resolver manifest
+ */
+export async function validateManifest(
+  manifest: unknown,
+): Promise<ValidationResult> {
+  const manifestValidator = new ManifestValidator();
+  return manifestValidator.validateManifest(manifest);
+}
 
-  constructor() {
-    this.manifestValidator = new ManifestValidator();
-    this.tokenValidator = new TokenValidator();
+/**
+ * Validate a token file
+ */
+export async function validateTokenFile(
+  filePath: string,
+): Promise<ValidationResult> {
+  try {
+    const content = await fs.readFile(filePath, "utf-8");
+    const data = JSON.parse(content);
+    const tokenValidator = new TokenValidator();
+    return tokenValidator.validateDocument(data);
+  } catch (error) {
+    return {
+      valid: false,
+      errors: [
+        {
+          message: error instanceof Error ? error.message : String(error),
+          path: filePath,
+          severity: "error",
+        },
+      ],
+      warnings: [],
+    };
   }
+}
 
-  /**
-   * Validate a resolver manifest
-   */
-  async validateManifest(manifest: unknown): Promise<ValidationResult> {
-    return this.manifestValidator.validateManifest(manifest);
-  }
+/**
+ * Validate all token files in a directory
+ */
+export async function validateDirectory(
+  dirPath: string,
+): Promise<ValidationResult> {
+  const errors: ValidationResult["errors"] = [];
 
-  /**
-   * Validate a token file
-   */
-  async validateTokenFile(filePath: string): Promise<ValidationResult> {
-    try {
-      const content = await fs.readFile(filePath, "utf-8");
-      const data = JSON.parse(content);
-      return this.tokenValidator.validateDocument(data);
-    } catch (error) {
-      return {
-        valid: false,
-        errors: [
-          {
-            message: error instanceof Error ? error.message : String(error),
-            path: filePath,
-            severity: "error",
-          },
-        ],
-        warnings: [],
-      };
-    }
-  }
+  try {
+    const files = await fs.readdir(dirPath);
+    const jsonFiles = files.filter((f) => f.endsWith(".json"));
 
-  /**
-   * Validate all token files in a directory
-   */
-  async validateDirectory(dirPath: string): Promise<ValidationResult> {
-    const errors: ValidationResult["errors"] = [];
-
-    try {
-      const files = await fs.readdir(dirPath);
-      const jsonFiles = files.filter((f) => f.endsWith(".json"));
-
-      for (const file of jsonFiles) {
-        const filePath = join(dirPath, file);
-        const result = await this.validateTokenFile(filePath);
-        if (!result.valid) {
-          errors.push(...result.errors);
-        }
+    for (const file of jsonFiles) {
+      const filePath = join(dirPath, file);
+      const result = await validateTokenFile(filePath);
+      if (!result.valid) {
+        errors.push(...result.errors);
       }
-
-      return {
-        valid: errors.length === 0,
-        errors,
-        warnings: [],
-      };
-    } catch (error) {
-      return {
-        valid: false,
-        errors: [
-          {
-            message: error instanceof Error ? error.message : String(error),
-            path: dirPath,
-            severity: "error",
-          },
-        ],
-        warnings: [],
-      };
     }
-  }
 
-  /**
-   * Legacy validate method for backward compatibility
-   */
-  async validate(pathOrManifest: string | unknown): Promise<ValidationResult> {
-    if (typeof pathOrManifest === "string") {
-      return this.validateTokenFile(pathOrManifest);
-    }
-    return this.validateManifest(pathOrManifest);
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings: [],
+    };
+  } catch (error) {
+    return {
+      valid: false,
+      errors: [
+        {
+          message: error instanceof Error ? error.message : String(error),
+          path: dirPath,
+          severity: "error",
+        },
+      ],
+      warnings: [],
+    };
   }
+}
+
+/**
+ * Validate using API function for resolver manifests
+ */
+export async function validateResolverManifest(
+  manifestPath: string,
+  options?: { allPermutations?: boolean },
+) {
+  return validateResolver(manifestPath, options);
 }

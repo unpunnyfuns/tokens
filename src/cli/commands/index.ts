@@ -2,13 +2,30 @@
  * CLI command modules
  */
 
-export type { BundleCommandOptions } from "./bundle.js";
-export { BundleCommand } from "./bundle.js";
+// Bundle exports
+export type { BundleCommandOptions, BundleWriteResult } from "./bundle.js";
+export { buildTokens, bundleTokens } from "./bundle.js";
+
+// Diff exports
 export type { DiffCommandOptions, TokenDiff } from "./diff.js";
-export { DiffCommand } from "./diff.js";
+export { diffDocuments, diffPermutations } from "./diff.js";
+
+// Info exports
 export type { ManifestInfo } from "./info.js";
-export { InfoCommand } from "./info.js";
-export { ListCommand } from "./list.js";
+export { getManifestInfo } from "./info.js";
+
+// List exports
+export type { ListOptions, TokenListItem } from "./list.js";
+export { listTokens } from "./list.js";
+
+// Resolve exports
 export type { ResolveCommandOptions } from "./resolve.js";
-export { ResolveCommand } from "./resolve.js";
-export { ValidateCommand } from "./validate.js";
+export { resolveTokens, listPermutations } from "./resolve.js";
+
+// Validate exports
+export {
+  validateManifest,
+  validateTokenFile,
+  validateDirectory,
+  validateResolverManifest,
+} from "./validate.js";

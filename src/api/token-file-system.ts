@@ -3,8 +3,8 @@
  */
 
 import { TokenFileReader } from "../filesystem/file-reader.js";
-import { ManifestReader } from "../filesystem/manifest-reader.js";
-import { UPFTResolver } from "../resolver/upft-resolver.js";
+import { readManifest } from "../resolver/manifest-reader.js";
+import { resolvePermutation } from "../resolver/resolver-core.js";
 import type { UPFTResolverManifest } from "../resolver/upft-types.js";
 import type { TokenDocument } from "../types.js";
 
@@ -16,7 +16,6 @@ export class TokenFileSystem {
   private documents: Map<string, TokenDocument> = new Map();
   private manifests: Map<string, UPFTResolverManifest> = new Map();
   private fileReader = new TokenFileReader();
-  private manifestReader = new ManifestReader();
 
   /**
    * Add a token document
@@ -43,13 +42,12 @@ export class TokenFileSystem {
     path: string,
     modifiers?: Record<string, string>,
   ): Promise<void> {
-    const manifest = await this.manifestReader.readManifest(path);
+    const manifest = await readManifest(path);
     this.manifests.set(path, manifest);
 
     // If modifiers provided, resolve and add the result
     if (modifiers) {
-      const resolver = new UPFTResolver();
-      const result = await resolver.resolvePermutation(manifest, modifiers);
+      const result = await resolvePermutation(manifest, modifiers);
       this.documents.set(`${path}:resolved`, result.tokens);
     }
   }

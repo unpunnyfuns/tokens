@@ -19,9 +19,7 @@
           "description": "Numeric value"
         }
       },
-      "required": [
-        "$type"
-      ]
+      "required": ["$type"]
     }
   ]
 }

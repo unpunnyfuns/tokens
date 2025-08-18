@@ -131,7 +131,7 @@ describe("CLI E2E Tests", () => {
       });
 
       expect(result).toContain("Comparing files:");
-      expect(result).toContain("Changed: 2");
+      expect(result).toContain("Changed  2");
     });
 
     it("should compare manifest permutations with -m flag", () => {
@@ -141,12 +141,12 @@ describe("CLI E2E Tests", () => {
       );
 
       const result = execSync(
-        `npx tsx ${CLI_PATH} diff ${manifestPath} -m --left theme=light --right theme=dark`,
+        `npx tsx ${CLI_PATH} diff ${manifestPath} -m --left-modifiers theme=light --right-modifiers theme=dark`,
         { encoding: "utf8", stdio: "pipe" },
       );
 
-      expect(result).toContain("Comparing permutations");
-      expect(result).toContain("Changed: 2");
+      expect(result).toContain("Comparing:");
+      expect(result).toContain("Changed  2");
     });
   });
 
