@@ -23,7 +23,7 @@ vi.mock("../ast/query.js", () => ({
 }));
 
 vi.mock("../core/merge.js", () => ({
-  mergeTokens: vi.fn(),
+  merge: vi.fn(),
 }));
 
 vi.mock("../manifest/manifest-core.js", () => ({
@@ -70,7 +70,7 @@ describe("Workflows", () => {
       };
 
       (TokenFileSystem as any).mockImplementation(() => mockFS);
-      (merge.mergeTokens as any)
+      (merge.merge as any)
         .mockReturnValueOnce({ color: { primary: { $value: "#007acc" } } })
         .mockReturnValueOnce(mockTokens);
       (astBuilder.createAST as any).mockReturnValue(mockAST);
@@ -79,7 +79,7 @@ describe("Workflows", () => {
       const result = await loadASTs(fs);
 
       expect(mockFS.getDocuments).toHaveBeenCalled();
-      expect(merge.mergeTokens).toHaveBeenCalledTimes(2);
+      expect(merge.merge).toHaveBeenCalledTimes(2);
       expect(astBuilder.createAST).toHaveBeenCalledWith(mockTokens);
       expect(result.ast).toBe(mockAST);
       expect(result.resolver).toBeUndefined();
@@ -115,7 +115,7 @@ describe("Workflows", () => {
       };
 
       (TokenFileSystem as any).mockImplementation(() => mockFS);
-      (merge.mergeTokens as any).mockReturnValue(mockTokens);
+      (merge.merge as any).mockReturnValue(mockTokens);
       (astBuilder.createAST as any).mockReturnValue(mockAST);
 
       const fs = new TokenFileSystem();

@@ -136,7 +136,8 @@ describe("AST Builder", () => {
       const ast = createAST(doc);
 
       const primary = ast.tokens.get("primary");
-      expect(primary?.references).toContain("#/base/$value");
+      // References are normalized to dot notation
+      expect(primary?.references).toContain("base.$value");
     });
 
     it("should preserve token metadata", () => {

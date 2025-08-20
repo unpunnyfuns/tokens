@@ -3,6 +3,7 @@ import * as analyzer from "../analysis/token-analyzer.js";
 import * as astBuilder from "../ast/ast-builder.js";
 import * as astQuery from "../ast/query.js";
 import * as astResolver from "../ast/resolver.js";
+import * as astTraverser from "../ast/ast-traverser.js";
 import * as merge from "../core/merge.js";
 import { TokenFileReader } from "../io/file-reader.js";
 import * as manifestCore from "../manifest/manifest-core.js";
@@ -35,8 +36,12 @@ vi.mock("../ast/resolver.js", () => ({
   resolveASTReferences: vi.fn(),
 }));
 
+vi.mock("../ast/ast-traverser.js", () => ({
+  visitGroups: vi.fn(),
+}));
+
 vi.mock("../core/merge.js", () => ({
-  mergeTokens: vi.fn(),
+  merge: vi.fn(),
 }));
 
 vi.mock("../io/file-reader.js");
@@ -224,7 +229,7 @@ describe("Bundle Helpers", () => {
         .mockResolvedValueOnce({ tokens: file1Tokens })
         .mockResolvedValueOnce({ tokens: file2Tokens });
 
-      (merge.mergeTokens as any)
+      (merge.merge as any)
         .mockReturnValueOnce(file1Tokens)
         .mockReturnValueOnce(mockTokens);
 
@@ -232,8 +237,8 @@ describe("Bundle Helpers", () => {
 
       expect(mockReader.readFile).toHaveBeenCalledWith("file1.json");
       expect(mockReader.readFile).toHaveBeenCalledWith("file2.json");
-      expect(merge.mergeTokens).toHaveBeenCalledWith({}, file1Tokens);
-      expect(merge.mergeTokens).toHaveBeenCalledWith(file1Tokens, file2Tokens);
+      expect(merge.merge).toHaveBeenCalledWith({}, file1Tokens);
+      expect(merge.merge).toHaveBeenCalledWith(file1Tokens, file2Tokens);
       expect(result.tokens).toEqual(mockTokens);
       expect(result.filePaths).toEqual(["file1.json", "file2.json"]);
     });
@@ -244,7 +249,7 @@ describe("Bundle Helpers", () => {
       };
 
       (TokenFileReader as any).mockImplementation(() => mockReader);
-      (merge.mergeTokens as any).mockReturnValue(mockTokens);
+      (merge.merge as any).mockReturnValue(mockTokens);
 
       const result = await loadFromFiles(["single.json"]);
 
@@ -451,6 +456,15 @@ describe("Bundle Helpers", () => {
     it("should extract tokens and groups from AST", () => {
       (astQuery.findAllTokens as any).mockReturnValue(mockTokenNodes);
 
+      // Mock visitGroups to simulate finding 3 groups
+      (astTraverser.visitGroups as any).mockImplementation(
+        (_ast: any, visitor: any) => {
+          visitor({ type: "group", path: "", name: "root" });
+          visitor({ type: "group", path: "color", name: "color" });
+          visitor({ type: "group", path: "spacing", name: "spacing" });
+        },
+      );
+
       const tokens = {
         color: {
           primary: { $value: "#007acc" },
@@ -471,6 +485,28 @@ describe("Bundle Helpers", () => {
 
     it("should identify groups correctly", () => {
       (astQuery.findAllTokens as any).mockReturnValue([]);
+
+      // Mock visitGroups to simulate finding 4 groups
+      (astTraverser.visitGroups as any).mockImplementation(
+        (_ast: any, visitor: any) => {
+          visitor({ type: "group", path: "", name: "root" });
+          visitor({
+            type: "group",
+            path: "groupWithTokens",
+            name: "groupWithTokens",
+          });
+          visitor({
+            type: "group",
+            path: "nestedGroups",
+            name: "nestedGroups",
+          });
+          visitor({
+            type: "group",
+            path: "nestedGroups.subGroup",
+            name: "subGroup",
+          });
+        },
+      );
 
       const tokens = {
         tokenValue: { $value: "test" },
@@ -496,6 +532,11 @@ describe("Bundle Helpers", () => {
     it("should handle empty tokens", () => {
       (astQuery.findAllTokens as any).mockReturnValue([]);
 
+      // Mock visitGroups to simulate empty AST (no groups)
+      (astTraverser.visitGroups as any).mockImplementation(() => {
+        // Intentionally empty - no groups to visit
+      });
+
       const result = extractASTInfo({}, mockAST);
 
       expect(result.tokens).toEqual([]);
@@ -505,6 +546,14 @@ describe("Bundle Helpers", () => {
 
     it("should skip $ properties when collecting groups", () => {
       (astQuery.findAllTokens as any).mockReturnValue([]);
+
+      // Mock visitGroups to simulate finding 2 groups
+      (astTraverser.visitGroups as any).mockImplementation(
+        (_ast: any, visitor: any) => {
+          visitor({ type: "group", path: "", name: "root" });
+          visitor({ type: "group", path: "validGroup", name: "validGroup" });
+        },
+      );
 
       const tokens = {
         $description: "Root description",
@@ -523,6 +572,25 @@ describe("Bundle Helpers", () => {
 
     it("should collect deeply nested groups", () => {
       (astQuery.findAllTokens as any).mockReturnValue([]);
+
+      // Mock visitGroups to simulate finding 5 groups
+      (astTraverser.visitGroups as any).mockImplementation(
+        (_ast: any, visitor: any) => {
+          visitor({ type: "group", path: "", name: "root" });
+          visitor({ type: "group", path: "level1", name: "level1" });
+          visitor({ type: "group", path: "level1.level2", name: "level2" });
+          visitor({
+            type: "group",
+            path: "level1.level2.level3",
+            name: "level3",
+          });
+          visitor({
+            type: "group",
+            path: "level1.level2.level3.level4",
+            name: "level4",
+          });
+        },
+      );
 
       const tokens = {
         level1: {
@@ -551,6 +619,15 @@ describe("Bundle Helpers", () => {
       (astQuery.findAllTokens as any).mockReturnValue([
         { path: "direct", value: { $value: "test" } },
       ]);
+
+      // Mock visitGroups to simulate finding 3 groups
+      (astTraverser.visitGroups as any).mockImplementation(
+        (_ast: any, visitor: any) => {
+          visitor({ type: "group", path: "", name: "root" });
+          visitor({ type: "group", path: "group1", name: "group1" });
+          visitor({ type: "group", path: "group1.subGroup", name: "subGroup" });
+        },
+      );
 
       const tokens = {
         direct: { $value: "test" },

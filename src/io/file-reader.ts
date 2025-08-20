@@ -3,7 +3,8 @@ import { dirname, extname, isAbsolute, join } from "node:path";
 import { glob } from "glob";
 import JSON5 from "json5";
 import YAML from "yaml";
-import { extractReferences, traverseTokens } from "../core/token/operations.js";
+import { createAST } from "../ast/ast-builder.js";
+import { visitTokens } from "../ast/ast-traverser.js";
 import type { TokenDocument } from "../types.js";
 import { FileCache } from "./cache.js";
 import type { TokenFile } from "./types.js";
@@ -269,15 +270,14 @@ export class TokenFileReader {
   private extractFileReferences(document: TokenDocument): Set<string> {
     const references = new Set<string>();
 
-    traverseTokens(document, (_path, token) => {
-      const refs = extractReferences(token);
-      for (const ref of refs) {
-        // Normalize reference
-        const normalized = ref
-          .replace(/^\{|\}$/g, "")
-          .replace(/^#\//, "")
-          .replace(/\//g, ".");
-        references.add(normalized);
+    // Create AST for traversal
+    const ast = createAST(document);
+
+    visitTokens(ast, (tokenNode) => {
+      if (tokenNode.references) {
+        for (const ref of tokenNode.references) {
+          references.add(ref);
+        }
       }
       return true;
     });

@@ -1,6 +1,6 @@
 # Examples
 
-Comprehensive collection of sample token files, manifest configurations, and test fixtures demonstrating best practices and advanced patterns. This directory serves as both documentation through working examples and a test suite foundation, providing templates for common use cases while validating the platform's capabilities across diverse token scenarios.
+Collection of sample token files, manifest configurations, and test fixtures demonstrating best practices and patterns. This directory serves as both documentation through working examples and a test suite foundation, providing templates for common use cases.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ Comprehensive collection of sample token files, manifest configurations, and tes
 
 The examples directory serves as a living documentation of the token platform's capabilities. Each example is carefully crafted to demonstrate specific features while remaining practical and applicable to real-world scenarios. These examples are actively used in the test suite, ensuring they remain accurate and functional as the platform evolves.
 
-The collection is organized into logical categories that progress from simple demonstrations to complex multi-dimensional token systems. This structure allows developers to start with basic concepts and gradually explore advanced features as their understanding deepens.
+The collection is organized into logical categories that progress from simple demonstrations to multi-dimensional token systems. This structure allows developers to start with basic concepts and explore features as needed.
 
 ## Structure
 
@@ -29,14 +29,14 @@ The collection is organized into logical categories that progress from simple de
 - **test-scenarios/** - Resolver configuration examples
   - simple.manifest.json - Basic theme switching
   - density-variants.manifest.json - Density modifiers
-  - group-mode.manifest.json - Advanced grouping
+  - group-mode.manifest.json - Complex grouping
 
 ### Output Examples
 - **output/** - Generated bundle examples
   - bundle.json - Sample bundled output
 
 ### Configuration Examples
-- **complete-resolver.json** - Comprehensive resolver example
+- **complete-resolver.json** - Complete resolver example
 - **selective-resolution-demo.json** - Selective generation patterns
 - **error-cases/** - Invalid tokens for testing
   - legacy-color-formats.json - Outdated color syntax

@@ -67,6 +67,10 @@
       "types": "./dist/api/index.d.ts",
       "import": "./dist/api/index.js"
     },
+    "./linter": {
+      "types": "./dist/linter/index.d.ts",
+      "import": "./dist/linter/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

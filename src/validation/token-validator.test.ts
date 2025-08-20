@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { isValidTokenDocument } from "../core/token/guards.js";
 import * as references from "../references/index.js";
 import {
   type TokenValidationOptions,
   validateTokenDocument,
   validateTokenDocuments,
 } from "./token-validator.js";
-import { isValidTokenDocument } from "../core/token/guards.js";
 
 // Mock the references module
 vi.mock("../references/index.js", () => ({

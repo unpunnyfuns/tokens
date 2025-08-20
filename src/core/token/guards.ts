@@ -1,14 +1,14 @@
 import type { Token, TokenDocument, TokenGroup } from "../../types.js";
 
 /**
- * Check if a value is a token (has $value property)
+ * Check if a value is a token (has $value or $ref property)
  */
 export function isToken(value: unknown): value is Token {
   return (
     value !== null &&
     value !== undefined &&
     typeof value === "object" &&
-    "$value" in value
+    ("$value" in value || "$ref" in value)
   );
 }
 
@@ -20,8 +20,8 @@ export function isTokenGroup(value: unknown): value is TokenGroup {
     return false;
   }
 
-  // Has $value means it's a token, not a group
-  if ("$value" in value) {
+  // Has $value or $ref means it's a token, not a group
+  if ("$value" in value || "$ref" in value) {
     return false;
   }
 

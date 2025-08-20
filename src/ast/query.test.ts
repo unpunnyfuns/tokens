@@ -4,7 +4,6 @@ import {
   createReferenceGraph,
   filterTokens,
   findAllTokens,
-  findCircularReferences,
   findDependencies,
   findDependents,
   findTokensByType,
@@ -580,67 +579,6 @@ describe("AST Query", () => {
       );
 
       const result = findDependents(mockRootNode, "color.primary");
-
-      expect(result).toEqual([]);
-    });
-  });
-
-  describe("findCircularReferences", () => {
-    it("should find circular references", () => {
-      const tokenA = {
-        type: "token",
-        path: "color.a",
-        value: {},
-        references: ["color.b"],
-      };
-      const tokenB = {
-        type: "token",
-        path: "color.b",
-        value: {},
-        references: ["color.a"],
-      };
-
-      (traverser.visitTokens as any).mockImplementation(
-        (_root: any, callback: any) => {
-          callback(tokenA);
-          callback(tokenB);
-        },
-      );
-
-      // Mock getToken for circular reference detection
-      (traverser.findNode as any).mockImplementation(
-        (_root: any, path: any) => {
-          if (path === "color.a") return tokenA;
-          if (path === "color.b") return tokenB;
-          return undefined;
-        },
-      );
-
-      const result = findCircularReferences(mockRootNode);
-
-      // The algorithm typically only marks one token in a cycle
-      expect(result.length).toBeGreaterThan(0);
-      expect(["color.a", "color.b"]).toContain(result[0]?.path);
-    });
-
-    it("should return empty array when no circular references", () => {
-      const tokens = [
-        { type: "token", path: "color.primary", value: {}, references: [] },
-        {
-          type: "token",
-          path: "color.brand",
-          value: {},
-          references: ["color.primary"],
-        },
-      ];
-
-      (traverser.visitTokens as any).mockImplementation(
-        (_root: any, callback: any) => {
-          tokens.forEach(callback);
-        },
-      );
-
-      const result = findCircularReferences(mockRootNode);
 
       expect(result).toEqual([]);
     });

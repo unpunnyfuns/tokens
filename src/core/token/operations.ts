@@ -1,4 +1,4 @@
-import type { TokenDocument, TokenOrGroup } from "../../types.js";
+import type { TokenOrGroup } from "../../types.js";
 
 /**
  * Create a deep copy of a token or token group
@@ -25,44 +25,6 @@ export function cloneToken<T extends TokenOrGroup>(token: T): T {
 }
 
 /**
- * Traverse all tokens in a document
- * Returns false from visitor to stop traversal
- */
-export function traverseTokens(
-  tokens: TokenDocument,
-  visitor: (path: string, token: TokenOrGroup) => undefined | boolean,
-  currentPath = "",
-): boolean {
-  for (const [key, value] of Object.entries(tokens)) {
-    // Skip metadata fields
-    if (key.startsWith("$") || !value || typeof value === "string") continue;
-
-    const tokenValue = value as TokenOrGroup;
-    const path = currentPath ? `${currentPath}.${key}` : key;
-
-    // Visit current node
-    const continueTraversal = visitor(path, tokenValue);
-    if (continueTraversal === false) {
-      return false;
-    }
-
-    // Traverse children if it's a group
-    if (isGroup(tokenValue)) {
-      const childrenContinue = traverseTokens(
-        tokenValue as TokenDocument,
-        visitor,
-        path,
-      );
-      if (!childrenContinue) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
-/**
  * Extract all references from a token
  */
 export function extractReferences(token: TokenOrGroup): string[] {
@@ -80,6 +42,12 @@ export function extractReferences(token: TokenOrGroup): string[] {
     }
   }
 
+  // Check for $ref at token level (JSON Schema style)
+  if ("$ref" in token && typeof token.$ref === "string") {
+    references.push(token.$ref);
+  }
+
+  // Check for references in $value (DTCG style)
   if ("$value" in token) {
     extractFromValue(token.$value);
   }
@@ -117,83 +85,4 @@ function extractObjectReferences(
   for (const val of Object.values(record)) {
     extractFromValue(val);
   }
-}
-
-/**
- * Check if a token has circular references
- */
-export function hasCircularReference(
-  tokens: TokenDocument,
-  startPath: string,
-  visited = new Set<string>(),
-): boolean {
-  if (visited.has(startPath)) {
-    return true;
-  }
-
-  const token = getTokenAtPath(tokens, startPath);
-  if (!token) {
-    return false;
-  }
-
-  const references = extractReferences(token);
-  if (references.length === 0) {
-    return false;
-  }
-
-  visited.add(startPath);
-
-  for (const ref of references) {
-    // Convert reference to path
-    const refPath = ref
-      .replace(/^\{|\}$/g, "")
-      .replace(/^#\//, "")
-      .replace(/\//g, ".")
-      .replace(/\$value$/, "");
-
-    if (hasCircularReference(tokens, refPath, new Set(visited))) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-// Helper function to check if value is a group
-function isGroup(value: unknown): boolean {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  // Has $value means it's a token, not a group
-  if ("$value" in (value as Record<string, unknown>)) {
-    return false;
-  }
-
-  // Check if it has nested objects (tokens or groups)
-  for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
-    if (!key.startsWith("$") && typeof val === "object" && val !== null) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-// Helper function to get token at path
-function getTokenAtPath(
-  tokens: TokenDocument,
-  path: string,
-): TokenOrGroup | undefined {
-  const segments = path.split(".");
-  let current: unknown = tokens;
-
-  for (const segment of segments) {
-    if (!current || typeof current !== "object") {
-      return undefined;
-    }
-    current = (current as Record<string, unknown>)[segment];
-  }
-
-  return current as TokenOrGroup;
 }

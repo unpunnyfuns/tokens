@@ -1,195 +1,221 @@
 # Linter
 
-Configurable rule engine for enforcing design token best practices, naming conventions, and organizational standards beyond basic schema validation. This work-in-progress module will provide customizable linting rules with auto-fix capabilities, enabling teams to maintain consistent token quality through automated checks integrated into development workflows and CI/CD pipelines.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Structure](#structure)
-- [Rule Categories](#rule-categories)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Built-in Rule Sets](#built-in-rule-sets)
-- [Custom Rules](#custom-rules)
-- [Auto-fixing](#auto-fixing)
-- [Performance](#performance)
-- [Future Considerations](#future-considerations)
-
-## Overview
-
-**Note: This module is currently work in progress and not yet available for use.**
-
-The linter module extends the platform's validation capabilities beyond structural correctness to enforce team-specific conventions and best practices. While the validation module ensures tokens conform to the DTCG specification, the linter ensures they conform to your organization's standards.
-
-The design prioritizes configurability and extensibility, recognizing that different teams have different conventions. Rules can be mixed and matched, configured with custom parameters, and extended with project-specific requirements. The auto-fix capability allows many issues to be resolved automatically, reducing the manual burden of maintaining consistency.
+Linting system for design tokens and manifests, enforcing best practices, naming conventions, and organizational standards. Provides configurable rules with severity levels for consistent token quality.
 
 ## Structure
 
-### Core Components
-- **token-linter.ts** - Main linting engine
-- **lint-rules.ts** - Built-in rule definitions
+| File | Purpose |
+|------|---------|
+| config.ts | Configuration loading with JSON5 support and preset management |
+| token-linter.ts | Main TokenLinter class for token file linting |
+| rules.ts | Token lint rule implementations (13 built-in rules) |
+| types.ts | TypeScript type definitions for linting |
+| manifest/lint-manifest.ts | Functional manifest linting implementation |
+| manifest/manifest-rules.ts | Manifest-specific rule implementations (8 rules) |
+| manifest/manifest-types.ts | Types for manifest linting |
+| index.ts | Module exports |
 
+## Token Linting
 
-## Rule Categories
+### Available Rules
 
-### Naming Rules
-Enforce consistent naming patterns:
-- **camelCase** - Require camelCase names
-- **kebab-case** - Require kebab-case names
-- **no-abbreviations** - Disallow common abbreviations
-- **hierarchical-naming** - Enforce path-based naming
+#### Accessibility
+- **prefer-rem-over-px** - Prefer rem units for better accessibility
+- **min-font-size** - Ensure minimum font size for readability
 
-### Structure Rules
-Maintain organizational standards:
-- **max-depth** - Limit nesting depth
-- **group-consistency** - Ensure consistent group structure
-- **required-groups** - Enforce presence of specific groups
-- **no-empty-groups** - Disallow groups without tokens
+#### Naming
+- **naming-convention** - Enforce consistent naming style (kebab-case, camelCase, any)
+- **naming-hierarchy** - Enforce hierarchical naming patterns
 
-### Value Rules
-Validate token values beyond type checking:
-- **color-format** - Enforce specific color formats
-- **unit-consistency** - Require consistent units
-- **value-constraints** - Custom value restrictions
-- **no-magic-numbers** - Require semantic values
+#### Documentation
+- **description-required** - All tokens must have descriptions
+- **group-description-required** - All groups must have descriptions
+- **description-min-length** - Ensure meaningful descriptions
 
-### Reference Rules
-Control reference patterns:
-- **no-circular-refs** - Prevent circular dependencies
-- **max-ref-depth** - Limit reference chain length
-- **ref-naming** - Enforce reference naming patterns
-- **local-refs-only** - Restrict cross-file references
+#### Organization
+- **max-nesting-depth** - Limit token nesting depth
+- **consistent-property-order** - Enforce property ordering
+- **no-mixed-token-types** - Prevent mixing unrelated types in groups
 
-## Configuration
+#### Quality
+- **unused-tokens** - Find tokens not referenced by others
+- **duplicate-values** - Identify tokens with identical values
+- **prefer-references** - Suggest using references for repeated values
 
-Linter configuration via `.lintrc.json`:
-```json
+### Configuration
+
+Create `.upftrc.json` in your project root:
+
+```typescript
 {
-  "extends": "recommended",
-  "rules": {
-    "naming/camelCase": "error",
-    "structure/max-depth": ["warning", { "max": 4 }],
-    "values/color-format": ["error", { "format": "hex" }],
-    "references/max-ref-depth": ["warning", { "max": 3 }]
-  },
-  "ignore": [
-    "**/generated/**",
-    "**/vendor/**"
-  ]
+  "lint": {
+    "extends": "recommended",  // "minimal", "recommended", or "strict"
+    "rules": {
+      "prefer-rem-over-px": "error",
+      "naming-convention": ["warn", { "style": "kebab-case" }],
+      "description-required": "off"
+    },
+    "ignore": [
+      "**/generated/**"
+    ]
+  }
 }
 ```
 
-## Severity Levels
-
-- **error** - Must be fixed, fails linting
-- **warning** - Should be addressed, passes with warnings
-- **info** - Suggestions, informational only
-- **off** - Rule disabled
-
-## Usage
+### Usage
 
 ```typescript
-import { TokenLinter } from './linter';
+import { TokenLinter } from '@unpunnyfuns/tokens/linter';
 
 const linter = new TokenLinter({
-  rules: {
-    'naming/camelCase': 'error',
-    'structure/max-depth': ['warning', { max: 4 }]
-  }
+  configPath: '.upftrc.json'
 });
 
-const results = linter.lint(tokenDocument);
-results.forEach(issue => {
-  console.log(`${issue.severity}: ${issue.message} at ${issue.path}`);
-});
+const result = linter.lint(tokenDocument);
+
+console.log(`Errors: ${result.summary.errors}`);
+console.log(`Warnings: ${result.summary.warnings}`);
+
+for (const violation of result.violations) {
+  console.log(`${violation.severity}: ${violation.message} at ${violation.path}`);
+}
 ```
 
-## Built-in Rule Sets
+## Manifest Linting
 
-### Recommended
-Balanced set of best practices:
-- Consistent naming
-- Reasonable depth limits
-- Standard value formats
+### Available Rules
 
-### Strict
-Enforces strict conventions:
-- No abbreviations
-- Minimal nesting
-- Explicit types required
+#### Structure
+- **no-empty-sets** - Sets must contain at least one file
+- **consistent-modifier-naming** - Enforce modifier naming style
+- **consistent-output-paths** - Check output path patterns
 
-### Minimal
-Essential rules only:
-- No circular references
-- Valid value formats
+#### Best Practices
+- **no-duplicate-files** - Warn about duplicate file references
+- **no-unused-modifiers** - Find modifiers not used in generate
+- **prefer-default-values** - Suggest defaults for common modifiers
 
-## Custom Rules
+#### Documentation
+- **modifier-description-required** - Modifiers should have descriptions
 
-Create custom lint rules:
+#### Performance
+- **reasonable-permutation-count** - Warn about excessive permutations
+
+### Configuration
+
+Configure manifest linting in `.upftrc.json`:
+
 ```typescript
-const customRule: LintRule = {
-  name: 'custom/no-brand-colors',
-  check: (token, path) => {
-    if (path.includes('brand') && token.$type === 'color') {
-      return {
-        severity: 'error',
-        message: 'Brand colors not allowed',
-        path
-      };
+{
+  "lintManifest": {
+    "extends": "recommended",
+    "rules": {
+      "consistent-modifier-naming": ["error", { "style": "kebab-case" }],
+      "reasonable-permutation-count": ["warn", { "max": 100 }]
     }
+  }
+}
+```
+
+### Usage
+
+```typescript
+import { lintManifest } from '@unpunnyfuns/tokens/linter';
+
+const manifest = {
+  sets: [{ values: ["base.json"] }],
+  modifiers: {
+    theme: { oneOf: ["light", "dark"] }
   }
 };
 
-linter.addRule(customRule);
+const result = lintManifest(manifest, {
+  configPath: '.upftrc.json'
+});
+
+console.log(`Errors: ${result.summary.errors}`);
+console.log(`Warnings: ${result.summary.warnings}`);
 ```
 
-## Auto-fixing
+## CLI Usage
 
-Some rules support automatic fixing:
-```typescript
-const results = linter.lint(document, { fix: true });
-// Returns fixed document and remaining issues
+```bash
+# Lint token file (auto-detected)
+upft lint tokens.json
+
+# Explicitly lint as manifest
+upft lint manifest.json --manifest
+
+# Use custom configuration
+upft lint tokens.json --config .upftrc.json
+
+# Output formats
+upft lint tokens.json --format json
+upft lint tokens.json --format compact
+
+# Filter output
+upft lint tokens.json --quiet  # Only show errors
 ```
 
-Fixable rules:
-- Naming convention conversion
-- Color format normalization
-- Group organization
-- Whitespace normalization
+## Presets
 
-## Integration Points
+### Minimal
+Basic quality checks:
+- naming-convention
+- duplicate-values
 
-- **CLI** - Lint command
-- **API** - Linting functions
-- **Validation** - Extended validation
-- **CI/CD** - Automated quality checks
+### Recommended (Default)
+Balanced best practices:
+- All minimal rules plus:
+- min-font-size
+- group-description-required
+- max-nesting-depth
+- no-mixed-token-types
+- prefer-references
+
+### Strict
+Comprehensive enforcement:
+- All recommended rules plus:
+- prefer-rem-over-px
+- naming-hierarchy
+- description-required
+- description-min-length
+- consistent-property-order
+- unused-tokens
+
+## Severity Levels
+
+- **error** - Must be fixed, exits with code 1
+- **warn** - Should be addressed but won't fail
+- **info** - Suggestions for improvement
+- **off** - Rule disabled
 
 ## Performance
 
-Linting performance characteristics:
-- **Small files** (<100 tokens): <5ms
-- **Medium files** (<1000 tokens): <20ms
-- **Large files** (<10000 tokens): <100ms
+- Token linting: O(n) where n is token count
+- Manifest linting: O(m*f) where m is modifiers, f is files
+- Typical performance: <50ms for most files
 
-Rules are executed in parallel when possible.
+## Integration
 
-## Reporting
+The linter integrates with:
+- **CLI** - `upft lint` command
+- **API** - Programmatic linting
+- **CI/CD** - Exit codes for automation
+- **Configuration** - `.upftrc.json` files
 
-Multiple output formats:
-- **Terminal** - Colored, formatted output
-- **JSON** - Machine-readable results
-- **HTML** - Interactive report
-- **Markdown** - Documentation-friendly
+## Design Principles
 
-## Future Considerations
+1. **Separation of Concerns** - Validation (requirements) vs Linting (opinions)
+2. **Configurable** - Every rule can be configured or disabled
+3. **Functional** - Manifest linting uses functional approach
+4. **Extensible** - Easy to add new rules
+5. **Performant** - Optimized for large token systems
 
-- **Rule plugins** - External rule packages
-- **Context-aware rules** - Rules based on token usage
-- **Progressive enhancement** - Gradual rule adoption
-- **Smart suggestions** - AI-powered fixes
+## Future Features (v0.6.0)
+
+- **Auto-fix** - Automatic fixing of violations
+- **Custom rules** - User-defined rule plugins
+- **IDE integration** - Real-time feedback
 - **Cross-file rules** - Rules spanning multiple files
-- **Performance rules** - Optimization suggestions
-- **Accessibility rules** - Color contrast checks
-- **Security rules** - Detect sensitive values
-- **Documentation rules** - Require descriptions
-- **IDE integration** - Real-time linting feedback
+- **Performance rules** - Bundle size optimization

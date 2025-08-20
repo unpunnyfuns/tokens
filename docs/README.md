@@ -1,6 +1,6 @@
 # UPFT Documentation
 
-Comprehensive documentation for the Universal Platform for Tokens (UPFT) - a modern implementation of the Design Tokens Community Group specification with multi-dimensional token composition capabilities.
+Documentation for the Universal Platform for Tokens (UPFT) - an implementation of the Design Tokens Community Group specification with multi-dimensional token composition.
 
 ## Table of Contents
 
@@ -14,20 +14,29 @@ Comprehensive documentation for the Universal Platform for Tokens (UPFT) - a mod
 Technical specifications and standards implemented by UPFT.
 
 ### [DTCG Token Specification](./specifications/dtcg-tokens.md)
-Comprehensive guide to the Design Tokens Community Group token format, including token structure, supported types, validation requirements, and migration strategies. Essential reading for understanding how UPFT implements and extends the DTCG standard.
+Guide to the Design Tokens Community Group token format, including token structure, supported types, validation requirements, and migration strategies. Covers how UPFT implements the DTCG standard.
 
 ### [UPFT Manifest Specification](./specifications/manifest.md)
 Declarative configuration format for multi-dimensional token composition. Learn how to define token sets, configure modifiers for themes and features, and generate targeted token bundles for different platforms and contexts.
+
+### [API Design Specification](./specifications/api-design.md)
+Design principles, naming conventions, and module structure for the UPFT API. Covers functional programming patterns, type organization, and error handling strategies.
 
 ## Guides
 
 Practical guides for common tasks and advanced patterns.
 
+### [Module Overview](./module-overview.md)
+Complete reference for all UPFT modules, their key functions, and usage examples. Quick reference for finding the right module and function for your needs.
+
 ### [Token Filtering Guide](./guides/filtering.md)
-Control which tokens are included in generated bundles through set-based and modifier-based filtering. Reduce bundle sizes and improve performance by shipping only relevant tokens to each platform or component.
+Control which tokens are included in generated bundles through set-based and modifier-based filtering. Reduce bundle sizes by including only relevant tokens for each platform or component.
 
 ### [Theming Guide](./guides/theming.md)
-Build sophisticated multi-dimensional design systems with themes, modes, and feature variations. Covers patterns from basic light/dark themes to complex multi-brand, multi-platform systems with accessibility modes.
+Build multi-dimensional design systems with themes, modes, and feature variations. Covers patterns from basic light/dark themes to multi-brand, multi-platform systems with accessibility modes.
+
+### [Linting Guide](./linting.md)
+Configure and use the token and manifest linting system. Covers rule configuration, presets, severity levels, and integration with CI/CD pipelines.
 
 ## Module Documentation
 
@@ -35,29 +44,32 @@ Each module in the UPFT codebase includes comprehensive documentation within its
 
 ### Core Modules
 
-- [**analyzer**](../src/analyzer/README.md) - Token analysis and validation with detailed error reporting
+- [**analysis**](../src/analysis/README.md) - Token analysis and comparison with statistics
 - [**ast**](../src/ast/README.md) - Abstract syntax tree operations for token manipulation
 - [**bundler**](../src/bundler/README.md) - Multi-format token bundling with transformation pipeline
-- [**file-writer**](../src/file-writer/README.md) - Atomic file operations with validation and backup
+- [**core**](../src/core/README.md) - Core token operations and type-safe merging
+- [**io**](../src/io/README.md) - File system operations with caching and format detection
 - [**manifest**](../src/manifest/README.md) - Manifest parsing and validation for token composition
-- [**parser**](../src/parser/README.md) - Multi-format token parsing (JSON, YAML, JSON5)
-- [**resolver**](../src/resolver/README.md) - Multi-dimensional token resolution engine
+- [**references**](../src/references/README.md) - Reference resolution and cycle detection
 - [**schemas**](../src/schemas/README.md) - JSON Schema definitions for tokens and manifests
-- [**validator**](../src/validator/README.md) - Comprehensive token validation against DTCG spec
+- [**validation**](../src/validation/README.md) - Comprehensive token validation against DTCG spec
 
 ### Utility Modules
 
-- [**linter**](../src/linter/README.md) - Token linting for consistency and best practices (WIP)
+- [**api**](../src/api/README.md) - High-level convenience APIs
+- [**cli**](../src/cli/README.md) - Command-line interface implementation
+- [**linter**](../src/linter/README.md) - Token and manifest linting for consistency and best practices
 - [**utils**](../src/utils/README.md) - Shared utilities and helpers
+- [**types**](../src/types/README.md) - TypeScript type definitions
 
 ## Architecture Overview
 
 UPFT implements a functional architecture with clear module boundaries and explicit data flow:
 
 ```
-Input Files → Parser → AST → Analyzer/Validator → Resolver → Bundler → Output Files
-                ↑                    ↓                 ↓
-            Manifest ←──────── Schemas ────────→ FileWriter
+Input Files → IO → AST → Validation → References → Bundler → Output Files
+              ↑              ↓             ↓            ↓
+          Manifest ←────── Schemas ──────────────→ Analysis
 ```
 
 ### Design Principles
@@ -89,9 +101,9 @@ UPFT follows semantic versioning with a stable public API. All modules export fu
 
 ```typescript
 // Consistent functional pattern across all modules
-import { validateTokens } from 'upft/validator';
-import { resolveTokens } from 'upft/resolver';
-import { bundleTokens } from 'upft/bundler';
+import { validateTokens } from '@unpunnyfuns/tokens/validation';
+import { resolveReferences } from '@unpunnyfuns/tokens/references';
+import { bundle } from '@unpunnyfuns/tokens/bundler';
 ```
 
 ## Performance

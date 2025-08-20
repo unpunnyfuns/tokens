@@ -4,10 +4,11 @@
 
 import { countGroups } from "../analysis/token-analyzer.js";
 import { createAST } from "../ast/ast-builder.js";
+import { visitGroups } from "../ast/ast-traverser.js";
 import { findAllTokens, getStatistics } from "../ast/query.js";
 import { resolveASTReferences } from "../ast/resolver.js";
 import type { ASTNode, GroupNode, TokenNode } from "../ast/types.js";
-import { mergeTokens } from "../core/merge.js";
+import { merge } from "../core/merge.js";
 import { TokenFileReader } from "../io/file-reader.js";
 import { resolvePermutation } from "../manifest/manifest-core.js";
 import { readManifest } from "../manifest/manifest-reader.js";
@@ -62,7 +63,7 @@ export async function loadFromFiles(
 
   for (const file of files) {
     const fileData = await fileReader.readFile(file);
-    tokens = mergeTokens(tokens, fileData.tokens);
+    tokens = merge(tokens, fileData.tokens);
     filePaths.push(file);
   }
 
@@ -141,36 +142,20 @@ export function createValidationFunction(
 /**
  * Extract AST information for bundle
  */
-export function extractASTInfo(tokens: TokenDocument, ast: ASTNode): TokenAST {
+export function extractASTInfo(_tokens: TokenDocument, ast: ASTNode): TokenAST {
+  // Use findAllTokens which internally uses visitTokens
   const allTokens = findAllTokens(ast);
-  const groups: Record<string, unknown>[] = [];
 
-  const isGroup = (obj: Record<string, unknown>): boolean => {
-    return (
-      !("$value" in obj) && Object.keys(obj).some((k) => !k.startsWith("$"))
-    );
-  };
-
-  function collectGroups(node: unknown, path: string[] = []) {
-    if (!node || typeof node !== "object") return;
-    const obj = node as Record<string, unknown>;
-
-    if (isGroup(obj)) {
-      groups.push({ path: path.join("."), ...obj });
-    }
-
-    for (const key in obj) {
-      if (!key.startsWith("$")) {
-        collectGroups(obj[key], [...path, key]);
-      }
-    }
-  }
-
-  collectGroups(tokens);
+  // Collect all groups using AST traversal
+  const groups: GroupNode[] = [];
+  visitGroups(ast, (group) => {
+    groups.push(group);
+    return true;
+  });
 
   return {
     tokens: allTokens as TokenNode[],
-    groups: groups as unknown as GroupNode[],
+    groups: groups,
     references: [],
   };
 }

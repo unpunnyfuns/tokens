@@ -1,6 +1,6 @@
 # References
 
-Standalone reference resolution engine with sophisticated cycle detection and multi-format support for token relationships. This module provides robust handling of DTCG and JSON Schema reference formats, employing graph algorithms to ensure safe resolution while detecting circular dependencies and providing detailed error context for debugging complex reference chains.
+Standalone reference resolution engine with multi-format support for token relationships. This module provides robust handling of DTCG and JSON Schema reference formats, with detailed error context for debugging complex reference chains. Note: Cycle detection has been moved to the AST module for centralized handling.
 
 ## Table of Contents
 
@@ -12,7 +12,7 @@ Standalone reference resolution engine with sophisticated cycle detection and mu
 
 ## Overview
 
-The references module provides comprehensive support for resolving token references within design token documents. It handles DTCG reference format (`{path.to.token}`), JSON Schema format (`#/path/to/token`), and detects circular dependencies using sophisticated graph algorithms.
+The references module provides comprehensive support for resolving token references within design token documents. It handles DTCG reference format (`{path.to.token}`) and JSON Schema format (`#/path/to/token`).
 
 The module features robust error recovery, continuing resolution even when some references fail, and provides detailed diagnostics for debugging complex reference chains. It supports nested references, composite values, arrays, and partial resolution modes for flexible integration scenarios.
 
@@ -64,10 +64,10 @@ console.log(`Errors: ${result.errors.length}`);
 
 ### Cycle Detection
 
-Detect circular references before resolution:
+**Note:** Cycle detection has been moved to the AST module for better integration. Use the AST module's `detectCycles` function:
 
 ```typescript
-import { detectCycles, findShortestCycle } from '@unpunnyfuns/tokens';
+import { createAST, detectCycles } from '@unpunnyfuns/tokens';
 
 const cyclicDocument = {
   a: { $value: "{b}", $type: "color" },
@@ -75,19 +75,23 @@ const cyclicDocument = {
   c: { $value: "{a}", $type: "color" }  // Creates cycle: a → b → c → a
 };
 
-const cycleResult = detectCycles(cyclicDocument);
+// Create AST first
+const ast = createAST(cyclicDocument);
+
+// Detect cycles using AST
+const cycleResult = detectCycles(ast);
 
 if (cycleResult.hasCycles) {
   console.log('Cycles detected:', cycleResult.cycles.length);
   
-  const shortestCycle = findShortestCycle(cycleResult.cycles);
-  console.log('Shortest cycle:', shortestCycle);
-  // Output: ["a", "b", "c", "a"]
+  // Show all detected cycles
+  cycleResult.cycles.forEach((cycle, index) => {
+    console.log(`Cycle ${index + 1}:`, cycle.join(' → '));
+  });
+  // Output: Cycle 1: a → b → c → a
   
-  // Analyze the dependency graph
-  for (const [token, dependencies] of cycleResult.graph) {
-    console.log(`${token} depends on: ${Array.from(dependencies).join(', ')}`);
-  }
+  // All tokens involved in cycles
+  console.log('Cyclic tokens:', Array.from(cycleResult.cyclicTokens));
 }
 ```
 
@@ -110,16 +114,16 @@ for (const [token, deps] of dependencies) {
 
 ### Topological Sorting
 
-Get safe resolution order for tokens:
+Get safe resolution order for tokens (included in detectCycles result):
 
 ```typescript
-import { getTopologicalSort } from '@unpunnyfuns/tokens';
+import { detectCycles } from '@unpunnyfuns/tokens';
 
-const order = getTopologicalSort(document);
+const result = detectCycles(document);
 
-if (order) {
+if (!result.hasCycles && result.topologicalOrder) {
   console.log('Safe resolution order:');
-  order.forEach((token, index) => {
+  result.topologicalOrder.forEach((token, index) => {
     console.log(`${index + 1}. ${token}`);
   });
 } else {
@@ -201,15 +205,23 @@ for (const error of result.errors) {
 
 ### Cycle Prevention
 
-Check if adding a reference would create a cycle:
+To check if adding a reference would create a cycle:
 
 ```typescript
-import { wouldCreateCycle, buildDependencyGraph } from '@unpunnyfuns/tokens';
+import { detectCycles } from '@unpunnyfuns/tokens';
 
-const graph = buildDependencyGraph(document);
+// Create a test document with the potential new reference
+const testDocument = {
+  ...document,
+  colors: {
+    ...document.colors,
+    primary: { ...document.colors.primary, $value: '{colors.base}' }
+  }
+};
 
-// Check before adding new reference
-if (wouldCreateCycle('colors.primary', 'colors.base', graph)) {
+// Check if this would create a cycle
+const result = detectCycles(testDocument);
+if (result.hasCycles) {
   console.log('Cannot add reference - would create cycle');
 } else {
   console.log('Safe to add reference');
@@ -242,49 +254,7 @@ function resolveValue(
 
 Resolve references in a single value using a resolved value map.
 
-#### `wouldCreateCycle`
 
-```typescript
-function wouldCreateCycle(
-  from: string, 
-  to: string, 
-  graph: Map<string, Set<string>>
-): boolean
-```
-
-Check if adding an edge would create a cycle in the dependency graph.
-
-### Cycle Detection Functions
-
-#### `detectCycles`
-
-```typescript
-function detectCycles(
-  document: TokenDocument
-): CycleDetectionResult
-```
-
-Detect all cycles in token references using Tarjan's algorithm.
-
-#### `findShortestCycle`
-
-```typescript
-function findShortestCycle(
-  cycles: string[][]
-): string[] | null
-```
-
-Find the shortest cycle from a list of detected cycles.
-
-#### `getTopologicalSort`
-
-```typescript
-function getTopologicalSort(
-  document: TokenDocument
-): string[] | null
-```
-
-Get topological ordering of tokens, or null if cycles exist.
 
 ### Reference Extraction Functions
 
@@ -400,9 +370,11 @@ interface CycleDetectionResult {
 | File | Purpose |
 |------|---------|
 | `resolver.ts` | Reference resolution with error handling |
-| `cycle-detector.ts` | Cycle detection using graph algorithms |
-| `extractor.ts` | Reference extraction utilities |
-| `graph-builder.ts` | Dependency graph construction |
+| `resolver/` | Resolver sub-modules |
+| `resolver/index.ts` | Main resolver API |
+| `resolver/resolve-engine.ts` | Core resolution engine |
+| `resolver/dependency-graph.ts` | Dependency graph utilities |
+| `resolver/types.ts` | Type definitions |
 
 ## Performance
 

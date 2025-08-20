@@ -8,9 +8,11 @@ import type {
   ResolutionInput,
   UPFTResolverManifest,
 } from "../../manifest/upft-types.js";
+import type {
+  BaseFileSystemOptions,
+  ResolverOptions,
+} from "../../types/options.js";
 import type { TokenDocument } from "../../types.js";
-import type { ResolverOptions } from "../../types/options.js";
-import type { BaseFileSystemOptions } from "../../types/options.js";
 
 export interface TokenDiff {
   differences: Array<{

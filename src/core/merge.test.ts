@@ -1,9 +1,9 @@
 import { join } from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
 import { TokenFileReader } from "../io/file-reader.js";
-import { mergeTokens } from "./merge.js";
+import { DTCGMergeError, merge } from "./merge.js";
 
-describe("mergeTokens", () => {
+describe("merge", () => {
   describe("simple token merging", () => {
     it("should merge non-conflicting tokens", () => {
       const a = {
@@ -15,7 +15,7 @@ describe("mergeTokens", () => {
         spacing: { large: { $value: "16px" } },
       };
 
-      const result = mergeTokens(a, b);
+      const result = merge(a, b);
 
       expect(result).toEqual({
         color: {
@@ -33,7 +33,7 @@ describe("mergeTokens", () => {
       const a = { color: { primary: { $value: "#ff0000" } } };
       const b = { color: { primary: { $value: "#00ff00" } } };
 
-      const result = mergeTokens(a, b);
+      const result = merge(a, b);
 
       expect(result).toEqual({
         color: { primary: { $value: "#00ff00" } },
@@ -56,7 +56,7 @@ describe("mergeTokens", () => {
         },
       };
 
-      const result = mergeTokens(a, b);
+      const result = merge(a, b);
 
       expect(result).toEqual({
         color: {
@@ -85,7 +85,7 @@ describe("mergeTokens", () => {
         },
       };
 
-      const result = mergeTokens(a, b);
+      const result = merge(a, b);
 
       expect(result.spacing).toBeDefined();
       const spacing = result.spacing as any;
@@ -108,14 +108,13 @@ describe("mergeTokens", () => {
         },
       };
 
-      // mergeTokens is now safe by default - it should not throw
-      const result = mergeTokens(a, b);
+      // Group-level $type changes are allowed - the last one wins
+      const result = merge(a, b);
       expect(result).toBeDefined();
-      // The last value wins in safe mode
       expect((result as any).colors?.$type).toBe("gradient");
     });
 
-    it("should handle conflicting token-level $type without throwing", () => {
+    it("should throw on conflicting token-level $type with detailed error", () => {
       const a = {
         theme: {
           primary: { $value: "#ff0000", $type: "color" },
@@ -127,16 +126,17 @@ describe("mergeTokens", () => {
         },
       };
 
-      // mergeTokens is now safe by default - it should not throw
-      const result = mergeTokens(a, b);
-      expect(result).toBeDefined();
-      // The last value wins in safe mode
-      expect((result as any).theme?.primary?.$type).toBe("dimension");
+      // merge should throw on type conflicts with detailed error
+      expect(() => merge(a, b)).toThrow(DTCGMergeError);
+      expect(() => merge(a, b)).toThrow(
+        /Cannot merge token of type 'color' with type 'dimension'/,
+      );
+      expect(() => merge(a, b)).toThrow(/undefined behavior/);
     });
   });
 
   describe("group vs token conflicts", () => {
-    it("should handle merging group into token without throwing", () => {
+    it("should throw when merging group into token with detailed error", () => {
       const a = {
         spacing: { $value: "8px", $type: "dimension" },
       };
@@ -147,14 +147,15 @@ describe("mergeTokens", () => {
         },
       };
 
-      // mergeTokens is now safe by default - it should not throw
-      const result = mergeTokens(a, b);
-      expect(result).toBeDefined();
-      // In safe mode, conflicting types are handled gracefully
-      expect(result.spacing).toBeDefined();
+      // merge should throw on structure conflicts
+      expect(() => merge(a, b)).toThrow(DTCGMergeError);
+      expect(() => merge(a, b)).toThrow(/Cannot merge a token with a group/);
+      expect(() => merge(a, b)).toThrow(
+        /One is a value, the other is a container/,
+      );
     });
 
-    it("should handle merging token into group without throwing", () => {
+    it("should throw when merging token into group with detailed error", () => {
       const a = {
         spacing: {
           small: { $value: "4px" },
@@ -165,11 +166,12 @@ describe("mergeTokens", () => {
         spacing: { $value: "8px", $type: "dimension" },
       };
 
-      // mergeTokens is now safe by default - it should not throw
-      const result = mergeTokens(a, b);
-      expect(result).toBeDefined();
-      // In safe mode, conflicting types are handled gracefully
-      expect(result.spacing).toBeDefined();
+      // merge should throw on structure conflicts
+      expect(() => merge(a, b)).toThrow(DTCGMergeError);
+      expect(() => merge(a, b)).toThrow(/Cannot merge a token with a group/);
+      expect(() => merge(a, b)).toThrow(
+        /One is a value, the other is a container/,
+      );
     });
   });
 
@@ -196,7 +198,7 @@ describe("mergeTokens", () => {
         },
       };
 
-      const result = mergeTokens(a, b);
+      const result = merge(a, b);
 
       expect(result).toEqual({
         shadow: {
@@ -233,7 +235,7 @@ describe("mergeTokens", () => {
         },
       };
 
-      const result = mergeTokens(a, b);
+      const result = merge(a, b);
 
       expect(result).toEqual({
         heading: {
@@ -261,7 +263,7 @@ describe("mergeTokens", () => {
         },
       };
 
-      const result = mergeTokens(a, b);
+      const result = merge(a, b);
 
       expect(result).toEqual({
         color: {
@@ -296,7 +298,7 @@ describe("mergeTokens", () => {
         },
       };
 
-      const result = mergeTokens(a, b);
+      const result = merge(a, b);
 
       const color = result.color as any;
       expect(color?.primary?.$extensions).toEqual({
@@ -326,7 +328,7 @@ describe("mergeTokens", () => {
         },
       };
 
-      const result = mergeTokens(a, b);
+      const result = merge(a, b);
 
       const color = result.color as any;
       expect(color?.primary?.$description).toBe("Updated primary color");
@@ -350,7 +352,7 @@ describe("mergeTokens", () => {
         },
       };
 
-      const result = mergeTokens(a, b);
+      const result = merge(a, b);
 
       const color = result.color as any;
       expect(color?.primary).toEqual({
@@ -362,13 +364,12 @@ describe("mergeTokens", () => {
   });
 
   describe("error handling", () => {
-    it("should handle conflicts gracefully without throwing", () => {
+    it("should throw on deeply nested conflicts with detailed error", () => {
       const a = {
         deeply: {
           nested: {
             color: {
-              $type: "color",
-              primary: { $value: "#ff0000" },
+              primary: { $value: "#ff0000", $type: "color" },
             },
           },
         },
@@ -377,18 +378,18 @@ describe("mergeTokens", () => {
         deeply: {
           nested: {
             color: {
-              $type: "dimension",
-              primary: { $value: "16px" },
+              primary: { $value: "16px", $type: "dimension" },
             },
           },
         },
       };
 
-      // mergeTokens is now safe by default - it should not throw
-      const result = mergeTokens(a, b);
-      expect(result).toBeDefined();
-      // The merge should succeed with the last value winning
-      expect((result as any).deeply?.nested?.color?.$type).toBe("dimension");
+      // merge should throw on type conflicts even when deeply nested
+      expect(() => merge(a, b)).toThrow(DTCGMergeError);
+      expect(() => merge(a, b)).toThrow(
+        /Cannot merge token of type 'color' with type 'dimension'/,
+      );
+      expect(() => merge(a, b)).toThrow(/undefined behavior/);
     });
   });
 
@@ -400,7 +401,7 @@ describe("mergeTokens", () => {
         { color: { a: { $value: "#0000ff" }, c: { $value: "#ffff00" } } },
       ];
 
-      const result = files.reduce((acc, file) => mergeTokens(acc, file), {});
+      const result = files.reduce((acc, file) => merge(acc, file), {});
 
       expect(result).toEqual({
         color: {
@@ -426,7 +427,7 @@ describe("mergeTokens", () => {
       );
       const semantic = await fileReader.readFile("tokens/semantic/colors.json");
 
-      const merged = mergeTokens(primitives.tokens, semantic.tokens);
+      const merged = merge(primitives.tokens, semantic.tokens);
 
       // Should have both primitive and semantic colors
       expect(merged.colors).toBeDefined();
@@ -438,7 +439,7 @@ describe("mergeTokens", () => {
         "test-scenarios/theme-light.json",
       );
 
-      const merged = mergeTokens(base.tokens, light.tokens);
+      const merged = merge(base.tokens, light.tokens);
 
       // Theme should override base values
       expect(merged.color).toBeDefined();
@@ -456,8 +457,8 @@ describe("mergeTokens", () => {
         "test-scenarios/density-compact.json",
       );
 
-      const mergedComfortable = mergeTokens(base.tokens, comfortable.tokens);
-      const mergedCompact = mergeTokens(base.tokens, compact.tokens);
+      const mergedComfortable = merge(base.tokens, comfortable.tokens);
+      const mergedCompact = merge(base.tokens, compact.tokens);
 
       // Different densities should have different spacing values
       expect(mergedComfortable).toBeDefined();

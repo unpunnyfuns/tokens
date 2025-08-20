@@ -3,7 +3,7 @@
  * Extracted from UPFTResolver class for functional composition
  */
 
-import { mergeTokens } from "../core/merge.js";
+import { merge } from "../core/merge.js";
 import type { TokenFileReader } from "../io/file-reader.js";
 import type { TokenDocument } from "../types.js";
 import type {
@@ -121,7 +121,7 @@ export async function loadAndMergeFiles(
 
   for (const file of files) {
     const tokenFile = await fileReader.readFile(file);
-    tokens = mergeTokens(tokens, tokenFile.tokens);
+    tokens = merge(tokens, tokenFile.tokens);
   }
 
   return tokens;

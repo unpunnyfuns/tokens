@@ -12,6 +12,7 @@ export interface OneOfModifier {
   oneOf: string[];
   values: Record<string, string[]>; // Map of option name to file paths
   default?: string; // First item is default if not specified
+  description?: string; // Optional description for documentation
 }
 
 /**
@@ -20,6 +21,8 @@ export interface OneOfModifier {
 export interface AnyOfModifier {
   anyOf: string[];
   values: Record<string, string[]>; // Map of option name to file paths
+  default?: string[]; // Default selections for anyOf
+  description?: string; // Optional description for documentation
 }
 
 /**

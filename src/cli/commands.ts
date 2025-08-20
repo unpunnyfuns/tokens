@@ -4,6 +4,7 @@
  */
 
 import type { BundleWriteResult } from "../bundler/index.js";
+import type { LintResult } from "../linter/index.js";
 import type {
   ResolutionInput,
   ResolvedPermutation,
@@ -14,6 +15,7 @@ import type { TokenDocument, ValidationResult } from "../types.js";
 import type {
   BundleCommandOptions,
   DiffCommandOptions,
+  LintCommandOptions,
   ListOptions,
   ManifestInfo,
   ResolveCommandOptions,
@@ -26,6 +28,7 @@ import {
   diffDocuments,
   diffPermutations,
   getManifestInfo,
+  lintFile,
   listPermutations,
   listTokens,
   resolveTokens,
@@ -126,5 +129,11 @@ export function createCLI(options: CommandOptions = {}) {
     // Info command
     info: (manifest: UPFTResolverManifest): Promise<ManifestInfo> =>
       getManifestInfo(manifest),
+
+    // Lint command
+    lint: (
+      filePath: string,
+      lintOpts?: LintCommandOptions,
+    ): Promise<LintResult> => lintFile(filePath, lintOpts),
   };
 }
