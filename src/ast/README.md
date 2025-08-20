@@ -15,7 +15,14 @@ Tree-based representation of design token documents enabling efficient structura
 
 The AST module provides a tree-based representation of design token documents that enables efficient querying, traversal, and manipulation of token structures. It uses a functional API for all operations, making it suitable for both simple queries and complex reference resolution tasks.
 
-The module constructs abstract syntax trees from token documents where each node represents either a token (with a `$value`) or a group (container for other nodes). This structure enables efficient path-based lookups, type-based filtering, and dependency analysis. The module integrates with the references module for robust reference resolution and cycle detection.
+The module constructs abstract syntax trees from token documents where each node represents either a token (with a `$value` or `$ref`) or a group (container for other nodes). This structure enables efficient path-based lookups, type-based filtering, and dependency analysis. 
+
+**Key Features:**
+- Centralized cycle detection using Tarjan's algorithm
+- Automatic reference normalization (DTCG `{path}` and JSON Schema `#/path` formats)
+- Built-in topological sorting for dependency order
+- Efficient traversal without redundant recursion
+- Support for both `$value` and `$ref` token formats
 
 ## Usage
 
@@ -24,13 +31,15 @@ The module constructs abstract syntax trees from token documents where each node
 Create AST representations from token documents:
 
 ```typescript
-import { createASTFromDocument, loadASTFromFile } from '@unpunnyfuns/tokens';
+import { createAST, loadAST } from '@unpunnyfuns/tokens';
 
 // From complete document
 const document = {
   colors: {
     primary: { $value: '#007bff', $type: 'color' },
-    secondary: { $value: '{colors.primary}', $type: 'color' }
+    secondary: { $value: '{colors.primary}', $type: 'color' },
+    // JSON Schema style reference
+    tertiary: { $ref: '#/colors/primary' }
   },
   spacing: {
     sm: { $value: '8px', $type: 'dimension' },
@@ -38,10 +47,10 @@ const document = {
   }
 };
 
-const ast = createASTFromDocument(document);
+const ast = createAST(document);
 
 // From file
-const astFromFile = await loadASTFromFile('./tokens.json');
+const astFromFile = await loadAST('./tokens.json');
 ```
 
 ### Querying AST
@@ -118,8 +127,7 @@ Analyze and resolve token references:
 ```typescript
 import { 
   resolveASTReferences, 
-  detectASTCycles, 
-  getResolutionOrder,
+  detectCycles,
   createASTReferenceGraph 
 } from '@unpunnyfuns/tokens';
 
@@ -129,15 +137,18 @@ if (errors.length > 0) {
   console.error('Resolution errors:', errors);
 }
 
-// Detect circular references
-const cycles = detectASTCycles(ast);
-if (cycles.length > 0) {
-  console.warn('Circular references found:', cycles);
+// Detect circular references using Tarjan's algorithm
+const cycleResult = detectCycles(ast);
+if (cycleResult.hasCycles) {
+  console.warn('Circular references found:', cycleResult.cycles);
+  console.warn('Tokens involved:', Array.from(cycleResult.cyclicTokens));
+  // cycleResult.cycles: Array of cycles, each cycle is an array of token paths
+  // cycleResult.cyclicTokens: Set of all token paths involved in any cycle
+} else {
+  // Get topological resolution order (only available when no cycles)
+  console.log('Resolution order:', cycleResult.topologicalOrder);
+  // Use this order to resolve tokens without dependency issues
 }
-
-// Get topological resolution order
-const order = getResolutionOrder(ast);
-console.log('Resolution order:', order);
 
 // Build dependency graph
 const { dependencies, dependents } = createASTReferenceGraph(ast);
@@ -206,8 +217,7 @@ console.log(`colors.primary is used by: ${dependents.join(', ')}`);
 | Function | Type | Description |
 |----------|------|-------------|
 | `resolveASTReferences` | `(root: ASTNode) => ResolutionError[]` | Resolve all references in AST |
-| `detectASTCycles` | `(root: ASTNode) => string[][]` | Detect circular references |
-| `getResolutionOrder` | `(root: ASTNode) => string[]` | Get topological resolution order |
+| `detectCycles` | `(root: ASTNode) => CycleDetectionResult` | Detect circular references with topological order |
 | `createASTReferenceGraph` | `(root: ASTNode) => ReferenceGraphResult` | Build dependency/dependent graph |
 | `astToDocument` | `(root: ASTNode) => TokenDocument` | Convert AST back to document |
 
@@ -290,10 +300,14 @@ interface ASTStatistics {
 
 | File | Purpose |
 |------|---------|
-| `ast-builder.ts` | Constructs AST from token documents |
+| `ast-builder.ts` | Constructs AST from token documents with reference normalization |
 | `ast-traverser.ts` | Tree traversal patterns and visitor utilities |
 | `query.ts` | Functional query API for finding and filtering nodes |
 | `resolver.ts` | Reference resolution using the references module |
+| `cycle-detector/` | Cycle detection using Tarjan's algorithm |
+| `cycle-detector/index.ts` | Main cycle detection API |
+| `cycle-detector/tarjan-algorithm.ts` | Tarjan's strongly connected components algorithm |
+| `cycle-detector/types.ts` | Type definitions for cycle detection |
 | `types.ts` | TypeScript type definitions for all AST structures |
 
 ## Performance Notes
@@ -336,9 +350,9 @@ const resolvedAST = createASTFromDocument(resolved);
 ```typescript
 // Use AST for efficient validation
 const unresolved = findUnresolvedTokens(ast);
-const cycles = detectASTCycles(ast);
+const cycleResult = detectCycles(ast);
 
-if (unresolved.length > 0 || cycles.length > 0) {
+if (unresolved.length > 0 || cycleResult.hasCycles) {
   throw new Error('Validation failed');
 }
 ```

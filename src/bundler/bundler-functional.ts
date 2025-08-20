@@ -5,9 +5,9 @@
 import { join } from "node:path";
 import type { TokenFileReader } from "../io/file-reader.js";
 import {
+  type FormatOptions,
   TokenFileWriter,
   type WriteOptions,
-  type FormatOptions,
 } from "../io/file-writer.js";
 import { generateAll as generateAllPermutations } from "../manifest/manifest-core.js";
 import type {
@@ -123,12 +123,11 @@ async function writeBundleToFile(
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`Failed to write ${filePath}: ${errorMessage}`);
 
     return {
       filePath,
       success: false,
-      error: errorMessage,
+      error: `Failed to write ${filePath}: ${errorMessage}`,
     };
   }
 }

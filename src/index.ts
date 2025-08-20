@@ -24,54 +24,49 @@
 // Re-export all submodules for convenient access
 // Each submodule has its own focused exports
 
+export * from "./api/index.js";
 export * from "./ast/index.js";
 export * from "./bundler/index.js";
-export * from "./validation/index.js";
-export * from "./references/index.js";
-export * from "./manifest/index.js";
-export * from "./io/index.js";
-export * from "./api/index.js";
 export * from "./core/index.js";
-
+export * from "./io/index.js";
+export * from "./manifest/index.js";
+export * from "./references/index.js";
 // Export all types from central location
 export type {
-  // Core token types
-  Token,
-  TokenDocument,
-  TokenGroup,
-  TokenValue,
-  // Validation types
-  ValidationError,
-  ValidationResult,
-  ValidationResultWithStats,
-  TokenValidationResult,
-  ManifestValidationResult,
+  // AST types
+  ASTNode,
   // Bundle types
   Bundle,
   BundleOptions,
   BundleResult,
-  BundleWriteResult,
   BundlerOptions,
-  // AST types
-  ASTNode,
-  TokenNode,
-  GroupNode,
-  // Manifest types
-  UPFTResolverManifest,
-  ResolvedPermutation,
-  GenerateSpec,
-  ResolutionInput,
-  // Options
-  ResolverOptions,
-  // Merge types
-  MergeResult,
-  MergeConflict,
-  MergeTokensOptions,
-  // Reference types
-  ResolutionError,
-  ResolveOptions,
-  ResolveResult,
+  BundleWriteResult,
   CycleDetectionResult,
+  GenerateSpec,
+  GroupNode,
+  ManifestValidationResult,
   // Path index types
   PathIndex,
+  // Reference types
+  ResolutionError,
+  ResolutionInput,
+  ResolvedPermutation,
+  ResolveOptions,
+  ResolveResult,
+  // Options
+  ResolverOptions,
+  // Core token types
+  Token,
+  TokenDocument,
+  TokenGroup,
+  TokenNode,
+  TokenValidationResult,
+  TokenValue,
+  // Manifest types
+  UPFTResolverManifest,
+  // Validation types
+  ValidationError,
+  ValidationResult,
+  ValidationResultWithStats,
 } from "./types/index.js";
+export * from "./validation/index.js";

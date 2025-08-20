@@ -2,10 +2,10 @@
  * Clean validation API for tokens and manifests
  */
 
-import type { TokenDocument } from "../types.js";
 import type { ValidationResult } from "../types/validation.js";
-import { validateTokenDocument } from "./token-validator.js";
+import type { TokenDocument } from "../types.js";
 import { validateManifestDocument } from "./manifest-validation.js";
+import { validateTokenDocument } from "./token-validator.js";
 
 /**
  * Validate a token document

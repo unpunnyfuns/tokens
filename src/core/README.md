@@ -313,13 +313,16 @@ if (isToken(value) && hasValue(value)) {
 
 ```typescript
 // Core utilities enable comprehensive testing
-import { cloneToken, traverseTokens } from '@unpunnyfuns/tokens';
+import { cloneToken, isToken } from '@unpunnyfuns/tokens';
+import { createAST, visitTokens } from '@unpunnyfuns/tokens';
 
 // Create test data without side effects
 const testToken = cloneToken(originalToken);
 
-// Verify token structures in tests
-traverseTokens(result, (path, token) => {
-  expect(isToken(token)).toBe(true);
+// Verify token structures in tests using AST
+const ast = createAST(result);
+visitTokens(ast, (tokenNode) => {
+  expect(tokenNode.value).toBeDefined();
+  return true;
 });
 ```

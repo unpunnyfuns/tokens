@@ -110,7 +110,15 @@ function createTokenNode(
   token: TokenOrGroup,
   parent: ASTNode,
 ): TokenNode {
-  const references = extractReferences(token);
+  const rawReferences = extractReferences(token);
+
+  // Normalize references (convert #/path/to/token and {path.to.token} to path.to.token)
+  const references = rawReferences.map((ref) => {
+    return ref
+      .replace(/^\{|\}$/g, "") // Remove DTCG braces
+      .replace(/^#\//, "") // Remove JSON Schema prefix
+      .replace(/\//g, "."); // Convert slashes to dots
+  });
 
   const node: TokenNode = {
     type: "token",

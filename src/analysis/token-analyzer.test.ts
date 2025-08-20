@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as astBuilder from "../ast/ast-builder.js";
+import * as cycleDetector from "../ast/cycle-detector/index.js";
 import * as ast from "../ast/index.js";
 import {
   analyzeTokens,
@@ -16,8 +17,11 @@ vi.mock("../ast/ast-builder.js", () => ({
 vi.mock("../ast/index.js", () => ({
   getStatistics: vi.fn(),
   resolveASTReferences: vi.fn(),
-  findCircularReferences: vi.fn(),
   findTokensByType: vi.fn(),
+}));
+
+vi.mock("../ast/cycle-detector/index.js", () => ({
+  detectCycles: vi.fn(),
 }));
 
 describe("Token Analyzer", () => {
@@ -52,22 +56,24 @@ describe("Token Analyzer", () => {
         { type: "invalid", path: "color.invalid" },
       ];
 
-      const mockCircularRefs = [
-        { path: "color.circular1" },
-        { path: "color.circular2" },
-      ];
+      const mockCycleResult = {
+        hasCycles: true,
+        cyclicTokens: new Set(["color.circular1", "color.circular2"]),
+        cycles: [["color.circular1", "color.circular2"]],
+        topologicalOrder: null,
+      };
 
       (astBuilder.createAST as any).mockReturnValue(mockAST);
       (ast.getStatistics as any).mockReturnValue(mockStats);
       (ast.resolveASTReferences as any).mockReturnValue(mockResolutionErrors);
-      (ast.findCircularReferences as any).mockReturnValue(mockCircularRefs);
+      (cycleDetector.detectCycles as any).mockReturnValue(mockCycleResult);
 
       const result = analyzeTokens(mockDocument);
 
       expect(astBuilder.createAST).toHaveBeenCalledWith(mockDocument);
       expect(ast.getStatistics).toHaveBeenCalledWith(mockAST);
       expect(ast.resolveASTReferences).toHaveBeenCalledWith(mockAST);
-      expect(ast.findCircularReferences).toHaveBeenCalledWith(mockAST);
+      expect(cycleDetector.detectCycles).toHaveBeenCalledWith(mockAST);
 
       expect(result).toEqual({
         tokenCount: 3,
@@ -93,7 +99,12 @@ describe("Token Analyzer", () => {
       (astBuilder.createAST as any).mockReturnValue(mockAST);
       (ast.getStatistics as any).mockReturnValue(mockStats);
       (ast.resolveASTReferences as any).mockReturnValue([]);
-      (ast.findCircularReferences as any).mockReturnValue([]);
+      (cycleDetector.detectCycles as any).mockReturnValue({
+        hasCycles: false,
+        cyclicTokens: new Set(),
+        cycles: [],
+        topologicalOrder: [],
+      });
 
       const result = analyzeTokens(mockDocument);
 
@@ -122,7 +133,12 @@ describe("Token Analyzer", () => {
       (astBuilder.createAST as any).mockReturnValue(mockAST);
       (ast.getStatistics as any).mockReturnValue(mockStats);
       (ast.resolveASTReferences as any).mockReturnValue(mockResolutionErrors);
-      (ast.findCircularReferences as any).mockReturnValue([]);
+      (cycleDetector.detectCycles as any).mockReturnValue({
+        hasCycles: false,
+        cyclicTokens: new Set(),
+        cycles: [],
+        topologicalOrder: [],
+      });
 
       const result = analyzeTokens(mockDocument);
 
@@ -143,8 +159,14 @@ describe("Token Analyzer", () => {
         },
       };
 
+      // Mock createAST and getStatistics
+      (astBuilder.createAST as any).mockReturnValue({});
+      (ast.getStatistics as any).mockReturnValue({
+        totalGroups: 4, // root + color + spacing = 3 user groups + 1 root
+      });
+
       const count = countGroups(doc);
-      expect(count).toBe(3); // root, color and spacing groups
+      expect(count).toBe(3); // root, color and spacing groups (excluding root)
     });
 
     it("should count nested groups", () => {
@@ -164,8 +186,14 @@ describe("Token Analyzer", () => {
         },
       };
 
+      // Mock createAST and getStatistics
+      (astBuilder.createAST as any).mockReturnValue({});
+      (ast.getStatistics as any).mockReturnValue({
+        totalGroups: 6, // root + theme + colors + background + foreground + spacing = 5 user + 1 root
+      });
+
       const count = countGroups(doc);
-      expect(count).toBe(6); // root, theme, colors, background, foreground, spacing
+      expect(count).toBe(5); // theme, colors, background, foreground, spacing (root excluded)
     });
 
     it("should not count tokens as groups", () => {
@@ -174,11 +202,23 @@ describe("Token Analyzer", () => {
         token2: { $value: "value2" },
       };
 
+      // Mock createAST and getStatistics
+      (astBuilder.createAST as any).mockReturnValue({});
+      (ast.getStatistics as any).mockReturnValue({
+        totalGroups: 1, // Only root group
+      });
+
       const count = countGroups(doc);
-      expect(count).toBe(1); // root is counted as a group
+      expect(count).toBe(0); // No user groups, only root which is excluded
     });
 
     it("should handle empty documents", () => {
+      // Mock createAST and getStatistics
+      (astBuilder.createAST as any).mockReturnValue({});
+      (ast.getStatistics as any).mockReturnValue({
+        totalGroups: 1, // Only root group for empty doc
+      });
+
       const count = countGroups({});
       expect(count).toBe(0);
     });
@@ -192,8 +232,14 @@ describe("Token Analyzer", () => {
         },
       };
 
+      // Mock createAST and getStatistics
+      (astBuilder.createAST as any).mockReturnValue({});
+      (ast.getStatistics as any).mockReturnValue({
+        totalGroups: 2, // root + colors = 1 user group + 1 root
+      });
+
       const count = countGroups(doc);
-      expect(count).toBe(2); // root and colors group
+      expect(count).toBe(1); // Only colors group (root excluded)
     });
 
     it("should handle mixed groups and tokens", () => {
@@ -207,8 +253,14 @@ describe("Token Analyzer", () => {
         },
       };
 
+      // Mock createAST and getStatistics
+      (astBuilder.createAST as any).mockReturnValue({});
+      (ast.getStatistics as any).mockReturnValue({
+        totalGroups: 3, // root + group1 + nestedGroup = 2 user groups + 1 root
+      });
+
       const count = countGroups(doc);
-      expect(count).toBe(3); // root, group1 and nestedGroup
+      expect(count).toBe(2); // group1 and nestedGroup (root excluded)
     });
 
     it("should handle null and undefined values", () => {
@@ -220,8 +272,14 @@ describe("Token Analyzer", () => {
         },
       };
 
+      // Mock createAST and getStatistics
+      (astBuilder.createAST as any).mockReturnValue({});
+      (ast.getStatistics as any).mockReturnValue({
+        totalGroups: 2, // root + group1 = 1 user group + 1 root
+      });
+
       const count = countGroups(doc as any);
-      expect(count).toBe(2); // root and group1
+      expect(count).toBe(1); // Only group1 (root excluded)
     });
   });
 

@@ -5,6 +5,12 @@
  * for convenient importing throughout the codebase.
  */
 
+// API types
+export type {
+  ApiBundleOptions as BundleOptions,
+  BundleMetadata,
+  BundleResult,
+} from "../api/types.js";
 // AST types
 export type {
   ASTNode,
@@ -14,36 +20,12 @@ export type {
   ResolutionError,
   TokenNode,
 } from "../ast/types.js";
-
 // Bundle types
 export type {
   Bundle,
   BundleWriteResult,
   TokenTransform,
 } from "../bundler/bundler-functional.js";
-
-// API types
-export type {
-  ApiBundleOptions as BundleOptions,
-  BundleResult,
-  BundleMetadata,
-} from "../api/types.js";
-
-// Merge types
-export type {
-  MergeResult,
-  MergeConflict,
-  MergeTokensOptions,
-} from "../core/merge.js";
-
-// Reference types
-export type {
-  ResolveOptions,
-  ResolveResult,
-} from "../references/resolver.js";
-
-export type { CycleDetectionResult } from "../references/cycle-detector.js";
-
 // Path index type
 export type { PathIndex } from "../core/path-index.js";
 // Filesystem types
@@ -59,6 +41,12 @@ export type {
   TokenSet,
   UPFTResolverManifest,
 } from "../manifest/upft-types.js";
+export type { CycleDetectionResult } from "../ast/cycle-detector/index.js";
+// Reference types
+export type {
+  ResolveOptions,
+  ResolveResult,
+} from "../references/resolver.js";
 // Core token types
 export type {
   DTCGReference,

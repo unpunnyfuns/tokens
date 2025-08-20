@@ -3,71 +3,51 @@
  * Separate from validation - these are opinions, not requirements
  */
 
-import { isToken } from "../core/token/guards.js";
-import { traverseTokens } from "../core/token/operations.js";
-import type { Token, TokenDocument } from "../types.js";
-import * as rules from "./lint-rules.js";
-
-export interface LintResult {
-  violations: LintViolation[];
-  summary: {
-    errors: number;
-    warnings: number;
-    info: number;
-  };
-}
-
-export interface LintViolation {
-  path: string;
-  rule: string;
-  severity: "error" | "warning" | "info";
-  message: string;
-  fix?: string;
-}
-
-export interface LintRule {
-  name: string;
-  description: string;
-  check: (token: Token, path: string) => LintViolation | null;
-}
-
-export interface LinterOptions {
-  rules?: string[];
-  customRules?: LintRule[];
-  severity?: {
-    [ruleName: string]: "error" | "warning" | "info" | "off";
-  };
-}
+import { createAST } from "../ast/ast-builder.js";
+import { visitGroups, visitTokens } from "../ast/ast-traverser.js";
+import type { GroupNode, TokenNode } from "../ast/types.js";
+import type { Token, TokenDocument, TokenOrGroup } from "../types.js";
+import { loadConfig, parseRuleSetting, resolveConfig } from "./config.js";
+import { RULES } from "./token-rules.js";
+import type {
+  LinterOptions,
+  LintResult,
+  LintRule,
+  LintViolation,
+} from "./token-types.js";
 
 /**
  * Token linter for checking style and best practices
  */
 export class TokenLinter {
-  private enabledRules: Map<string, LintRule>;
-  private severityOverrides: Map<string, "error" | "warning" | "info">;
+  private rules: Map<
+    string,
+    { rule: LintRule; severity: string; options: Record<string, unknown> }
+  >;
+  private ignorePatterns: string[];
 
   constructor(options: LinterOptions = {}) {
-    this.enabledRules = new Map();
-    this.severityOverrides = new Map();
+    this.rules = new Map();
 
-    // Load default rules
-    this.loadDefaultRules(options.rules);
+    // Load configuration
+    const config = loadConfig(options.configPath);
+    const lintConfig = config.lint || {};
+    const ruleConfig = resolveConfig(lintConfig);
+    this.ignorePatterns = lintConfig.ignore || [];
 
-    // Add custom rules
-    if (options.customRules) {
-      for (const rule of options.customRules) {
-        this.enabledRules.set(rule.name, rule);
-      }
-    }
+    // Process rules from config
+    for (const [ruleName, setting] of Object.entries(ruleConfig)) {
+      const { severity, options: ruleOptions } = parseRuleSetting(setting);
 
-    // Apply severity overrides
-    if (options.severity) {
-      for (const [ruleName, severity] of Object.entries(options.severity)) {
-        if (severity === "off") {
-          this.enabledRules.delete(ruleName);
-        } else {
-          this.severityOverrides.set(ruleName, severity);
-        }
+      if (severity === "off") continue;
+
+      const rule = RULES[ruleName];
+      if (rule) {
+        this.rules.set(ruleName, {
+          rule,
+          severity,
+          options: ruleOptions,
+        });
       }
     }
   }
@@ -77,19 +57,74 @@ export class TokenLinter {
    */
   lint(document: TokenDocument): LintResult {
     const violations: LintViolation[] = [];
+    const allTokens = new Map<string, Token>();
+    const allGroups = new Map<string, TokenOrGroup>();
+    const tokensByType = new Map<string, Map<string, Token>>();
+    const valueOccurrences = new Map<string, string[]>();
 
-    // Check each token
-    traverseTokens(document, (path, tokenOrGroup) => {
-      if (isToken(tokenOrGroup)) {
-        this.lintToken(tokenOrGroup, path, violations);
+    // Create AST for traversal
+    const ast = createAST(document);
+
+    // First pass: collect all tokens for document-level analysis
+    visitTokens(ast, (tokenNode: TokenNode) => {
+      // Check ignore patterns
+      if (this.shouldIgnore(tokenNode.path)) {
+        return true;
       }
+
+      const token: Token = {
+        $value: tokenNode.value || "",
+        ...(tokenNode.tokenType ? { $type: tokenNode.tokenType } : {}),
+      };
+      allTokens.set(tokenNode.path, token);
+
+      // Track by type
+      const type = tokenNode.tokenType || "unknown";
+      if (!tokensByType.has(type)) {
+        tokensByType.set(type, new Map());
+      }
+      tokensByType.get(type)?.set(tokenNode.path, token);
+
+      // Track value occurrences
+      const valueStr = JSON.stringify(tokenNode.value);
+      if (!valueOccurrences.has(valueStr)) {
+        valueOccurrences.set(valueStr, []);
+      }
+      valueOccurrences.get(valueStr)?.push(tokenNode.path);
       return true;
     });
+
+    // Collect groups
+    visitGroups(ast, (groupNode: GroupNode) => {
+      if (this.shouldIgnore(groupNode.path)) {
+        return true;
+      }
+      // Convert group node back to TokenOrGroup format for compatibility
+      const group: TokenOrGroup = {};
+      if (groupNode.metadata?.$type) {
+        group.$type = groupNode.metadata.$type as string;
+      }
+      allGroups.set(groupNode.path, group);
+      return true;
+    });
+
+    // Check token-level rules
+    for (const [path, token] of allTokens) {
+      this.lintToken(token, path, violations);
+    }
+
+    // Check group-level rules
+    for (const [path, group] of allGroups) {
+      this.lintGroup(group, path, violations, tokensByType);
+    }
+
+    // Check document-level rules
+    this.lintDocument(allTokens, valueOccurrences, violations);
 
     // Calculate summary
     const summary = {
       errors: violations.filter((v) => v.severity === "error").length,
-      warnings: violations.filter((v) => v.severity === "warning").length,
+      warnings: violations.filter((v) => v.severity === "warn").length,
       info: violations.filter((v) => v.severity === "info").length,
     };
 
@@ -97,135 +132,267 @@ export class TokenLinter {
   }
 
   /**
+   * Check if path should be ignored
+   */
+  private shouldIgnore(path: string): boolean {
+    for (const pattern of this.ignorePatterns) {
+      // Simple glob matching (supports * and **)
+      const regex = pattern
+        .replace(/\*\*/g, "___DOUBLE_STAR___")
+        .replace(/\*/g, "[^.]*")
+        .replace(/___DOUBLE_STAR___/g, ".*");
+
+      if (new RegExp(`^${regex}$`).test(path)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Lint a single token
    */
   private lintToken(token: Token, path: string, violations: LintViolation[]) {
-    for (const [ruleName, rule] of this.enabledRules) {
-      const violation = rule.check(token, path);
+    for (const [ruleName, config] of this.rules) {
+      // Skip group-level and document-level rules
+      if (
+        [
+          "group-description-required",
+          "no-mixed-token-types",
+          "unused-tokens",
+          "duplicate-values",
+          "prefer-references",
+        ].includes(ruleName)
+      ) {
+        continue;
+      }
+
+      const violation = config.rule.check(token, path, config.options);
 
       if (violation) {
-        // Apply severity override if present
-        const overrideSeverity = this.severityOverrides.get(ruleName);
-        if (overrideSeverity) {
-          violation.severity = overrideSeverity;
-        }
-
+        violation.severity = config.severity as "error" | "warn" | "info";
         violations.push(violation);
       }
     }
   }
 
   /**
-   * Load default lint rules
+   * Lint a group
    */
-  private loadDefaultRules(ruleNames?: string[]) {
-    const defaultRules: LintRule[] = [
-      {
-        name: "valid-color-format",
-        description: "Check color values are in valid format",
-        check: (token, path) => {
-          if (token.$type === "color" && token.$value) {
-            if (!rules.validateColor(token.$value)) {
-              return {
-                path,
-                rule: "valid-color-format",
-                severity: "error",
-                message: `Invalid color format: ${token.$value}`,
-                fix: "Use hex (#RGB, #RRGGBB), rgb(), rgba(), hsl(), or hsla() format",
-              };
-            }
-          }
-          return null;
-        },
-      },
-      {
-        name: "valid-dimension-format",
-        description: "Check dimension values have units",
-        check: (token, path) => {
-          if (token.$type === "dimension" && token.$value) {
-            if (!rules.validateDimension(token.$value)) {
-              return {
-                path,
-                rule: "valid-dimension-format",
-                severity: "error",
-                message: `Invalid dimension format: ${token.$value}`,
-                fix: "Add a unit (px, rem, em, %, etc.) to the dimension",
-              };
-            }
-          }
-          return null;
-        },
-      },
-      {
-        name: "prefer-rem-over-px",
-        description: "Prefer rem units over px for better accessibility",
-        check: (token, path) => {
-          if (token.$type === "dimension" && typeof token.$value === "string") {
-            if (token.$value.endsWith("px") && !path.includes("border")) {
-              return {
-                path,
-                rule: "prefer-rem-over-px",
-                severity: "warning",
-                message:
-                  "Consider using rem instead of px for better accessibility",
-                fix: `Convert ${token.$value} to rem (divide by 16)`,
-              };
-            }
-          }
-          return null;
-        },
-      },
-      {
-        name: "description-recommended",
-        description: "Tokens should have descriptions",
-        check: (token, path) => {
-          if (!token.$description) {
-            return {
-              path,
-              rule: "description-recommended",
-              severity: "info",
-              message: "Consider adding a $description to document this token",
-              fix: "Add a $description field explaining the token's purpose",
-            };
-          }
-          return null;
-        },
-      },
-      {
-        name: "naming-convention",
-        description: "Check token naming follows conventions",
-        check: (_, path) => {
-          const segments = path.split(".");
-          const lastSegment = segments[segments.length - 1];
+  private lintGroup(
+    group: TokenOrGroup,
+    path: string,
+    violations: LintViolation[],
+    tokensByType: Map<string, Map<string, Token>>,
+  ) {
+    this.checkGroupDescription(group, path, violations);
+    this.checkMixedTokenTypes(path, violations, tokensByType);
+  }
 
-          // Check for camelCase or kebab-case
-          if (
-            !(
-              lastSegment &&
-              (/^[a-z][a-z0-9]*(?:[A-Z][a-z0-9]*)*$/.test(lastSegment) ||
-                /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(lastSegment))
-            )
-          ) {
-            return {
-              path,
-              rule: "naming-convention",
-              severity: "warning",
-              message: "Token name should use camelCase or kebab-case",
-              fix: "Rename to follow camelCase or kebab-case convention",
-            };
-          }
-          return null;
-        },
-      },
+  /**
+   * Check group description rule
+   */
+  private checkGroupDescription(
+    group: TokenOrGroup,
+    path: string,
+    violations: LintViolation[],
+  ) {
+    const rule = this.rules.get("group-description-required");
+    if (rule && !group.$description) {
+      violations.push({
+        path,
+        rule: "group-description-required",
+        severity: rule.severity as "error" | "warn" | "info",
+        message: "Group should have a $description",
+      });
+    }
+  }
+
+  /**
+   * Check mixed token types rule
+   */
+  private checkMixedTokenTypes(
+    path: string,
+    violations: LintViolation[],
+    tokensByType: Map<string, Map<string, Token>>,
+  ) {
+    const rule = this.rules.get("no-mixed-token-types");
+    if (!rule) return;
+
+    const types = this.getDirectChildTypes(path, tokensByType);
+    if (this.hasUnrelatedTypes(types)) {
+      violations.push({
+        path,
+        rule: "no-mixed-token-types",
+        severity: rule.severity as "error" | "warn" | "info",
+        message: `Group contains mixed token types: ${Array.from(types).join(", ")}`,
+      });
+    }
+  }
+
+  /**
+   * Get direct child types of a group
+   */
+  private getDirectChildTypes(
+    path: string,
+    tokensByType: Map<string, Map<string, Token>>,
+  ): Set<string> {
+    const types = new Set<string>();
+    const groupPrefix = path ? `${path}.` : "";
+
+    for (const [type, tokens] of tokensByType) {
+      for (const tokenPath of tokens.keys()) {
+        if (this.isDirectChild(tokenPath, groupPrefix)) {
+          types.add(type);
+        }
+      }
+    }
+
+    return types;
+  }
+
+  /**
+   * Check if token is direct child of group
+   */
+  private isDirectChild(tokenPath: string, groupPrefix: string): boolean {
+    return (
+      tokenPath.startsWith(groupPrefix) &&
+      tokenPath.substring(groupPrefix.length).indexOf(".") === -1
+    );
+  }
+
+  /**
+   * Check if types are unrelated
+   */
+  private hasUnrelatedTypes(types: Set<string>): boolean {
+    if (types.size <= 1) return false;
+
+    const relatedTypes = [
+      new Set(["dimension", "number"]),
+      new Set(["color", "gradient"]),
     ];
 
-    // Filter rules if specific ones requested
-    const rulesToAdd = ruleNames
-      ? defaultRules.filter((r) => ruleNames.includes(r.name))
-      : defaultRules;
+    const typeArray = Array.from(types);
+    return !relatedTypes.some((related) =>
+      typeArray.every((t) => related.has(t)),
+    );
+  }
 
-    for (const rule of rulesToAdd) {
-      this.enabledRules.set(rule.name, rule);
+  /**
+   * Lint document-level rules
+   */
+  private lintDocument(
+    allTokens: Map<string, Token>,
+    valueOccurrences: Map<string, string[]>,
+    violations: LintViolation[],
+  ) {
+    this.checkDuplicateValues(valueOccurrences, violations);
+    this.checkPreferReferences(valueOccurrences, violations);
+    this.checkUnusedTokens(allTokens, violations);
+  }
+
+  /**
+   * Check for duplicate values
+   */
+  private checkDuplicateValues(
+    valueOccurrences: Map<string, string[]>,
+    violations: LintViolation[],
+  ) {
+    const rule = this.rules.get("duplicate-values");
+    if (!rule) return;
+
+    for (const [value, paths] of valueOccurrences) {
+      if (this.isSignificantDuplicate(value, paths)) {
+        violations.push({
+          path: paths[0] || "",
+          rule: "duplicate-values",
+          severity: rule.severity as "error" | "warn" | "info",
+          message: `Value appears in ${paths.length} tokens: ${paths.join(", ")}`,
+        });
+      }
     }
+  }
+
+  /**
+   * Check for values that should be references
+   */
+  private checkPreferReferences(
+    valueOccurrences: Map<string, string[]>,
+    violations: LintViolation[],
+  ) {
+    const rule = this.rules.get("prefer-references");
+    if (!rule) return;
+
+    const threshold = (rule.options.threshold as number) || 3;
+    for (const [value, paths] of valueOccurrences) {
+      if (this.shouldUseReference(value, paths, threshold)) {
+        violations.push({
+          path: paths[0] || "",
+          rule: "prefer-references",
+          severity: rule.severity as "error" | "warn" | "info",
+          message: `Value repeated ${paths.length} times - consider using a reference token`,
+        });
+      }
+    }
+  }
+
+  /**
+   * Check for unused tokens
+   */
+  private checkUnusedTokens(
+    allTokens: Map<string, Token>,
+    violations: LintViolation[],
+  ) {
+    const rule = this.rules.get("unused-tokens");
+    if (!rule) return;
+
+    const referencedTokens = this.findReferencedTokens(allTokens);
+    for (const path of allTokens.keys()) {
+      if (!referencedTokens.has(path)) {
+        violations.push({
+          path,
+          rule: "unused-tokens",
+          severity: rule.severity as "error" | "warn" | "info",
+          message: "Token is not referenced by any other token",
+        });
+      }
+    }
+  }
+
+  /**
+   * Find all referenced tokens
+   */
+  private findReferencedTokens(allTokens: Map<string, Token>): Set<string> {
+    const referencedTokens = new Set<string>();
+    const refPattern = /\{([^}]+)\}/g;
+
+    for (const [, token] of allTokens) {
+      const tokenStr = JSON.stringify(token);
+      let match: RegExpExecArray | null = refPattern.exec(tokenStr);
+      while (match !== null) {
+        referencedTokens.add(match[1] || "");
+        match = refPattern.exec(tokenStr);
+      }
+    }
+
+    return referencedTokens;
+  }
+
+  /**
+   * Check if value is a significant duplicate
+   */
+  private isSignificantDuplicate(value: string, paths: string[]): boolean {
+    return paths.length > 1 && value !== '""' && value !== "null";
+  }
+
+  /**
+   * Check if value should use reference
+   */
+  private shouldUseReference(
+    value: string,
+    paths: string[],
+    threshold: number,
+  ): boolean {
+    return paths.length >= threshold && value !== '""' && value !== "null";
   }
 }

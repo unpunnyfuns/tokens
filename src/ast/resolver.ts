@@ -1,5 +1,4 @@
 import {
-  detectCycles,
   type ResolutionError as RefError,
   type ResolveResult,
   resolveReferences,
@@ -119,57 +118,6 @@ function convertErrors(errors: RefError[]): ResolutionError[] {
     message: error.message,
     ...(error.reference ? { reference: error.reference } : {}),
   }));
-}
-
-/**
- * Detect cycles in AST using the references module
- */
-export function detectASTCycles(root: ASTNode): string[][] {
-  const document = astToDocument(root);
-  const result = detectCycles(document);
-  return result.cycles;
-}
-
-/**
- * Get resolution order for tokens (topologically sorted)
- */
-export function getResolutionOrder(root: ASTNode): string[] {
-  const order: string[] = [];
-  const visited = new Set<string>();
-  const recursionStack = new Set<string>();
-
-  function visit(token: TokenNode): void {
-    if (visited.has(token.path)) return;
-    if (recursionStack.has(token.path)) return; // Cycle
-
-    recursionStack.add(token.path);
-
-    // Visit dependencies first
-    if (token.references) {
-      for (const ref of token.references) {
-        visitTokens(root, (t) => {
-          if (t.path === ref) {
-            visit(t);
-          }
-          return true;
-        });
-      }
-    }
-
-    recursionStack.delete(token.path);
-    visited.add(token.path);
-    order.push(token.path);
-  }
-
-  // Visit all tokens
-  visitTokens(root, (token) => {
-    if (!visited.has(token.path)) {
-      visit(token);
-    }
-    return true;
-  });
-
-  return order;
 }
 
 /**

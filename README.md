@@ -1,6 +1,6 @@
 # UPFT - UnPunny Fun Tokens
 
-A comprehensive design token platform implementing DTCG specifications with advanced multi-dimensional composition and type-safe operations. This platform provides both a powerful CLI and programmatic API for managing design tokens at scale, supporting complex theme variations, strict validation, and intelligent bundling strategies while maintaining complete type safety throughout the token lifecycle.
+A design token platform implementing DTCG specifications with multi-dimensional composition and type-safe operations. Provides CLI and programmatic API for managing design tokens with theme variations, validation, and bundling.
 
 ## Table of Contents
 
@@ -20,24 +20,26 @@ A comprehensive design token platform implementing DTCG specifications with adva
 
 ## Overview
 
-UPFT represents a modern approach to design token management, built from the ground up to support the Design Token Community Group (DTCG) specifications while providing practical solutions for real-world token system challenges. The platform addresses the complexity of managing tokens across multiple themes, densities, and feature flags through its innovative manifest system, which enables declarative token composition with mathematical precision.
+UPFT implements the Design Token Community Group (DTCG) specifications and provides tools for managing tokens across multiple themes, densities, and feature flags through a manifest system that enables declarative token composition.
 
-The architecture prioritizes type safety and validation at every level, from individual token operations to complex multi-file bundles. Unlike traditional token tools that treat tokens as simple key-value pairs, UPFT understands the semantic meaning of tokens and enforces type consistency during merge operations, reference resolution, and transformations. This approach catches errors early in the development process rather than at runtime in production applications.
+The architecture uses type safety and validation throughout, from individual token operations to multi-file bundles. UPFT enforces type consistency during merge operations, reference resolution, and transformations, catching errors during development rather than at runtime.
 
-The platform's functional programming approach ensures predictable, testable operations throughout the system. Every operation is pure and immutable, making it easy to reason about token transformations and debug complex composition scenarios. The modular architecture allows teams to use only the parts they need, from simple validation to complex AST manipulation, without pulling in unnecessary dependencies.
+Uses functional programming with pure, immutable operations for predictable behavior. The modular architecture allows using only needed components, from validation to AST manipulation.
 
 ## Features
 
 - **DTCG Compliance**: Full implementation of Design Token Community Group draft specifications with strict type validation
-- **Multi-Dimensional Composition**: Sophisticated manifest system for composing tokens across themes, densities, and custom modifiers
+- **Multi-Dimensional Composition**: Manifest system for composing tokens across themes, densities, and custom modifiers
 - **Type-Safe Operations**: All token operations validate type compatibility with detailed error reporting
-- **Comprehensive Validation**: Dual-mode schema validation supporting both strict DTCG compliance and flexible experimentation
+- **Schema Validation**: Dual-mode validation supporting strict DTCG compliance and flexible experimentation
+- **Token Linting**: Configurable linter with 21 built-in rules for enforcing style and best practices on both tokens and manifests
 - **AST Manipulation**: Build and query abstract syntax trees for advanced token analysis and transformation
-- **Reference Resolution**: Robust handling of both DTCG `{alias}` and JSON Schema `$ref` formats with cycle detection
-- **Intelligent Caching**: Performance-optimized file operations with smart caching and incremental updates
-- **Format Support**: Native support for JSON, JSON5, and YAML with automatic format detection
-- **Watch Mode**: Development-friendly watch mode with incremental rebuilds
-- **Extensible Architecture**: Modular design allowing custom transforms and validation rules
+- **Reference Resolution**: Handles DTCG `{alias}` and JSON Schema `#/path` formats with automatic normalization
+- **Cycle Detection**: Integrated Tarjan's algorithm in AST for detecting circular references with topological sorting
+- **File Caching**: File operations with caching and incremental updates
+- **Format Support**: Supports JSON, JSON5, and YAML with automatic format detection
+- **Watch Mode**: File watching with incremental rebuilds
+- **Modular Architecture**: Allows custom transforms and validation rules
 
 ## Installation
 
@@ -176,6 +178,24 @@ Options:
   --detailed    Show detailed breakdown by type
 ```
 
+### `lint` - Check tokens or manifests for style and best practices
+```bash
+upft lint <path> [--config <path>] [--format <format>] [--quiet] [--manifest]
+
+Options:
+  -c, --config <path>     Configuration file (.upftrc.json)
+  -f, --format <format>   Output format (stylish|json|compact)
+  -q, --quiet             Only show errors
+  --max-warnings <n>      Exit with error if warnings exceed n
+  -m, --manifest          Lint as manifest file
+  --no-manifest           Force lint as token file
+
+Example:
+  upft lint tokens.json
+  upft lint manifest.json --manifest
+  upft lint tokens.json --config .upftrc.json --format json
+```
+
 ## Programmatic API
 
 ### Basic Usage
@@ -286,11 +306,11 @@ The architecture is organized into three layers:
 **Foundation Layer**
 - **[core](./src/core)** - Zero-dependency primitives for token operations, providing immutable merging, path manipulation, and type guards
 - **[types](./src/types)** - TypeScript definitions establishing contracts across the system
-- **[references](./src/references)** - Standalone reference resolution with cycle detection
+- **[references](./src/references)** - Standalone reference resolution engine
 
 **Processing Layer**
 - **[validation](./src/validation)** - Schema-based validation using JSON Schema and AJV
-- **[ast](./src/ast)** - Abstract syntax tree construction and manipulation
+- **[ast](./src/ast)** - Abstract syntax tree construction, manipulation, and cycle detection
 - **[analysis](./src/analysis)** - Statistical analysis and document comparison
 - **[io](./src/io)** - File system operations with caching and format detection
 
@@ -335,7 +355,7 @@ Detailed documentation for each module is available in their respective director
 - [Schemas](./src/schemas/README.md) - JSON Schema definitions
 - [Examples](./src/examples/README.md) - Sample files and test fixtures
 - [Utils](./src/utils/README.md) - Utility functions (pending refactor)
-- [Linter](./src/linter/README.md) - Token linting rules (work in progress)
+- [Linter](./src/linter/README.md) - Token and manifest linting with 21 built-in rules
 
 ## Key Concepts
 

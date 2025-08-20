@@ -7,7 +7,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type Ajv from "ajv/dist/2020.js";
 import { glob } from "glob";
-import { createLogger, LogLevel } from "../utils/logger.js";
+import { createLogger, LogLevel } from "./logger.js";
 
 type JSONSchema = Parameters<Ajv.default["compile"]>[0];
 

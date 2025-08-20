@@ -6,12 +6,37 @@ import { compareTokenDocumentsDetailed } from "../analysis/token-comparison.js";
 import { createAST } from "../ast/ast-builder.js";
 import { findAllTokens, findTokensByType } from "../ast/query.js";
 import type { ASTNode } from "../ast/types.js";
-import { mergeTokens } from "../core/merge.js";
+import { merge } from "../core/merge.js";
 import { resolvePermutation } from "../manifest/manifest-core.js";
 import { readManifest } from "../manifest/manifest-reader.js";
 import type { UPFTResolverManifest } from "../manifest/upft-types.js";
 import type { TokenDocument } from "../types.js";
 import { TokenFileSystem } from "./token-file-system.js";
+
+/**
+ * Modifier option structure
+ */
+interface ModifierOption {
+  name: string;
+  values: string[];
+}
+
+/**
+ * Get modifier options in a structured format
+ */
+function getModifierOptions(manifest: UPFTResolverManifest): ModifierOption[] {
+  if (!manifest.modifiers) return [];
+
+  return Object.entries(manifest.modifiers).map(([name, modifier]) => ({
+    name,
+    values:
+      "oneOf" in modifier
+        ? modifier.oneOf
+        : "anyOf" in modifier
+          ? modifier.anyOf
+          : [],
+  }));
+}
 
 /**
  * Result of building AST with optional resolver metadata
@@ -38,10 +63,7 @@ export async function loadASTs(fs: TokenFileSystem): Promise<ASTWithMetadata> {
   // Merge all documents
   const bundled: TokenDocument =
     documents.length > 0
-      ? documents.reduce(
-          (acc, doc) => mergeTokens(acc, doc),
-          {} as TokenDocument,
-        )
+      ? documents.reduce((acc, doc) => merge(acc, doc), {} as TokenDocument)
       : {};
 
   // Create AST
@@ -58,13 +80,7 @@ export async function loadASTs(fs: TokenFileSystem): Promise<ASTWithMetadata> {
         currentPermutation: { id: "default" },
         groups: Object.keys(manifest.modifiers),
         availablePermutations: generatePermutations(manifest),
-        modifierOptions: Object.entries(manifest.modifiers).map(
-          ([name, mod]) => ({
-            name,
-            values:
-              "oneOf" in mod ? mod.oneOf : "anyOf" in mod ? mod.anyOf : [],
-          }),
-        ),
+        modifierOptions: getModifierOptions(manifest),
       };
     }
   }

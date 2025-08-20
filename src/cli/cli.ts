@@ -8,7 +8,10 @@ import { promises as fs } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
-import { countTokens } from "../utils/token-helpers.js";
+import type { LintResult } from "../linter/token-types.js";
+import { countTokens } from "../analysis/token-analyzer.js";
+import type { LintCommandOptions } from "./commands/index.js";
+import { formatLintResults } from "./commands/index.js";
 import { createCLI } from "./commands.js";
 import { createOutput } from "./output.js";
 
@@ -31,6 +34,53 @@ const parseModifiers = (mods?: string[]) =>
 
 const readJson = async (path: string) =>
   JSON.parse(await fs.readFile(path, "utf-8"));
+
+/**
+ * Build lint options from CLI options
+ */
+const buildLintOptions = (
+  opts: Record<string, unknown>,
+): LintCommandOptions => {
+  const lintOpts: LintCommandOptions = {};
+  if (opts.config) lintOpts.configPath = opts.config as string;
+  if (opts.quiet) lintOpts.quiet = opts.quiet as boolean;
+  if (opts.maxWarnings)
+    lintOpts.maxWarnings = parseInt(opts.maxWarnings as string);
+  if (opts.manifest !== undefined) lintOpts.manifest = opts.manifest as boolean;
+  return lintOpts;
+};
+
+/**
+ * Handle lint output and formatting
+ */
+const handleLintOutput = (
+  result: LintResult,
+  format: string | undefined,
+  output: ReturnType<typeof createOutput>,
+): void => {
+  const formatted = formatLintResults(
+    result,
+    (format || "stylish") as "stylish" | "json" | "compact",
+  );
+  if (format === "json") {
+    output.data(JSON.parse(formatted));
+  } else {
+    console.log(formatted);
+  }
+};
+
+/**
+ * Determine if lint should exit with error
+ */
+const shouldExitWithError = (
+  result: LintResult,
+  maxWarnings?: string,
+): boolean => {
+  const hasErrors = result.summary.errors > 0;
+  const exceedsWarnings =
+    maxWarnings && result.summary.warnings > parseInt(maxWarnings);
+  return hasErrors || !!exceedsWarnings;
+};
 
 const commands = {
   validate: (p: Command) =>
@@ -211,19 +261,38 @@ const commands = {
       }),
 
   lint: (p: Command) =>
-    p.command("lint <path>").action(async (path, opts) => {
-      const output = createOutput(opts);
-      try {
-        const result = await createCLI().validateTokenFile(path);
-        if (!result.valid) {
-          output.error(`${result.errors.length} errors`);
+    p
+      .command("lint <path>")
+      .description("Lint token or manifest files for style and best practices")
+      .option("-c, --config <path>", "Config file path")
+      .option(
+        "-f, --format <format>",
+        "Output format (stylish|json|compact)",
+        "stylish",
+      )
+      .option("-q, --quiet", "Only show errors")
+      .option("--max-warnings <n>", "Number of warnings to trigger exit code 1")
+      .option("-m, --manifest", "Lint as manifest file")
+      .option("--no-manifest", "Force lint as token file")
+      .action(async (path, opts) => {
+        const output = createOutput(opts);
+        try {
+          const lintOpts = buildLintOptions(opts);
+          const result = await createCLI().lint(path, lintOpts);
+
+          handleLintOutput(result, opts.format, output);
+
+          if (shouldExitWithError(result, opts.maxWarnings)) {
+            process.exit(1);
+          }
+        } catch (e) {
+          if (e instanceof Error) {
+            console.error(e.message);
+          }
+          output.error("Lint failed", e);
           process.exit(1);
         }
-      } catch (e) {
-        output.error("Failed", e);
-        process.exit(1);
-      }
-    }),
+      }),
 
   perms: (p: Command) =>
     p

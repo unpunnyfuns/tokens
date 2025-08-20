@@ -8,7 +8,7 @@ import { TokenFileWriter } from "../io/file-writer.js";
 import { resolvePermutation } from "../manifest/manifest-core.js";
 import { readManifest } from "../manifest/manifest-reader.js";
 import type { TokenDocument } from "../types.js";
-import { validateTokens, validateManifest } from "../validation/index.js";
+import { validateManifest, validateTokens } from "../validation/index.js";
 import {
   buildModifiers,
   createBundleMetadata,
@@ -203,16 +203,16 @@ function generateAllCombinations(
   return combinations;
 }
 
+export { parseManifest } from "./manifest-helpers.js";
 // Re-export convenience functions from other modules
 export { loadASTs } from "./workflows.js";
-export { parseManifest } from "./manifest-helpers.js";
 
+import type { TokenFileReader } from "../io/file-reader.js";
 // Add resolveManifest function for backwards compatibility
 import type {
   ResolutionInput,
   UPFTResolverManifest,
 } from "../manifest/upft-types.js";
-import type { TokenFileReader } from "../io/file-reader.js";
 
 export async function resolveManifest(
   manifest: UPFTResolverManifest,

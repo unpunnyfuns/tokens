@@ -3,23 +3,14 @@
  * @module @unpunnyfuns/tokens/validation
  */
 
-// Main validation API - just two functions, no variations
-export {
-  validateTokens,
-  validateManifest,
-  isValidTokens,
-  isValidManifest,
-} from "./validate.js";
-
 // Re-export validation types
 export type {
+  ManifestValidationResult,
+  TokenValidationResult,
   ValidationError,
   ValidationResult,
   ValidationResultWithStats,
-  TokenValidationResult,
-  ManifestValidationResult,
 } from "../types/validation.js";
-
 // Schema utilities (for advanced use)
 export {
   clearSchemaCache,
@@ -29,3 +20,10 @@ export {
   preloadSchemas,
   type SchemaLocation,
 } from "./functional-api.js";
+// Main validation API - just two functions, no variations
+export {
+  isValidManifest,
+  isValidTokens,
+  validateManifest,
+  validateTokens,
+} from "./validate.js";

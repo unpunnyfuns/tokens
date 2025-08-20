@@ -1,6 +1,6 @@
 import { createAST } from "../ast/ast-builder.js";
+import { detectCycles } from "../ast/cycle-detector/index.js";
 import {
-  findCircularReferences,
   findTokensByType as findTokensByTypeInAST,
   getStatistics,
   resolveASTReferences,
@@ -29,7 +29,7 @@ export function analyzeTokens(document: TokenDocument): TokenAnalysis {
   const stats = getStatistics(ast);
 
   const resolutionErrors = resolveASTReferences(ast);
-  const circularRefs = findCircularReferences(ast);
+  const cycleResult = detectCycles(ast);
 
   return {
     tokenCount: stats.totalTokens,
@@ -41,35 +41,20 @@ export function analyzeTokens(document: TokenDocument): TokenAnalysis {
     unresolvedReferences: resolutionErrors
       .filter((e) => e.type === "missing")
       .map((e) => e.path),
-    circularReferences: circularRefs.map((t) => t.path),
+    circularReferences: cycleResult.hasCycles
+      ? Array.from(cycleResult.cyclicTokens)
+      : [],
   };
 }
 
 /**
- * Count groups in a document
+ * Count groups in a document (excluding root)
  */
 export function countGroups(doc: TokenDocument): number {
-  let count = 0;
-
-  const isGroup = (obj: Record<string, unknown>): boolean => {
-    if ("$value" in obj) return false;
-    return Object.keys(obj).some((k) => !k.startsWith("$"));
-  };
-
-  function traverse(obj: unknown) {
-    if (!obj || typeof obj !== "object") return;
-    const record = obj as Record<string, unknown>;
-    if (isGroup(record)) count++;
-
-    for (const key in record) {
-      if (!key.startsWith("$")) {
-        traverse(record[key]);
-      }
-    }
-  }
-
-  traverse(doc);
-  return count;
+  const ast = createAST(doc);
+  const stats = getStatistics(ast);
+  // Subtract 1 to exclude the root group from count
+  return Math.max(0, stats.totalGroups - 1);
 }
 
 /**
@@ -98,6 +83,14 @@ export function getTokenTypes(document: TokenDocument): string[] {
   return Object.keys(stats.tokensByType);
 }
 
+/**
+ * Count total tokens in a document
+ */
+export function countTokens(document: TokenDocument): number {
+  const ast = createAST(document);
+  const stats = getStatistics(ast);
+  return stats.totalTokens;
+}
+
 // Re-export for convenience
-export { countTokens } from "../utils/token-helpers.js";
 export { compareTokenDocuments } from "./token-comparison.js";

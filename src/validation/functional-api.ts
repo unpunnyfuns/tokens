@@ -6,7 +6,7 @@ export type {
   ValidationError,
   ValidationResult,
 } from "../types/validation.js";
-
+export { validateManifestDocument } from "./manifest-validation.js";
 export {
   clearSchemaCache,
   DTCG_SCHEMAS,
@@ -16,7 +16,5 @@ export {
   preloadSchemas,
   type SchemaLocation,
 } from "./schema-utils.js";
-
 // Internal validation functions - not exported from main API
 export { validateTokenDocument } from "./token-validator.js";
-export { validateManifestDocument } from "./manifest-validation.js";

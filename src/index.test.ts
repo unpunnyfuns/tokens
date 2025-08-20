@@ -14,7 +14,7 @@ describe("UPFT Public API", () => {
       expect(UPFT.createAST).toBeDefined();
       expect(UPFT.formatTokens).toBeDefined();
       expect(UPFT.parseManifest).toBeDefined();
-      expect(UPFT.mergeTokens).toBeDefined();
+      expect(UPFT.merge).toBeDefined();
     });
 
     it("should export API module functions", () => {
@@ -157,8 +157,8 @@ describe("UPFT Public API", () => {
         },
       };
 
-      const { mergeTokens } = await import("./core/merge.js");
-      const result = mergeTokens(a, b);
+      const { merge } = await import("./core/merge.js");
+      const result = merge(a, b);
 
       expect((result.color as any)?.red?.$value).toBe("#ff0000");
       expect((result.color as any)?.blue?.$value).toBe("#0000ff");
