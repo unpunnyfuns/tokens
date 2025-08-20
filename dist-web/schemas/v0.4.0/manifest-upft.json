@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schemas/v0.3.1/resolver/upft.json",
-  "title": "UPFT Resolver Specification",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.4.0/manifest/upft.json",
+  "title": "UPFT Manifest Specification",
   "description": "Clean, explicit, and predictable token resolution",
   "type": "object",
   "properties": {

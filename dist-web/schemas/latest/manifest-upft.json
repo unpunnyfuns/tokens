@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tokens.unpunny.fun/schemas/v0.3.0/manifest/upft.json",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.4.0/manifest/upft.json",
   "title": "UPFT Manifest Specification",
   "description": "Clean, explicit, and predictable token resolution",
   "type": "object",
@@ -63,7 +63,10 @@
           "properties": {
             "mode": {
               "type": "string",
-              "enum": ["strict", "loose"],
+              "enum": [
+                "strict",
+                "loose"
+              ],
               "default": "strict",
               "description": "Validation strictness"
             }
@@ -74,7 +77,10 @@
       "additionalProperties": false
     }
   },
-  "required": ["sets", "modifiers"],
+  "required": [
+    "sets",
+    "modifiers"
+  ],
   "additionalProperties": false,
   "$defs": {
     "tokenSet": {
@@ -95,7 +101,9 @@
           "description": "Optional name for documentation"
         }
       },
-      "required": ["values"],
+      "required": [
+        "values"
+      ],
       "additionalProperties": false
     },
     "oneOfModifier": {
@@ -128,7 +136,10 @@
           "additionalProperties": false
         }
       },
-      "required": ["oneOf", "values"],
+      "required": [
+        "oneOf",
+        "values"
+      ],
       "additionalProperties": false
     },
     "anyOfModifier": {
@@ -161,7 +172,10 @@
           "additionalProperties": false
         }
       },
-      "required": ["anyOf", "values"],
+      "required": [
+        "anyOf",
+        "values"
+      ],
       "additionalProperties": false
     },
     "generateSpec": {

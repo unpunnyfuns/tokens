@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Design Tokens Resolver Manifest",
-  "description": "Schema for resolver manifest files that define token composition across themes and modes",
+  "title": "Design Tokens Manifest",
+  "description": "Schema for manifest files that define token composition across themes and modes",
   "type": "object",
   "properties": {
     "$schema": {
@@ -10,11 +10,11 @@
     },
     "name": {
       "type": "string",
-      "description": "Name of the resolver configuration"
+      "description": "Name of the manifest configuration"
     },
     "description": {
       "type": "string",
-      "description": "Description of what this resolver configuration is for"
+      "description": "Description of what this manifest configuration is for"
     },
     "output": {
       "type": "object",
