@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Design Tokens Manifest",
+  "description": "Schema for manifest files that define token composition across themes and modes",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to the JSON schema"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the manifest configuration"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of what this manifest configuration is for"
+    },
+    "output": {
+      "type": "object",
+      "description": "Output configuration for the resolver",
+      "properties": {
+        "grouping": {
+          "type": "string",
+          "enum": [
+            "explicit",
+            "auto",
+            "none"
+          ],
+          "default": "explicit",
+          "description": "How to handle grouping: explicit (use group property), auto (infer from usage), none (no grouping)"
+        },
+        "ungrouped": {
+          "type": "string",
+          "enum": [
+            "inline",
+            "standalone",
+            "error"
+          ],
+          "default": "inline",
+          "description": "How to handle sets without explicit groups"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "nested-json"
+          ],
+          "default": "json",
+          "description": "Output format for tokens"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sets": {
+      "type": "array",
+      "description": "Token sets that can be referenced by modifiers",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the token set (can be referenced in modifiers)"
+          },
+          "files": {
+            "type": "array",
+            "description": "Array of token file paths or glob patterns",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "group": {
+            "type": "string",
+            "description": "Group identifier for output organization (e.g., 'base', 'theme-dark')"
+          }
+        },
+        "required": [
+          "name",
+          "files"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "modifiers": {
+      "type": "array",
+      "description": "Modifiers that can be applied to base sets (themes, modes, etc)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the modifier dimension (e.g., 'theme', 'contrast')"
+          },
+          "values": {
+            "type": "array",
+            "description": "Possible values for this modifier",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of this modifier value (e.g., 'light', 'dark')"
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Set names or token file paths to apply for this modifier value",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "values"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          },
+          "meta": {
+            "type": "object",
+            "description": "Additional metadata for this modifier",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "values"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "metadata": {
+    "type": "object",
+    "description": "Additional metadata for the resolver",
+    "properties": {
+      "default": {
+        "type": "object",
+        "description": "Default modifier values when not specified",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    },
+    "additionalProperties": true
+  },
+  "required": [
+    "sets",
+    "modifiers"
+  ],
+  "additionalProperties": false
+}
