@@ -3,15 +3,6 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      release-type:
-        description: "Release type"
-        required: true
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-        default: patch
       packages:
         description: "Packages to release (comma-separated, leave empty for all changed)"
         required: false
@@ -57,23 +48,30 @@ jobs:
       - name: Build packages
         run: pnpm turbo build
 
-      - name: Create Release Pull Request or Version
+      - name: Create Release Pull Request or Publish to NPM
         id: changesets
         uses: changesets/action@v1
         with:
           version: pnpm changeset version
+          publish: pnpm changeset publish
           commit: "chore: version packages"
           title: "chore: version packages"
+          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Release Summary
-        if: steps.changesets.outputs.hasChangesets == 'true'
         run: |
           echo "## 📋 Release Summary" >> $GITHUB_STEP_SUMMARY
-          echo "Release preparation completed. Versions updated and changesets processed." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Next steps:**" >> $GITHUB_STEP_SUMMARY
-          echo "1. Review and merge the version PR if created" >> $GITHUB_STEP_SUMMARY
-          echo "2. Run the Manual Publish workflow to publish to NPM" >> $GITHUB_STEP_SUMMARY
-          echo "3. Run the Deploy to Netlify workflow if schemas changed" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.changesets.outputs.hasChangesets }}" = "true" ]; then
+            echo "✅ Version bump PR created - review and merge to trigger releases" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.changesets.outputs.published }}" = "true" ]; then
+            echo "🎉 Packages published to NPM with GitHub releases and tags created!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Optional next step:**" >> $GITHUB_STEP_SUMMARY
+            echo "- Run Deploy to Netlify workflow if schemas were updated" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No changesets found - nothing to release" >> $GITHUB_STEP_SUMMARY
+          fi
