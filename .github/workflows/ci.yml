@@ -55,12 +55,21 @@ jobs:
 
       - name: Check for changesets
         run: |
+          echo "Branch: ${{ github.head_ref }}"
+          echo "Event: ${{ github.event_name }}"
+
           # Skip changeset check for release PRs (they consume changesets)
-          if [[ "${{ github.head_ref }}" == changeset-release/* ]]; then
+          if [[ "${{ github.head_ref }}" =~ ^changeset-release/ ]] || [[ "${{ github.head_ref }}" == *changeset* ]]; then
             echo "✅ Skipping changeset check for release PR"
             exit 0
           fi
-          
+
+          # Skip for push events (only check on PRs)
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            echo "✅ Skipping changeset check for push events"
+            exit 0
+          fi
+
           if [ "$(ls -A .changeset/*.md 2>/dev/null | grep -v README | wc -l)" -eq 0 ]; then
             echo "❌ No changesets found. Please run 'pnpm changeset' to create one."
             exit 1
