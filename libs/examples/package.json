@@ -1,6 +1,6 @@
 {
   "name": "@upft/examples",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "description": "Design token examples that validate against DTCG schemas",
   "repository": {

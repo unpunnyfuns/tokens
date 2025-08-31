@@ -1,6 +1,6 @@
 {
   "name": "@upft/linter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "description": "Linting rules for DTCG design tokens",
   "repository": {
