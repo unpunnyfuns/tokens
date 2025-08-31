@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.0.1/tokens/types/font-family.schema.json",
+  "title": "Font Family Token Schema",
+  "description": "Schema for font family tokens",
+  "allOf": [
+    {
+      "$ref": "../base.schema.json#/$defs/leaf"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "const": "fontFamily"
+        },
+        "$value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Single font family or comma-separated list"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Array of font families"
+            }
+          ]
+        }
+      },
+      "required": [
+        "$type"
+      ]
+    }
+  ]
+}

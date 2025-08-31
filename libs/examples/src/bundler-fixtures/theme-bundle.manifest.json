@@ -1,0 +1,15 @@
+{
+  "sets": [
+    { "files": ["input/colors-base.json"] },
+    { "files": ["input/colors-semantic.json"] }
+  ],
+  "modifiers": {
+    "theme": {
+      "oneOf": ["light", "dark"],
+      "values": {
+        "light": ["input/theme-light.json"],
+        "dark": ["input/theme-dark.json"]
+      }
+    }
+  }
+}

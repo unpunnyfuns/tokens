@@ -1,0 +1,12 @@
+{
+  "sets": [{ "files": ["input/invalid-reference.json"] }],
+  "modifiers": {},
+  "options": {
+    "resolveReferences": true
+  },
+  "generate": [
+    {
+      "output": "output/should-fail.json"
+    }
+  ]
+}

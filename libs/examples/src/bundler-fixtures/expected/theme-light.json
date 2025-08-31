@@ -1,0 +1,120 @@
+{
+  "color": {
+    "primary": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [0, 0.498, 1],
+        "alpha": 1
+      },
+      "$type": "color"
+    },
+    "secondary": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [0.498, 0, 1],
+        "alpha": 1
+      },
+      "$type": "color"
+    },
+    "neutral": {
+      "100": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.961, 0.961, 0.961],
+          "alpha": 1
+        },
+        "$type": "color"
+      },
+      "900": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.129, 0.129, 0.129],
+          "alpha": 1
+        },
+        "$type": "color"
+      }
+    },
+    "background": {
+      "primary": {
+        "$value": {
+          "alpha": 1,
+          "colorSpace": "srgb",
+          "components": [0.961, 0.961, 0.961]
+        },
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": {
+          "alpha": 1,
+          "colorSpace": "srgb",
+          "components": [0.129, 0.129, 0.129]
+        },
+        "$type": "color"
+      }
+    },
+    "text": {
+      "link": {
+        "$value": {
+          "alpha": 1,
+          "colorSpace": "srgb",
+          "components": [0, 0.498, 1]
+        },
+        "$type": "color"
+      },
+      "primary": {
+        "$value": {
+          "alpha": 1,
+          "colorSpace": "srgb",
+          "components": [0.129, 0.129, 0.129]
+        },
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": {
+          "alpha": 1,
+          "colorSpace": "srgb",
+          "components": [0.961, 0.961, 0.961]
+        },
+        "$type": "color"
+      }
+    },
+    "button": {
+      "primary": {
+        "background": {
+          "$value": {
+            "alpha": 1,
+            "colorSpace": "srgb",
+            "components": [0, 0.498, 1]
+          },
+          "$type": "color"
+        },
+        "text": {
+          "$value": {
+            "alpha": 1,
+            "colorSpace": "srgb",
+            "components": [0.961, 0.961, 0.961]
+          },
+          "$type": "color"
+        }
+      },
+      "secondary": {
+        "background": {
+          "$value": {
+            "alpha": 1,
+            "colorSpace": "srgb",
+            "components": [0.498, 0, 1]
+          },
+          "$type": "color"
+        },
+        "text": {
+          "$value": {
+            "alpha": 1,
+            "colorSpace": "srgb",
+            "components": [0.961, 0.961, 0.961]
+          },
+          "$type": "color"
+        }
+      }
+    }
+  }
+}

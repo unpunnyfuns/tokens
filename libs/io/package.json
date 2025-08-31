@@ -1,0 +1,46 @@
+{
+  "name": "@upft/io",
+  "version": "0.0.1",
+  "description": "File operations and caching for design tokens",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unpunnyfuns/tokens.git",
+    "directory": "libs/io"
+  },
+  "license": "MIT",
+  "author": "unpunnyfuns <unpunnyfuns@gmail.com>",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "format": "biome format --write .",
+    "lint": "biome lint --write .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@upft/foundation": "workspace:*",
+    "chokidar": "^4.0.3",
+    "glob": "^11.0.3",
+    "json5": "^2.2.3",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "@upft/examples": "workspace:*",
+    "msw": "^2.10.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

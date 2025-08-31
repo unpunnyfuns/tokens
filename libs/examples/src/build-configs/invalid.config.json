@@ -1,0 +1,16 @@
+{
+  "$schema": "upft-build-config.json",
+  "manifest": "../bundler-fixtures/theme-bundle.manifest.json",
+  "outputs": [
+    {
+      "name": "template-mismatch",
+      "modifiers": {
+        "theme": "light"
+      },
+      "output": {
+        "path": "./dist/tokens-{platform}.json",
+        "format": "json"
+      }
+    }
+  ]
+}

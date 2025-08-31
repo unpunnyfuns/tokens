@@ -1,0 +1,74 @@
+name: Publish to NPM
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: "Comma-separated list of package names to publish (leave empty for all changed)"
+        required: false
+        type: string
+      dry-run:
+        description: "Run in dry-run mode"
+        required: false
+        type: boolean
+        default: false
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  PNPM_VERSION: 10.15.0
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm turbo build
+
+      - name: Publish packages
+        run: |
+          if [ "${{ github.event.inputs.dry-run }}" = "true" ]; then
+            echo "🔍 Dry run mode - no packages will be published"
+            pnpm changeset publish --dry-run
+          else
+            echo "📦 Publishing packages..."
+            pnpm changeset publish
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "## Publish Summary" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event.inputs.dry-run }}" = "true" ]; then
+            echo "**Mode:** Dry run (no packages published)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Mode:** Live publish" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "**Packages:** ${{ github.event.inputs.packages || 'All changed packages' }}" >> $GITHUB_STEP_SUMMARY

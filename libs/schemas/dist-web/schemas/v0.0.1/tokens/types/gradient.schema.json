@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.0.1/tokens/types/gradient.schema.json",
+  "title": "Gradient Token Schema",
+  "description": "Schema for gradient composite tokens",
+  "allOf": [
+    {
+      "$ref": "../base.schema.json#/$defs/leaf"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "const": "gradient"
+        },
+        "$value": {
+          "oneOf": [
+            {
+              "$ref": "../value-types.schema.json#/$defs/dtcgReference"
+            },
+            {
+              "type": "array",
+              "description": "Array of color stops defining the gradient",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "$ref": "../value-types.schema.json#/$defs/colorValueOrRef",
+                    "description": "Color at this stop"
+                  },
+                  "position": {
+                    "$ref": "../value-types.schema.json#/$defs/percentageOrRef",
+                    "description": "Position of the color stop (0-1)"
+                  }
+                },
+                "required": [
+                  "color",
+                  "position"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 2
+            }
+          ]
+        }
+      },
+      "required": [
+        "$type"
+      ]
+    }
+  ]
+}

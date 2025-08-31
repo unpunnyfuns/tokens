@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.0.1/tokens/base.schema.json",
+  "title": "Design Tokens Base Schema",
+  "description": "Base schema for design tokens with JSON Schema $ref support",
+  "$comment": "DESIGN DECISIONS: 1) Uses JSON Schema $ref (url#/json/pointer) instead of DTCG's {token.path} syntax for better tooling support and standard compliance. 2) Follows DTCG token structure and types as guidance. 3) Structure: root -> groups -> leaves. Groups organize tokens, leaves hold actual values.",
+  "$ref": "#/$defs/root",
+
+  "$defs": {
+    "$type": {
+      "$ref": "https://tokens.unpunny.fun/schemas/v0.0.1/tokens/value-types.schema.json#/$defs/tokenTypes"
+    },
+
+    "$value": {
+      "description": "The token value - can be a direct value or a $ref",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "object" },
+        { "type": "array" }
+      ]
+    },
+
+    "$ref": {
+      "$ref": "https://tokens.unpunny.fun/schemas/v0.0.1/tokens/value-types.schema.json#/$defs/$ref"
+    },
+
+    "$description": {
+      "type": "string",
+      "description": "Human-readable description of the token"
+    },
+
+    "$extensions": {
+      "type": "object",
+      "description": "Custom extensions for the token",
+      "additionalProperties": true
+    },
+
+    "$deprecated": {
+      "oneOf": [{ "type": "boolean" }, { "type": "string" }],
+      "description": "Indicates if the token is deprecated"
+    },
+
+    "leaf": {
+      "type": "object",
+      "description": "Base definition for all token types",
+      "properties": {
+        "$type": { "$ref": "#/$defs/$type" },
+        "$value": { "$ref": "#/$defs/$value" },
+        "$ref": { "$ref": "#/$defs/$ref" },
+        "$description": { "$ref": "#/$defs/$description" },
+        "$extensions": { "$ref": "#/$defs/$extensions" },
+        "$deprecated": { "$ref": "#/$defs/$deprecated" }
+      },
+      "oneOf": [
+        {
+          "required": ["$value"],
+          "not": {
+            "required": ["$ref"]
+          }
+        },
+        {
+          "required": ["$ref"],
+          "not": {
+            "required": ["$value"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+
+    "group": {
+      "type": "object",
+      "properties": {
+        "$description": { "$ref": "#/$defs/$description" },
+        "$extensions": { "$ref": "#/$defs/$extensions" }
+      },
+      "patternProperties": {
+        "^[^$].*": {
+          "anyOf": [{ "$ref": "#/$defs/leaf" }, { "$ref": "#/$defs/group" }]
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "root": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "Reference to the JSON schema"
+        },
+        "$description": { "$ref": "#/$defs/$description" },
+        "$extensions": { "$ref": "#/$defs/$extensions" }
+      },
+      "patternProperties": {
+        "^[^$].*": {
+          "anyOf": [{ "$ref": "#/$defs/leaf" }, { "$ref": "#/$defs/group" }]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

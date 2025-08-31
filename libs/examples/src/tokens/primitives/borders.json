@@ -1,0 +1,21 @@
+{
+  "$schema": "../../../schemas/tokens/base.schema.json",
+  "$description": "Primitive border and stroke style tokens",
+
+  "borders": {
+    "styles": {
+      "solid": {
+        "$type": "strokeStyle",
+        "$value": "solid"
+      },
+      "dashed": {
+        "$type": "strokeStyle",
+        "$value": "dashed"
+      },
+      "dotted": {
+        "$type": "strokeStyle",
+        "$value": "dotted"
+      }
+    }
+  }
+}

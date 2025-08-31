@@ -1,0 +1,73 @@
+strict digraph "UPFT Package Dependencies"{
+    rankdir="TD"
+    node [shape=box style="rounded,filled" fillcolor="#e6f3ff"]
+    edge [arrowhead=vee]
+    
+    // Foundation layer
+    foundation [label="@upft/foundation
+Core types & utilities" fillcolor="#90ee90"]
+    schemas [label="@upft/schemas
+JSON schemas" fillcolor="#90ee90"]
+    
+    // I/O layer  
+    io [label="@upft/io
+File operations" fillcolor="#ffeb3b"]
+    
+    // Processing layer
+    ast [label="@upft/ast
+Syntax tree" fillcolor="#ffa726"]  
+    resolver [label="@upft/resolver
+Reference resolution" fillcolor="#ffa726"]
+    analysis [label="@upft/analysis
+Token analysis" fillcolor="#ffa726"]
+    
+    // Higher-level services
+    validator [label="@upft/validator
+Validation services" fillcolor="#e91e63"]
+    linter [label="@upft/linter
+Code quality" fillcolor="#e91e63"]
+    manifest [label="@upft/manifest
+Manifest handling" fillcolor="#e91e63"]
+    bundler [label="@upft/bundler
+Bundle generation" fillcolor="#e91e63"]
+    
+    // Future
+    transforms [label="@upft/transforms
+Transformations" fillcolor="#9e9e9e"]
+    
+    // Applications
+    cli [label="@upft/cli
+Command line" fillcolor="#3f51b5"]
+    
+    // Dependencies (proper architecture)
+    io -> foundation
+    
+    ast -> foundation
+    resolver -> foundation  
+    analysis -> foundation
+    analysis -> ast
+    
+    validator -> foundation
+    validator -> schemas
+    linter -> foundation
+    linter -> ast
+    manifest -> foundation
+    manifest -> io
+    manifest -> resolver
+    manifest -> validator
+    bundler -> foundation
+    bundler -> io
+    bundler -> manifest
+    
+    // CLI should only talk to high-level services
+    cli -> io
+    cli -> analysis
+    cli -> validator
+    cli -> linter
+    cli -> manifest  
+    cli -> bundler
+    
+    // Architectural issues to fix
+    cli -> ast [style=dashed color=red label="should be removed"]
+    resolver -> ast [style=dashed color=green label="should be added"]
+}

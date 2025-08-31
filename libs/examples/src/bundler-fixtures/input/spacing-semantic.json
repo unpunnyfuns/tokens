@@ -1,0 +1,40 @@
+{
+  "spacing": {
+    "component": {
+      "button": {
+        "padding": {
+          "$value": "{spacing.md}",
+          "$type": "dimension"
+        },
+        "gap": {
+          "$value": "{spacing.sm}",
+          "$type": "dimension"
+        }
+      },
+      "card": {
+        "padding": {
+          "$value": "{spacing.lg}",
+          "$type": "dimension"
+        },
+        "gap": {
+          "$value": "{spacing.md}",
+          "$type": "dimension"
+        }
+      }
+    },
+    "layout": {
+      "section": {
+        "padding": {
+          "$value": "{spacing.xl}",
+          "$type": "dimension"
+        }
+      },
+      "grid": {
+        "gap": {
+          "$value": "{spacing.lg}",
+          "$type": "dimension"
+        }
+      }
+    }
+  }
+}

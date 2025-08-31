@@ -1,0 +1,88 @@
+{
+  "$schema": "../schemas/tokens/base.schema.json",
+  "$description": "Example showing different reference types",
+  "tokens": {
+    "internal": {
+      "ref": {
+        "$type": "color",
+        "$value": {
+          "$ref": "#/primitives/colors/blue/$value"
+        }
+      },
+      "alias": {
+        "$type": "color",
+        "$value": "{primitives.colors.red}"
+      }
+    },
+    "external": {
+      "file-ref": {
+        "$type": "color",
+        "$value": {
+          "$ref": "./tokens/primitives/colors.json#/colors/green/500/$value"
+        }
+      },
+      "relative-ref": {
+        "$type": "dimension",
+        "$value": {
+          "$ref": "./tokens/primitives/dimensions.json#/spacing/md/$value"
+        }
+      }
+    },
+    "mixed": {
+      "composite": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "$ref": "#/primitives/colors/black/$value"
+          },
+          "offsetX": "{primitives.dimensions.xs}",
+          "offsetY": {
+            "$ref": "./tokens/primitives/dimensions.json#/spacing/xs/$value"
+          },
+          "blur": "4px",
+          "spread": "0px"
+        }
+      }
+    }
+  },
+  "primitives": {
+    "colors": {
+      "blue": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 1],
+          "alpha": 1,
+          "hex": "#0000ff"
+        }
+      },
+      "red": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 0, 0],
+          "alpha": 1,
+          "hex": "#ff0000"
+        }
+      },
+      "black": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 0],
+          "alpha": 1,
+          "hex": "#000000"
+        }
+      }
+    },
+    "dimensions": {
+      "xs": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        }
+      }
+    }
+  }
+}

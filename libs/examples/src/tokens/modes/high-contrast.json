@@ -1,0 +1,43 @@
+{
+  "$schema": "../../../schemas/tokens/base.schema.json",
+  "semantic": {
+    "colors": {
+      "primary": {
+        "$type": "color",
+        "$value": "#0000ff"
+      },
+      "primaryHover": {
+        "$type": "color",
+        "$value": "#0000cc"
+      },
+      "primaryActive": {
+        "$type": "color",
+        "$value": "#000099"
+      },
+      "text": {
+        "primary": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "muted": {
+          "$type": "color",
+          "$value": "#595959"
+        }
+      },
+      "border": {
+        "default": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "focus": {
+          "$type": "color",
+          "$value": "#0000ff"
+        }
+      }
+    }
+  }
+}

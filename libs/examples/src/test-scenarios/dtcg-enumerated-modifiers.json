@@ -1,0 +1,76 @@
+{
+  "name": "DTCG Enumerated Modifiers Example",
+  "version": "1.0.0",
+  "description": "Demonstrates enumerated modifiers with different values and sets",
+  "sets": [
+    {
+      "source": "base-tokens.json",
+      "description": "Base design tokens"
+    },
+    {
+      "source": "semantic-tokens.json",
+      "namespace": "semantic",
+      "description": "Semantic tokens with namespace"
+    }
+  ],
+  "modifiers": [
+    {
+      "name": "theme",
+      "type": "enumerated",
+      "description": "Light and dark theme variants",
+      "values": ["light", "dark", "high-contrast"],
+      "sets": {
+        "light": [
+          {
+            "source": "theme-light.json",
+            "description": "Light theme colors"
+          }
+        ],
+        "dark": [
+          {
+            "source": "theme-dark.json",
+            "description": "Dark theme colors"
+          }
+        ],
+        "high-contrast": [
+          {
+            "source": "theme-high-contrast.json",
+            "description": "High contrast accessibility theme"
+          }
+        ]
+      }
+    },
+    {
+      "name": "density",
+      "type": "enumerated",
+      "description": "UI density variations",
+      "values": ["compact", "comfortable", "spacious"],
+      "sets": {
+        "compact": [
+          {
+            "source": "density-compact.json"
+          }
+        ],
+        "comfortable": [
+          {
+            "source": "density-comfortable.json"
+          }
+        ],
+        "spacious": [
+          {
+            "source": "density-spacious.json"
+          }
+        ]
+      }
+    }
+  ],
+  "$extensions": {
+    "design": {
+      "system": "material-design",
+      "version": "3.0"
+    },
+    "build": {
+      "outputs": ["css", "json", "scss"]
+    }
+  }
+}

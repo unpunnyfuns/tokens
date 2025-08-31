@@ -1,0 +1,201 @@
+{
+  "name": "DTCG Inline Tokens Example",
+  "version": "2.1.0",
+  "description": "Demonstrates inline token definitions within resolver manifest",
+  "sets": [
+    {
+      "tokens": {
+        "color": {
+          "base": {
+            "white": {
+              "$type": "color",
+              "$value": "#ffffff",
+              "$description": "Pure white"
+            },
+            "black": {
+              "$type": "color",
+              "$value": "#000000",
+              "$description": "Pure black"
+            }
+          },
+          "blue": {
+            "50": {
+              "$type": "color",
+              "$value": "#eff6ff"
+            },
+            "100": {
+              "$type": "color",
+              "$value": "#dbeafe"
+            },
+            "500": {
+              "$type": "color",
+              "$value": "#3b82f6"
+            },
+            "900": {
+              "$type": "color",
+              "$value": "#1e3a8a"
+            }
+          }
+        },
+        "dimension": {
+          "space": {
+            "xs": {
+              "$type": "dimension",
+              "$value": "4px"
+            },
+            "sm": {
+              "$type": "dimension",
+              "$value": "8px"
+            },
+            "md": {
+              "$type": "dimension",
+              "$value": "16px"
+            },
+            "lg": {
+              "$type": "dimension",
+              "$value": "24px"
+            },
+            "xl": {
+              "$type": "dimension",
+              "$value": "32px"
+            }
+          }
+        }
+      },
+      "namespace": "base",
+      "description": "Base tokens defined inline"
+    },
+    {
+      "tokens": {
+        "typography": {
+          "font": {
+            "family": {
+              "sans": {
+                "$type": "fontFamily",
+                "$value": ["Inter", "system-ui", "sans-serif"]
+              },
+              "mono": {
+                "$type": "fontFamily",
+                "$value": ["JetBrains Mono", "monospace"]
+              }
+            },
+            "size": {
+              "sm": {
+                "$type": "dimension",
+                "$value": "14px"
+              },
+              "base": {
+                "$type": "dimension",
+                "$value": "16px"
+              },
+              "lg": {
+                "$type": "dimension",
+                "$value": "18px"
+              },
+              "xl": {
+                "$type": "dimension",
+                "$value": "20px"
+              }
+            },
+            "weight": {
+              "normal": {
+                "$type": "fontWeight",
+                "$value": 400
+              },
+              "medium": {
+                "$type": "fontWeight",
+                "$value": 500
+              },
+              "bold": {
+                "$type": "fontWeight",
+                "$value": 700
+              }
+            }
+          }
+        }
+      },
+      "namespace": "typography",
+      "description": "Typography tokens with type definitions"
+    },
+    {
+      "source": "external/component-tokens.json",
+      "description": "External component tokens from file"
+    }
+  ],
+  "modifiers": [
+    {
+      "name": "theme",
+      "type": "enumerated",
+      "description": "Theme with inline token overrides",
+      "values": ["light", "dark"],
+      "sets": {
+        "light": [
+          {
+            "tokens": {
+              "color": {
+                "text": {
+                  "primary": {
+                    "$type": "color",
+                    "$value": "{color.base.black}"
+                  },
+                  "secondary": {
+                    "$type": "color",
+                    "$value": "#6b7280"
+                  }
+                },
+                "background": {
+                  "primary": {
+                    "$type": "color",
+                    "$value": "{color.base.white}"
+                  }
+                }
+              }
+            },
+            "namespace": "theme",
+            "description": "Light theme semantic colors"
+          }
+        ],
+        "dark": [
+          {
+            "tokens": {
+              "color": {
+                "text": {
+                  "primary": {
+                    "$type": "color",
+                    "$value": "{color.base.white}"
+                  },
+                  "secondary": {
+                    "$type": "color",
+                    "$value": "#9ca3af"
+                  }
+                },
+                "background": {
+                  "primary": {
+                    "$type": "color",
+                    "$value": "#111827"
+                  }
+                }
+              }
+            },
+            "namespace": "theme",
+            "description": "Dark theme semantic colors"
+          }
+        ]
+      }
+    }
+  ],
+  "$extensions": {
+    "design": {
+      "system": "custom",
+      "tokenTypes": ["color", "dimension", "fontFamily", "fontWeight"],
+      "references": {
+        "enabled": true,
+        "syntax": "curly-braces"
+      }
+    },
+    "tooling": {
+      "validator": "dtcg-validator",
+      "version": "1.0.0"
+    }
+  }
+}

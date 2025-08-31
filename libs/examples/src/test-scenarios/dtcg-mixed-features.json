@@ -1,0 +1,216 @@
+{
+  "name": "DTCG Mixed Features Showcase",
+  "version": "1.0.0-beta.3",
+  "description": "Comprehensive example showing enumerated + include modifiers with inline + external tokens",
+  "sets": [
+    {
+      "source": "core/base.json",
+      "description": "Base tokens from external file"
+    },
+    {
+      "tokens": {
+        "brand": {
+          "logo": {
+            "primary": {
+              "$type": "color",
+              "$value": "#ff6b35",
+              "$description": "Primary brand orange"
+            },
+            "secondary": {
+              "$type": "color",
+              "$value": "#2d3748",
+              "$description": "Secondary brand dark gray"
+            }
+          }
+        },
+        "spacing": {
+          "component": {
+            "button": {
+              "padding": {
+                "x": {
+                  "$type": "dimension",
+                  "$value": "16px"
+                },
+                "y": {
+                  "$type": "dimension",
+                  "$value": "8px"
+                }
+              }
+            }
+          }
+        }
+      },
+      "namespace": "brand",
+      "description": "Brand-specific inline tokens"
+    }
+  ],
+  "modifiers": [
+    {
+      "name": "theme",
+      "type": "enumerated",
+      "description": "Color theme variations",
+      "values": ["light", "dark", "auto"],
+      "sets": {
+        "light": [
+          {
+            "source": "themes/light-theme.json",
+            "description": "Light theme from file"
+          },
+          {
+            "tokens": {
+              "semantic": {
+                "surface": {
+                  "primary": {
+                    "$type": "color",
+                    "$value": "#ffffff"
+                  },
+                  "secondary": {
+                    "$type": "color",
+                    "$value": "#f8fafc"
+                  }
+                }
+              }
+            },
+            "namespace": "semantic",
+            "description": "Light theme semantic overrides"
+          }
+        ],
+        "dark": [
+          {
+            "source": "themes/dark-theme.json"
+          },
+          {
+            "tokens": {
+              "semantic": {
+                "surface": {
+                  "primary": {
+                    "$type": "color",
+                    "$value": "#1a202c"
+                  },
+                  "secondary": {
+                    "$type": "color",
+                    "$value": "#2d3748"
+                  }
+                }
+              }
+            },
+            "namespace": "semantic"
+          }
+        ],
+        "auto": [
+          {
+            "source": "themes/auto-theme.json",
+            "description": "System preference based theme"
+          }
+        ]
+      }
+    },
+    {
+      "name": "platform",
+      "type": "include",
+      "description": "Platform-specific token additions",
+      "include": [
+        {
+          "source": "platforms/web.json"
+        },
+        {
+          "tokens": {
+            "elevation": {
+              "button": {
+                "hover": {
+                  "$type": "shadow",
+                  "$value": {
+                    "offsetX": "0px",
+                    "offsetY": "2px",
+                    "blur": "4px",
+                    "spread": "0px",
+                    "color": "rgba(0, 0, 0, 0.15)"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Web-specific elevation effects"
+        }
+      ]
+    },
+    {
+      "name": "density",
+      "type": "enumerated",
+      "description": "UI density options",
+      "values": ["comfortable", "compact"],
+      "sets": {
+        "comfortable": [
+          {
+            "tokens": {
+              "spacing": {
+                "component": {
+                  "list": {
+                    "item": {
+                      "padding": {
+                        "$type": "dimension",
+                        "$value": "12px"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "compact": [
+          {
+            "tokens": {
+              "spacing": {
+                "component": {
+                  "list": {
+                    "item": {
+                      "padding": {
+                        "$type": "dimension",
+                        "$value": "8px"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "experimental",
+      "type": "include",
+      "description": "Experimental features (optional)",
+      "include": [
+        {
+          "tokens": {
+            "motion": {
+              "easing": {
+                "smooth": {
+                  "$type": "cubicBezier",
+                  "$value": [0.4, 0.0, 0.2, 1.0]
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "$extensions": {
+    "build": {
+      "outputs": ["css", "js", "json", "scss"],
+      "cssPrefix": "ds",
+      "jsFormat": "es6"
+    },
+    "design": {
+      "figmaFileId": "abc123def456",
+      "lastSync": "2024-12-01T10:30:00Z"
+    },
+    "testing": {
+      "chromatic": true,
+      "percy": false
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "@upft/tokens",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Token document to AST conversion for UPFT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unpunnyfuns/tokens.git",
+    "directory": "libs/tokens"
+  },
+  "license": "MIT",
+  "author": "unpunnyfuns <unpunnyfuns@gmail.com>",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "dependencies": {
+    "@upft/ast": "workspace:*",
+    "@upft/foundation": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "@upft/examples": "workspace:*",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "format": "biome format --write .",
+    "lint": "biome lint --write .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "design-tokens",
+    "dtcg",
+    "ast",
+    "parsing"
+  ]
+}

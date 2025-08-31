@@ -1,0 +1,63 @@
+{
+  "name": "DTCG Example Resolver",
+  "version": "2025-10-01",
+  "description": "Example W3C DTCG resolver manifest",
+  "sets": [
+    {
+      "source": "tokens/base.json",
+      "description": "Base tokens"
+    },
+    {
+      "source": "tokens/semantic.json",
+      "namespace": "semantic",
+      "description": "Semantic tokens with namespace"
+    },
+    {
+      "tokens": {
+        "color": {
+          "debug": {
+            "$type": "color",
+            "$value": "#ff0000"
+          }
+        }
+      },
+      "description": "Inline debug tokens"
+    }
+  ],
+  "modifiers": [
+    {
+      "name": "theme",
+      "type": "enumerated",
+      "description": "Theme variations",
+      "values": ["light", "dark"],
+      "sets": {
+        "light": [
+          {
+            "source": "tokens/theme-light.json"
+          }
+        ],
+        "dark": [
+          {
+            "source": "tokens/theme-dark.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "platform",
+      "type": "include",
+      "description": "Platform-specific tokens",
+      "include": [
+        {
+          "source": "tokens/platform-web.json"
+        }
+      ]
+    }
+  ],
+  "$extensions": {
+    "tooling": {
+      "generator": "tokens-studio",
+      "version": "1.0.0"
+    }
+  }
+}

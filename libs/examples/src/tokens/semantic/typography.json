@@ -1,0 +1,167 @@
+{
+  "$schema": "../../../schemas/tokens/base.schema.json",
+  "$description": "Semantic typography tokens - composed from primitives",
+
+  "text-style": {
+    "heading-1": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": {
+          "$ref": "../primitives/typography.json#/typography/fontFamily/sans"
+        },
+        "fontSize": {
+          "$ref": "../primitives/typography.json#/typography/fontSize/5xl"
+        },
+        "fontWeight": {
+          "$ref": "../primitives/typography.json#/typography/fontWeight/bold"
+        },
+        "lineHeight": {
+          "$ref": "../primitives/typography.json#/typography/lineHeight/tight"
+        },
+        "letterSpacing": {
+          "$ref": "../primitives/typography.json#/typography/letterSpacing/normal"
+        }
+      }
+    },
+    "heading-2": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": {
+          "$ref": "../primitives/typography.json#/typography/fontFamily/sans"
+        },
+        "fontSize": {
+          "$ref": "../primitives/typography.json#/typography/fontSize/4xl"
+        },
+        "fontWeight": {
+          "$ref": "../primitives/typography.json#/typography/fontWeight/bold"
+        },
+        "lineHeight": {
+          "$ref": "../primitives/typography.json#/typography/lineHeight/tight"
+        },
+        "letterSpacing": {
+          "$ref": "../primitives/typography.json#/typography/letterSpacing/normal"
+        }
+      }
+    },
+    "heading-3": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": {
+          "$ref": "../primitives/typography.json#/typography/fontFamily/sans"
+        },
+        "fontSize": {
+          "$ref": "../primitives/typography.json#/typography/fontSize/3xl"
+        },
+        "fontWeight": {
+          "$ref": "../primitives/typography.json#/typography/fontWeight/semibold"
+        },
+        "lineHeight": {
+          "$ref": "../primitives/typography.json#/typography/lineHeight/snug"
+        },
+        "letterSpacing": {
+          "$ref": "../primitives/typography.json#/typography/letterSpacing/normal"
+        }
+      }
+    },
+    "body-large": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": {
+          "$ref": "../primitives/typography.json#/typography/fontFamily/sans"
+        },
+        "fontSize": {
+          "$ref": "../primitives/typography.json#/typography/fontSize/lg"
+        },
+        "fontWeight": {
+          "$ref": "../primitives/typography.json#/typography/fontWeight/normal"
+        },
+        "lineHeight": {
+          "$ref": "../primitives/typography.json#/typography/lineHeight/relaxed"
+        },
+        "letterSpacing": {
+          "$ref": "../primitives/typography.json#/typography/letterSpacing/normal"
+        }
+      }
+    },
+    "body": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": {
+          "$ref": "../primitives/typography.json#/typography/fontFamily/sans"
+        },
+        "fontSize": {
+          "$ref": "../primitives/typography.json#/typography/fontSize/base"
+        },
+        "fontWeight": {
+          "$ref": "../primitives/typography.json#/typography/fontWeight/normal"
+        },
+        "lineHeight": {
+          "$ref": "../primitives/typography.json#/typography/lineHeight/normal"
+        },
+        "letterSpacing": {
+          "$ref": "../primitives/typography.json#/typography/letterSpacing/normal"
+        }
+      }
+    },
+    "body-small": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": {
+          "$ref": "../primitives/typography.json#/typography/fontFamily/sans"
+        },
+        "fontSize": {
+          "$ref": "../primitives/typography.json#/typography/fontSize/sm"
+        },
+        "fontWeight": {
+          "$ref": "../primitives/typography.json#/typography/fontWeight/normal"
+        },
+        "lineHeight": {
+          "$ref": "../primitives/typography.json#/typography/lineHeight/normal"
+        },
+        "letterSpacing": {
+          "$ref": "../primitives/typography.json#/typography/letterSpacing/normal"
+        }
+      }
+    },
+    "caption": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": {
+          "$ref": "../primitives/typography.json#/typography/fontFamily/sans"
+        },
+        "fontSize": {
+          "$ref": "../primitives/typography.json#/typography/fontSize/xs"
+        },
+        "fontWeight": {
+          "$ref": "../primitives/typography.json#/typography/fontWeight/normal"
+        },
+        "lineHeight": {
+          "$ref": "../primitives/typography.json#/typography/lineHeight/normal"
+        },
+        "letterSpacing": {
+          "$ref": "../primitives/typography.json#/typography/letterSpacing/normal"
+        }
+      }
+    },
+    "code": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": {
+          "$ref": "../primitives/typography.json#/typography/fontFamily/mono"
+        },
+        "fontSize": {
+          "$ref": "../primitives/typography.json#/typography/fontSize/sm"
+        },
+        "fontWeight": {
+          "$ref": "../primitives/typography.json#/typography/fontWeight/normal"
+        },
+        "lineHeight": {
+          "$ref": "../primitives/typography.json#/typography/lineHeight/normal"
+        },
+        "letterSpacing": {
+          "$ref": "../primitives/typography.json#/typography/letterSpacing/normal"
+        }
+      }
+    }
+  }
+}

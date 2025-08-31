@@ -1,0 +1,13 @@
+{
+  "$description": "Simple color token for testing",
+  "color": {
+    "red": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [1, 0, 0],
+        "alpha": 1
+      }
+    }
+  }
+}

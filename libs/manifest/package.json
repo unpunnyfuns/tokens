@@ -1,0 +1,31 @@
+{
+  "name": "@upft/manifest",
+  "version": "0.0.1",
+  "description": "UPFT manifest parsing and loading",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "biome lint --write .",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@upft/ast": "workspace:*",
+    "@upft/foundation": "workspace:*",
+    "glob": "^11.0.3"
+  },
+  "devDependencies": {
+    "@upft/examples": "workspace:*",
+    "typescript": "^5.7.3",
+    "vitest": "^3.2.4"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}

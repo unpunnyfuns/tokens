@@ -1,0 +1,37 @@
+{
+  "$schema": "upft-build-config.json",
+  "manifest": "../bundler-fixtures/theme-bundle.manifest.json",
+  "outputs": [
+    {
+      "name": "web-light",
+      "modifiers": {
+        "theme": "light"
+      },
+      "output": {
+        "path": "./dist/tokens-light.json",
+        "format": "json",
+        "prettify": true
+      }
+    },
+    {
+      "name": "web-dark",
+      "modifiers": {
+        "theme": "dark"
+      },
+      "output": {
+        "path": "./dist/tokens-dark.json",
+        "format": "json",
+        "prettify": true
+      }
+    }
+  ],
+  "transforms": [
+    {
+      "name": "resolve-references"
+    }
+  ],
+  "validation": {
+    "strict": false,
+    "skipValidation": false
+  }
+}

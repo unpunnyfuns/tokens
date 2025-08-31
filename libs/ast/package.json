@@ -1,0 +1,42 @@
+{
+  "name": "@upft/ast",
+  "version": "0.0.1",
+  "description": "AST building and traversal for design tokens",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unpunnyfuns/tokens.git",
+    "directory": "libs/ast"
+  },
+  "license": "MIT",
+  "author": "unpunnyfuns <unpunnyfuns@gmail.com>",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "format": "biome format --write .",
+    "lint": "biome lint --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@upft/foundation": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "@upft/examples": "workspace:*",
+    "memfs": "^4.36.3",
+    "msw": "^2.10.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

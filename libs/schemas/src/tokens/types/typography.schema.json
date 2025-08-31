@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.0.1/tokens/types/typography.schema.json",
+  "title": "Typography Token Schema",
+  "description": "Schema for typography composite tokens",
+  "allOf": [
+    {
+      "$ref": "../base.schema.json#/$defs/leaf"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "const": "typography"
+        },
+        "$value": {
+          "type": "object",
+          "$comment": "Per DTCG spec: All properties are required for typography tokens",
+          "properties": {
+            "fontFamily": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "$ref": "../base.schema.json#/$defs/$ref"
+                }
+              ],
+              "description": "Font family name or stack"
+            },
+            "fontSize": {
+              "$ref": "../value-types.schema.json#/$defs/dimensionValueOrRef",
+              "description": "Font size in px or rem"
+            },
+            "fontWeight": {
+              "$ref": "../value-types.schema.json#/$defs/fontWeightValueOrRef",
+              "description": "Font weight (numeric 1-1000 or keyword)"
+            },
+            "lineHeight": {
+              "$ref": "../value-types.schema.json#/$defs/lineHeightValueOrRef",
+              "$comment": "DTCG spec: lineHeight is a multiplier of fontSize, not a dimension",
+              "description": "Line height as multiplier of font size (typically 0.5-3)"
+            },
+            "letterSpacing": {
+              "$ref": "../value-types.schema.json#/$defs/dimensionValueOrRef",
+              "description": "Horizontal spacing between characters"
+            }
+          },
+          "required": [
+            "fontFamily",
+            "fontSize",
+            "fontWeight",
+            "lineHeight",
+            "letterSpacing"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": ["$type"]
+    }
+  ]
+}

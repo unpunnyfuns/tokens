@@ -1,0 +1,57 @@
+{
+  "name": "@upft/schema-validator",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "JSON schema validation for UPFT design tokens and manifests",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unpunnyfuns/tokens.git",
+    "directory": "libs/schema-validator"
+  },
+  "license": "MIT",
+  "author": "unpunnyfuns <unpunnyfuns@gmail.com>",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "dependencies": {
+    "@upft/foundation": "workspace:*",
+    "@upft/schemas": "workspace:*",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "@upft/examples": "workspace:*",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "format": "biome format --write .",
+    "lint": "biome lint --write .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "design-tokens",
+    "dtcg",
+    "validation",
+    "json-schema",
+    "ajv"
+  ]
+}

@@ -1,0 +1,62 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+.npm/
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Build files
+build/
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Claude configuration
+CLAUDE.md
+.claude/
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+
+# npm specific
+.npm/
+.npmrc.local
+
+# Parcel-bundler cache
+.cache/
+
+# TypeScript
+*.tsbuildinfo
+*.d.ts.map
+
+# Misc
+*.tgz
+
+# Keep package-lock.json but ignore other locks
+yarn.lock
+
+# Local Netlify folder
+.netlify
+.turbo/
+
+# NX
+.nx

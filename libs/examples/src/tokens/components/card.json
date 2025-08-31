@@ -1,0 +1,133 @@
+{
+  "$schema": "../../../schemas/tokens/full.schema.json",
+  "$description": "Card component tokens demonstrating complex cross-file references",
+
+  "card": {
+    "$description": "Card component design tokens",
+
+    "spacing": {
+      "padding": {
+        "$type": "dimension",
+        "$value": { "$ref": "../primitives/dimensions.json#/spacing/lg" },
+        "$description": "Internal card padding"
+      },
+      "gap": {
+        "$type": "dimension",
+        "$value": { "$ref": "../primitives/dimensions.json#/spacing/md" },
+        "$description": "Gap between card elements"
+      }
+    },
+
+    "typography": {
+      "title": {
+        "$type": "typography",
+        "$value": { "$ref": "../primitives/typography.json#/heading/h3" }
+      },
+      "body": {
+        "$type": "typography",
+        "$value": { "$ref": "../primitives/typography.json#/body/base" }
+      },
+      "caption": {
+        "$type": "typography",
+        "$value": { "$ref": "../primitives/typography.json#/body/small" }
+      }
+    },
+
+    "background": {
+      "default": {
+        "$type": "color",
+        "$value": { "$ref": "../primitives/colors.json#/base/white" }
+      },
+      "hover": {
+        "$type": "color",
+        "$value": { "$ref": "../primitives/colors.json#/gray/50" }
+      },
+      "selected": {
+        "$type": "color",
+        "$value": {
+          "$ref": "../semantic/colors.json#/semantic/surface/selected"
+        }
+      }
+    },
+
+    "border": {
+      "default": {
+        "$type": "border",
+        "$value": {
+          "color": {
+            "$ref": "../semantic/colors.json#/semantic/border/subtle"
+          },
+          "width": { "$ref": "../primitives/dimensions.json#/borders/thin" },
+          "style": "solid"
+        }
+      },
+      "hover": {
+        "$type": "border",
+        "$value": {
+          "color": {
+            "$ref": "../semantic/colors.json#/semantic/border/default"
+          },
+          "width": { "$ref": "../primitives/dimensions.json#/borders/thin" },
+          "style": "solid"
+        }
+      },
+      "selected": {
+        "$type": "border",
+        "$value": {
+          "color": {
+            "$ref": "../semantic/colors.json#/semantic/interactive/primary"
+          },
+          "width": { "$ref": "../primitives/dimensions.json#/borders/medium" },
+          "style": "solid"
+        }
+      }
+    },
+
+    "shadow": {
+      "default": {
+        "$type": "shadow",
+        "$value": { "$ref": "../shadows.json#/elevation/level-2" }
+      },
+      "hover": {
+        "$type": "shadow",
+        "$value": { "$ref": "../shadows.json#/elevation/level-3" }
+      },
+      "dragging": {
+        "$type": "shadow",
+        "$value": { "$ref": "../shadows.json#/elevation/level-4" }
+      }
+    },
+
+    "radius": {
+      "$type": "dimension",
+      "$value": { "$ref": "../primitives/dimensions.json#/radius/md" },
+      "$description": "Card border radius"
+    },
+
+    "gradient": {
+      "overlay": {
+        "$type": "gradient",
+        "$value": {
+          "$ref": "../composite-tokens.json#/gradients/fade-to-black"
+        },
+        "$description": "Gradient overlay for image cards"
+      }
+    },
+
+    "transition": {
+      "hover": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "$ref": "../composite-tokens.json#/animations/transitions/smooth/$value/duration"
+          },
+          "delay": "0ms",
+          "timingFunction": {
+            "$ref": "../composite-tokens.json#/animations/easings/ease-out"
+          }
+        },
+        "$description": "Card hover transition"
+      }
+    }
+  }
+}

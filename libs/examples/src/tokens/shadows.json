@@ -1,0 +1,281 @@
+{
+  "$schema": "../../schemas/tokens/full.schema.json",
+  "$description": "Shadow token examples demonstrating single and multi-shadow effects",
+
+  "elevation": {
+    "$description": "Material Design inspired elevation shadows",
+    "level-0": {
+      "$type": "shadow",
+      "$value": {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 0],
+          "alpha": 0
+        },
+        "offsetX": "0px",
+        "offsetY": "0px",
+        "blur": "0px",
+        "spread": "0px",
+        "inset": false
+      },
+      "$description": "No shadow"
+    },
+    "level-1": {
+      "$type": "shadow",
+      "$value": {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 0],
+          "alpha": 0.12
+        },
+        "offsetX": "0px",
+        "offsetY": "2px",
+        "blur": "4px",
+        "spread": "0px"
+      },
+      "$description": "Subtle elevation"
+    },
+    "level-2": {
+      "$type": "shadow",
+      "$value": {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 0],
+          "alpha": 0.16
+        },
+        "offsetX": "0px",
+        "offsetY": "4px",
+        "blur": "8px",
+        "spread": "0px"
+      },
+      "$description": "Card elevation"
+    },
+    "level-3": {
+      "$type": "shadow",
+      "$value": [
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0.12
+          },
+          "offsetX": "0px",
+          "offsetY": "2px",
+          "blur": "4px",
+          "spread": "-1px"
+        },
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0.16
+          },
+          "offsetX": "0px",
+          "offsetY": "8px",
+          "blur": "16px",
+          "spread": "0px"
+        }
+      ],
+      "$description": "Multi-layer shadow for depth"
+    },
+    "level-4": {
+      "$type": "shadow",
+      "$value": [
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0.12
+          },
+          "offsetX": "0px",
+          "offsetY": "4px",
+          "blur": "8px",
+          "spread": "-2px"
+        },
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0.16
+          },
+          "offsetX": "0px",
+          "offsetY": "12px",
+          "blur": "24px",
+          "spread": "0px"
+        },
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0.08
+          },
+          "offsetX": "0px",
+          "offsetY": "16px",
+          "blur": "32px",
+          "spread": "0px"
+        }
+      ],
+      "$description": "Three-layer shadow for high elevation"
+    }
+  },
+
+  "functional": {
+    "$description": "Functional shadow styles",
+    "focus-ring": {
+      "$type": "shadow",
+      "$value": {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [0, 0.4, 1],
+          "alpha": 0.5
+        },
+        "offsetX": "0px",
+        "offsetY": "0px",
+        "blur": "0px",
+        "spread": "3px"
+      },
+      "$description": "Focus indicator shadow"
+    },
+    "error-glow": {
+      "$type": "shadow",
+      "$value": {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [1, 0, 0],
+          "alpha": 0.3
+        },
+        "offsetX": "0px",
+        "offsetY": "0px",
+        "blur": "8px",
+        "spread": "0px"
+      },
+      "$description": "Error state glow"
+    },
+    "inset-well": {
+      "$type": "shadow",
+      "$value": {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 0],
+          "alpha": 0.15
+        },
+        "offsetX": "0px",
+        "offsetY": "2px",
+        "blur": "4px",
+        "spread": "0px",
+        "inset": true
+      },
+      "$description": "Inset shadow for recessed effect"
+    },
+    "inner-border": {
+      "$type": "shadow",
+      "$value": {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 0],
+          "alpha": 0.1
+        },
+        "offsetX": "0px",
+        "offsetY": "0px",
+        "blur": "0px",
+        "spread": "1px",
+        "inset": true
+      },
+      "$description": "Inner border using inset shadow"
+    }
+  },
+
+  "decorative": {
+    "$description": "Decorative and creative shadow effects",
+    "neumorphism": {
+      "$type": "shadow",
+      "$value": [
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [1, 1, 1],
+            "alpha": 0.5
+          },
+          "offsetX": "-6px",
+          "offsetY": "-6px",
+          "blur": "12px",
+          "spread": "0px"
+        },
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0.15
+          },
+          "offsetX": "6px",
+          "offsetY": "6px",
+          "blur": "12px",
+          "spread": "0px"
+        }
+      ],
+      "$description": "Neumorphic design shadow"
+    },
+    "long-shadow": {
+      "$type": "shadow",
+      "$value": {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 0],
+          "alpha": 0.2
+        },
+        "offsetX": "20px",
+        "offsetY": "20px",
+        "blur": "0px",
+        "spread": "0px"
+      },
+      "$description": "Flat long shadow effect"
+    },
+    "colored-glow": {
+      "$type": "shadow",
+      "$value": [
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [1, 0, 0.5],
+            "alpha": 0.4
+          },
+          "offsetX": "0px",
+          "offsetY": "0px",
+          "blur": "20px",
+          "spread": "0px"
+        },
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [0, 0.5, 1],
+            "alpha": 0.3
+          },
+          "offsetX": "0px",
+          "offsetY": "0px",
+          "blur": "40px",
+          "spread": "0px"
+        }
+      ],
+      "$description": "Multi-color glow effect"
+    }
+  },
+
+  "semantic": {
+    "$description": "Semantic shadows with references",
+    "card": {
+      "$type": "shadow",
+      "$value": { "$ref": "#/elevation/level-2" },
+      "$description": "Standard card shadow"
+    },
+    "modal": {
+      "$type": "shadow",
+      "$value": { "$ref": "#/elevation/level-4" },
+      "$description": "Modal overlay shadow"
+    },
+    "button-hover": {
+      "$type": "shadow",
+      "$value": { "$ref": "#/elevation/level-1" },
+      "$description": "Button hover state shadow"
+    }
+  }
+}

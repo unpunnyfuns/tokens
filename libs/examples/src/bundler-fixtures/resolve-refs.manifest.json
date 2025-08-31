@@ -1,0 +1,15 @@
+{
+  "sets": [
+    { "files": ["input/colors-base.json"] },
+    { "files": ["input/colors-semantic.json"] }
+  ],
+  "modifiers": {},
+  "options": {
+    "resolveReferences": true
+  },
+  "generate": [
+    {
+      "output": "output/resolved-refs.json"
+    }
+  ]
+}

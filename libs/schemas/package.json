@@ -1,0 +1,70 @@
+{
+  "name": "@upft/schemas",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "JSON schemas for DTCG design tokens",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unpunnyfuns/tokens.git",
+    "directory": "libs/schemas"
+  },
+  "license": "MIT",
+  "author": "unpunnyfuns <unpunnyfuns@gmail.com>",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./manifest": "./src/manifest-upft.json",
+    "./manifest-upft": "./src/manifest-upft.json",
+    "./tokens/base": "./src/tokens/base.schema.json",
+    "./tokens/full": "./src/tokens/full.schema.json",
+    "./tokens/value-types": "./src/tokens/value-types.schema.json",
+    "./tokens/types/border.schema.json": "./src/tokens/types/border.schema.json",
+    "./tokens/types/color.schema.json": "./src/tokens/types/color.schema.json",
+    "./tokens/types/cubic-bezier.schema.json": "./src/tokens/types/cubic-bezier.schema.json",
+    "./tokens/types/dimension.schema.json": "./src/tokens/types/dimension.schema.json",
+    "./tokens/types/duration.schema.json": "./src/tokens/types/duration.schema.json",
+    "./tokens/types/font-family.schema.json": "./src/tokens/types/font-family.schema.json",
+    "./tokens/types/font-weight.schema.json": "./src/tokens/types/font-weight.schema.json",
+    "./tokens/types/gradient.schema.json": "./src/tokens/types/gradient.schema.json",
+    "./tokens/types/number.schema.json": "./src/tokens/types/number.schema.json",
+    "./tokens/types/shadow.schema.json": "./src/tokens/types/shadow.schema.json",
+    "./tokens/types/stroke-style.schema.json": "./src/tokens/types/stroke-style.schema.json",
+    "./tokens/types/transition.schema.json": "./src/tokens/types/transition.schema.json",
+    "./tokens/types/typography.schema.json": "./src/tokens/types/typography.schema.json"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:web": "node ../../scripts/version-schemas.js",
+    "clean": "rm -rf dist dist-web",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "@upft/examples": "workspace:*",
+    "ajv": "^8.17.1",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "design-tokens",
+    "dtcg",
+    "json-schema",
+    "design-system",
+    "tokens"
+  ],
+  "dependencies": {}
+}

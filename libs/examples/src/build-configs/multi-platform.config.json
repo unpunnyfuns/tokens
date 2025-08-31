@@ -1,0 +1,59 @@
+{
+  "$schema": "upft-build-config.json",
+  "manifest": "../bundler-fixtures/theme-bundle.manifest.json",
+  "outputs": [
+    {
+      "name": "web-themes",
+      "modifiers": {
+        "theme": ["light", "dark"]
+      },
+      "output": {
+        "path": "./dist/web-{theme}.json",
+        "format": "json",
+        "prettify": true
+      },
+      "transforms": [
+        {
+          "name": "px-to-rem",
+          "options": {
+            "baseSize": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "mobile-compact",
+      "modifiers": {
+        "theme": "dark"
+      },
+      "output": {
+        "path": "./dist/mobile-compact.json",
+        "format": "json",
+        "prettify": false
+      },
+      "transforms": [
+        {
+          "name": "px-to-dp",
+          "options": {
+            "density": 2
+          }
+        },
+        {
+          "name": "color-to-hex"
+        }
+      ]
+    }
+  ],
+  "transforms": [
+    {
+      "name": "resolve-references"
+    },
+    {
+      "name": "validate-tokens"
+    }
+  ],
+  "validation": {
+    "strict": true,
+    "skipValidation": false
+  }
+}

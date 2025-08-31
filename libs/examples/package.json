@@ -1,0 +1,41 @@
+{
+  "name": "@upft/examples",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Design token examples that validate against DTCG schemas",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unpunnyfuns/tokens.git",
+    "directory": "packages/examples"
+  },
+  "license": "MIT",
+  "author": "unpunnyfuns <unpunnyfuns@gmail.com>",
+  "exports": {
+    "./tokens/*": "./src/tokens/*",
+    "./bundler-fixtures/*": "./src/bundler-fixtures/*",
+    "./test-fixtures/*": "./src/test-fixtures/*",
+    "./test-scenarios/*": "./src/test-scenarios/*",
+    "./error-cases/*": "./src/error-cases/*",
+    "./tokens/*.json": "./src/tokens/*.json",
+    "./bundler-fixtures/*.json": "./src/bundler-fixtures/*.json",
+    "./test-fixtures/*.json": "./src/test-fixtures/*.json",
+    "./test-scenarios/*.json": "./src/test-scenarios/*.json",
+    "./error-cases/*.json": "./src/error-cases/*.json"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "check": "biome check --write .",
+    "format": "biome format --write .",
+    "lint": "biome lint --write ."
+  },
+  "private": true,
+  "keywords": [
+    "design-tokens",
+    "dtcg",
+    "examples",
+    "design-system",
+    "tokens"
+  ]
+}

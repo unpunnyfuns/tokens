@@ -1,0 +1,69 @@
+{
+  "$schema": "../../../schemas/tokens/base.schema.json",
+  "$description": "Semantic spacing tokens - references to primitive dimensions",
+
+  "spacing": {
+    "none": {
+      "$type": "dimension",
+      "$value": { "$ref": "../primitives/dimensions.json#/dimensions/scale/0" }
+    },
+    "xs": {
+      "$type": "dimension",
+      "$value": { "$ref": "../primitives/dimensions.json#/dimensions/scale/1" }
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": { "$ref": "../primitives/dimensions.json#/dimensions/scale/2" }
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": { "$ref": "../primitives/dimensions.json#/dimensions/scale/4" }
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": { "$ref": "../primitives/dimensions.json#/dimensions/scale/6" }
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": { "$ref": "../primitives/dimensions.json#/dimensions/scale/8" }
+    },
+    "2xl": {
+      "$type": "dimension",
+      "$value": { "$ref": "../primitives/dimensions.json#/dimensions/scale/12" }
+    },
+    "3xl": {
+      "$type": "dimension",
+      "$value": { "$ref": "../primitives/dimensions.json#/dimensions/scale/16" }
+    }
+  },
+
+  "padding": {
+    "none": { "$type": "dimension", "$value": { "$ref": "#/spacing/none" } },
+    "xs": { "$type": "dimension", "$value": { "$ref": "#/spacing/xs" } },
+    "sm": { "$type": "dimension", "$value": { "$ref": "#/spacing/sm" } },
+    "md": { "$type": "dimension", "$value": { "$ref": "#/spacing/md" } },
+    "lg": { "$type": "dimension", "$value": { "$ref": "#/spacing/lg" } },
+    "xl": { "$type": "dimension", "$value": { "$ref": "#/spacing/xl" } },
+    "2xl": { "$type": "dimension", "$value": { "$ref": "#/spacing/2xl" } }
+  },
+
+  "margin": {
+    "none": { "$type": "dimension", "$value": { "$ref": "#/spacing/none" } },
+    "xs": { "$type": "dimension", "$value": { "$ref": "#/spacing/xs" } },
+    "sm": { "$type": "dimension", "$value": { "$ref": "#/spacing/sm" } },
+    "md": { "$type": "dimension", "$value": { "$ref": "#/spacing/md" } },
+    "lg": { "$type": "dimension", "$value": { "$ref": "#/spacing/lg" } },
+    "xl": { "$type": "dimension", "$value": { "$ref": "#/spacing/xl" } },
+    "2xl": { "$type": "dimension", "$value": { "$ref": "#/spacing/2xl" } },
+    "3xl": { "$type": "dimension", "$value": { "$ref": "#/spacing/3xl" } }
+  },
+
+  "gap": {
+    "none": { "$type": "dimension", "$value": { "$ref": "#/spacing/none" } },
+    "xs": { "$type": "dimension", "$value": { "$ref": "#/spacing/xs" } },
+    "sm": { "$type": "dimension", "$value": { "$ref": "#/spacing/sm" } },
+    "md": { "$type": "dimension", "$value": { "$ref": "#/spacing/md" } },
+    "lg": { "$type": "dimension", "$value": { "$ref": "#/spacing/lg" } },
+    "xl": { "$type": "dimension", "$value": { "$ref": "#/spacing/xl" } }
+  }
+}

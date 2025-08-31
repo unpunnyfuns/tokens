@@ -1,0 +1,86 @@
+{
+  "name": "DTCG Include Modifiers Example",
+  "version": "1.2.5",
+  "description": "Demonstrates include modifiers with conditional token sets",
+  "sets": [
+    {
+      "source": "core/foundation.json",
+      "description": "Core foundation tokens"
+    },
+    {
+      "tokens": {
+        "brand": {
+          "primary": {
+            "$type": "color",
+            "$value": "#0066cc",
+            "$description": "Primary brand color"
+          }
+        }
+      },
+      "namespace": "brand",
+      "description": "Inline brand tokens"
+    }
+  ],
+  "modifiers": [
+    {
+      "name": "platform",
+      "type": "include",
+      "description": "Platform-specific token overrides",
+      "include": [
+        {
+          "source": "platforms/web.json",
+          "description": "Web platform specific tokens"
+        },
+        {
+          "source": "platforms/mobile.json",
+          "description": "Mobile platform optimizations"
+        }
+      ]
+    },
+    {
+      "name": "accessibility",
+      "type": "include",
+      "description": "Accessibility enhancements",
+      "include": [
+        {
+          "tokens": {
+            "a11y": {
+              "focus": {
+                "outline": {
+                  "$type": "dimension",
+                  "$value": "3px"
+                }
+              }
+            }
+          },
+          "namespace": "a11y",
+          "description": "Focus outline accessibility"
+        },
+        {
+          "source": "accessibility/high-contrast.json",
+          "description": "High contrast mode tokens"
+        }
+      ]
+    },
+    {
+      "name": "experimental",
+      "type": "include",
+      "description": "Experimental features",
+      "include": [
+        {
+          "source": "experimental/new-components.json"
+        }
+      ]
+    }
+  ],
+  "$extensions": {
+    "build": {
+      "targets": ["web", "ios", "android"],
+      "preprocessors": ["sass", "postcss"]
+    },
+    "validation": {
+      "strict": true,
+      "checkReferences": true
+    }
+  }
+}

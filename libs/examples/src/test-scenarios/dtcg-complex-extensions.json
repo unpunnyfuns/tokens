@@ -1,0 +1,179 @@
+{
+  "name": "DTCG Complex Extensions Example",
+  "version": "3.2.1",
+  "description": "Demonstrates complex extensions and metadata usage in DTCG resolver",
+  "sets": [
+    {
+      "source": "foundation/primitives.json",
+      "description": "Primitive design tokens"
+    },
+    {
+      "tokens": {
+        "effect": {
+          "shadow": {
+            "small": {
+              "$type": "shadow",
+              "$value": {
+                "offsetX": "0px",
+                "offsetY": "1px",
+                "blur": "3px",
+                "spread": "0px",
+                "color": "rgba(0, 0, 0, 0.1)"
+              }
+            },
+            "medium": {
+              "$type": "shadow",
+              "$value": {
+                "offsetX": "0px",
+                "offsetY": "4px",
+                "blur": "6px",
+                "spread": "-1px",
+                "color": "rgba(0, 0, 0, 0.1)"
+              }
+            }
+          }
+        }
+      },
+      "namespace": "effects",
+      "description": "Shadow effects with complex values"
+    }
+  ],
+  "modifiers": [
+    {
+      "name": "device",
+      "type": "enumerated",
+      "description": "Device-specific optimizations",
+      "values": ["desktop", "tablet", "mobile"],
+      "sets": {
+        "desktop": [
+          {
+            "source": "device/desktop.json"
+          }
+        ],
+        "tablet": [
+          {
+            "source": "device/tablet.json"
+          }
+        ],
+        "mobile": [
+          {
+            "source": "device/mobile.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "features",
+      "type": "include",
+      "description": "Optional feature flags",
+      "include": [
+        {
+          "source": "features/animations.json"
+        },
+        {
+          "tokens": {
+            "motion": {
+              "duration": {
+                "fast": {
+                  "$type": "duration",
+                  "$value": "150ms"
+                },
+                "normal": {
+                  "$type": "duration",
+                  "$value": "300ms"
+                },
+                "slow": {
+                  "$type": "duration",
+                  "$value": "500ms"
+                }
+              }
+            }
+          },
+          "description": "Motion timing tokens"
+        }
+      ]
+    }
+  ],
+  "$extensions": {
+    "build": {
+      "generator": "design-tokens-cli",
+      "version": "2.1.4",
+      "targets": {
+        "web": {
+          "formats": ["css", "scss", "js"],
+          "prefix": "dt",
+          "customProperties": true
+        },
+        "mobile": {
+          "formats": ["json", "swift", "kotlin"],
+          "classPrefix": "DesignToken"
+        },
+        "figma": {
+          "formats": ["figma-tokens"],
+          "collections": ["Primitives", "Semantic", "Component"]
+        }
+      },
+      "transformations": {
+        "colors": ["hex", "hsl", "rgb"],
+        "dimensions": ["px", "rem", "em"],
+        "shadows": ["css", "android", "ios"]
+      }
+    },
+    "design": {
+      "system": "enterprise-design-system",
+      "version": "4.0.0",
+      "maintainer": "Design Systems Team",
+      "documentation": "https://design.company.com/tokens",
+      "governance": {
+        "reviewRequired": true,
+        "approvers": ["design-lead", "frontend-lead"],
+        "breakingChangePolicy": "major-version"
+      }
+    },
+    "validation": {
+      "rules": {
+        "naming": {
+          "pattern": "kebab-case",
+          "maxDepth": 4
+        },
+        "colors": {
+          "contrastRatio": {
+            "aa": 4.5,
+            "aaa": 7.0
+          },
+          "colorSpace": "sRGB"
+        },
+        "typography": {
+          "minFontSize": "12px",
+          "maxLineHeight": 2.0
+        }
+      },
+      "accessibility": {
+        "wcagLevel": "AA",
+        "colorBlindness": ["protanopia", "deuteranopia", "tritanopia"]
+      }
+    },
+    "tooling": {
+      "figma": {
+        "plugin": "design-tokens-sync",
+        "version": "1.5.2",
+        "autoSync": true
+      },
+      "storybook": {
+        "addon": "design-tokens",
+        "showInControls": true
+      },
+      "testing": {
+        "visualRegression": true,
+        "accessibilityChecks": true
+      }
+    },
+    "metadata": {
+      "created": "2024-01-15T10:30:00Z",
+      "updated": "2024-12-01T15:45:30Z",
+      "authors": ["design-team@company.com", "frontend-team@company.com"],
+      "license": "MIT",
+      "repository": "https://github.com/company/design-tokens"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Simple DTCG Test",
+  "version": "2025-10-01",
+  "description": "Simple test of DTCG resolver format",
+  "sets": [
+    {
+      "source": "simple-tokens.json",
+      "description": "Base tokens"
+    }
+  ]
+}

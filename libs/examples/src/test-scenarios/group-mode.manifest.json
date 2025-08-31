@@ -1,0 +1,18 @@
+{
+  "sets": [
+    {
+      "name": "core",
+      "files": ["base-tokens.json"]
+    }
+  ],
+  "modifiers": {
+    "theme": {
+      "oneOf": ["light", "dark"],
+      "values": {
+        "light": ["theme-light.json"],
+        "dark": ["theme-dark.json"]
+      },
+      "default": "light"
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalDependencies": ["tsconfig.base.json", "tsconfig.json", "biome.json"],
+  "globalEnv": ["NODE_ENV", "CI"],
+  "boundaries": {
+    "tags": {
+      "public": {
+        "dependencies": {
+          "deny": ["internal"]
+        }
+      },
+      "internal": {
+        "dependents": {
+          "deny": ["public"]
+        }
+      }
+    }
+  },
+  "tasks": {
+    "@upft/schemas#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "env": ["NODE_ENV"],
+      "cache": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "env": ["NODE_ENV"],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": ["^build", "build"],
+      "outputs": [],
+      "env": ["NODE_ENV", "CI"],
+      "cache": true
+    },
+    "test:unit": {
+      "dependsOn": ["^build", "build"],
+      "outputs": [],
+      "cache": true
+    },
+    "test:e2e": {
+      "dependsOn": ["^build", "build"],
+      "outputs": [],
+      "cache": true
+    },
+    "test:coverage": {
+      "dependsOn": ["^build", "build"],
+      "outputs": ["coverage/**"],
+      "cache": true
+    },
+    "typecheck": {
+      "dependsOn": ["^build", "build"],
+      "outputs": [],
+      "cache": true
+    },
+    "lint": {
+      "dependsOn": [],
+      "outputs": [],
+      "cache": true
+    },
+    "format": {
+      "dependsOn": [],
+      "outputs": [],
+      "cache": false
+    },
+    "validate:examples": {
+      "dependsOn": ["^build", "build"],
+      "outputs": [],
+      "cache": true
+    },
+    "validate:bundler-output": {
+      "dependsOn": ["^build", "build"],
+      "outputs": [],
+      "cache": true
+    },
+    "clean": {
+      "cache": false
+    },
+    "dev": {
+      "persistent": true,
+      "cache": false
+    },
+    "depcheck": {
+      "dependsOn": [],
+      "outputs": [],
+      "cache": true
+    },
+    "quality": {
+      "dependsOn": ["format", "lint", "typecheck", "depcheck", "test"],
+      "outputs": [],
+      "cache": false
+    },
+    "depcheck:workspace": {
+      "dependsOn": [],
+      "outputs": [],
+      "cache": true
+    }
+  }
+}

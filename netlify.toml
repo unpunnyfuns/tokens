@@ -1,0 +1,23 @@
+[build]
+  publish = "dist-web"
+
+# Serve schemas with proper headers
+[[headers]]
+  for = "/schemas/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "application/schema+json"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/schemas/latest/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "application/schema+json"
+    Cache-Control = "public, max-age=3600"  # Shorter cache for latest
+
+# Root redirect to GitHub
+[[redirects]]
+  from = "/"
+  to = "https://github.com/unpunnyfuns/tokens"
+  status = 302

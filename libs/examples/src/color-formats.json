@@ -1,0 +1,92 @@
+{
+  "$schema": "https://tokens.unpunny.fun/schemas/latest/tokens/full.schema.json",
+  "$description": "Examples showing different color token formats supported by UPFT",
+
+  "colors": {
+    "simple": {
+      "red": {
+        "$type": "color",
+        "$value": "#ff0000",
+        "$description": "Simple hex red"
+      },
+      "blue": {
+        "$type": "color",
+        "$value": "#00f",
+        "$description": "Short hex blue"
+      },
+      "greenWithAlpha": {
+        "$type": "color",
+        "$value": "#00ff0080",
+        "$description": "Hex with alpha channel"
+      }
+    },
+
+    "dtcg": {
+      "red": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 0, 0],
+          "alpha": 1
+        },
+        "$description": "DTCG format red"
+      },
+      "blue": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 1],
+          "alpha": 1
+        },
+        "$description": "DTCG format blue"
+      },
+      "greenWithAlpha": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 1, 0],
+          "alpha": 0.5
+        },
+        "$description": "DTCG format with alpha"
+      }
+    },
+
+    "advanced": {
+      "hslColor": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "hsl",
+          "components": [240, 100, 50],
+          "alpha": 1
+        },
+        "$description": "HSL color space"
+      },
+      "p3Color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "display-p3",
+          "components": [1, 0, 0],
+          "alpha": 1
+        },
+        "$description": "Display P3 wide gamut red"
+      },
+      "oklchColor": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.7, 0.15, 180],
+          "alpha": 1
+        },
+        "$description": "OKLCH perceptually uniform color"
+      }
+    },
+
+    "references": {
+      "primaryRef": {
+        "$type": "color",
+        "$value": "{colors.simple.red}",
+        "$description": "Reference to another color token"
+      }
+    }
+  }
+}

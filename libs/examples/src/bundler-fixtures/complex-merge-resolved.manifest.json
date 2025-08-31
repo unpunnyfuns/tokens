@@ -1,0 +1,30 @@
+{
+  "sets": [
+    { "files": ["input/colors-base.json"] },
+    { "files": ["input/spacing-base.json"] },
+    { "files": ["input/colors-semantic.json"] },
+    { "files": ["input/spacing-semantic.json"] }
+  ],
+  "modifiers": {
+    "theme": {
+      "oneOf": ["default", "override"],
+      "values": {
+        "default": [],
+        "override": ["input/colors-override.json"]
+      }
+    }
+  },
+  "options": {
+    "resolveReferences": true
+  },
+  "generate": [
+    {
+      "theme": "default",
+      "output": "output/complex-default-resolved.json"
+    },
+    {
+      "theme": "override",
+      "output": "output/complex-override-resolved.json"
+    }
+  ]
+}

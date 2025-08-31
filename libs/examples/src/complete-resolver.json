@@ -1,0 +1,182 @@
+{
+  "$schema": "../schemas/manifest-upft.json",
+  "name": "Complete Design System Resolver",
+  "description": "Multi-dimensional resolver supporting themes, brands, and features",
+
+  "sets": [
+    {
+      "name": "Core foundation tokens",
+      "values": [
+        "tokens/core/colors.json",
+        "tokens/core/spacing.json",
+        "tokens/core/typography.json"
+      ]
+    },
+    {
+      "name": "Semantic tokens",
+      "values": ["tokens/semantic/base.json", "tokens/semantic/components.json"]
+    }
+  ],
+
+  "modifiers": {
+    "theme": {
+      "oneOf": ["light", "dark", "high-contrast"],
+      "values": {
+        "light": ["tokens/themes/light.json"],
+        "dark": ["tokens/themes/dark.json", "tokens/themes/dark-extras.json"],
+        "high-contrast": [
+          "tokens/themes/high-contrast.json",
+          "tokens/themes/hc-borders.json"
+        ]
+      }
+    },
+    "brand": {
+      "oneOf": ["consumer", "enterprise", "mobile"],
+      "values": {
+        "consumer": ["tokens/brands/consumer.json"],
+        "enterprise": [
+          "tokens/brands/enterprise.json",
+          "tokens/brands/enterprise-logos.json"
+        ],
+        "mobile": ["tokens/brands/mobile.json"]
+      }
+    },
+    "platform": {
+      "oneOf": ["web", "ios", "android"],
+      "values": {
+        "web": ["tokens/platforms/web.json"],
+        "ios": ["tokens/platforms/ios.json"],
+        "android": ["tokens/platforms/android.json"]
+      }
+    },
+    "features": {
+      "anyOf": [
+        "compact",
+        "animations",
+        "accessibility",
+        "rtl",
+        "experimental"
+      ],
+      "values": {
+        "compact": ["tokens/features/compact-spacing.json"],
+        "animations": [
+          "tokens/features/animations.json",
+          "tokens/features/transitions.json"
+        ],
+        "accessibility": ["tokens/features/a11y.json"],
+        "rtl": ["tokens/features/rtl.json"],
+        "experimental": ["tokens/features/experimental.json"]
+      }
+    },
+    "density": {
+      "oneOf": ["comfortable", "compact", "touch"],
+      "values": {
+        "comfortable": ["tokens/density/comfortable.json"],
+        "compact": ["tokens/density/compact.json"],
+        "touch": ["tokens/density/touch.json"]
+      }
+    }
+  },
+
+  "generate": [
+    {
+      "theme": "light",
+      "brand": "consumer",
+      "platform": "web",
+      "density": "comfortable",
+      "output": "dist/consumer-web-light.json"
+    },
+    {
+      "theme": "dark",
+      "brand": "consumer",
+      "platform": "web",
+      "density": "comfortable",
+      "output": "dist/consumer-web-dark.json"
+    },
+    {
+      "theme": "light",
+      "brand": "consumer",
+      "platform": "web",
+      "density": "compact",
+      "features": ["animations"],
+      "output": "dist/consumer-web-light-compact-animated.json"
+    },
+    {
+      "theme": "dark",
+      "brand": "consumer",
+      "platform": "web",
+      "density": "compact",
+      "features": ["animations"],
+      "output": "dist/consumer-web-dark-compact-animated.json"
+    },
+    {
+      "theme": "high-contrast",
+      "brand": "consumer",
+      "platform": "web",
+      "density": "touch",
+      "features": ["accessibility", "rtl"],
+      "output": "dist/consumer-web-accessible.json"
+    },
+    {
+      "theme": "light",
+      "brand": "enterprise",
+      "platform": "web",
+      "density": "comfortable",
+      "output": "dist/enterprise-web-light.json"
+    },
+    {
+      "theme": "dark",
+      "brand": "enterprise",
+      "platform": "web",
+      "density": "comfortable",
+      "output": "dist/enterprise-web-dark.json"
+    },
+    {
+      "theme": "light",
+      "brand": "mobile",
+      "platform": "ios",
+      "density": "touch",
+      "features": ["compact"],
+      "output": "dist/mobile-ios-light.json"
+    },
+    {
+      "theme": "dark",
+      "brand": "mobile",
+      "platform": "ios",
+      "density": "touch",
+      "features": ["compact"],
+      "output": "dist/mobile-ios-dark.json"
+    },
+    {
+      "theme": "light",
+      "brand": "mobile",
+      "platform": "android",
+      "density": "touch",
+      "features": ["compact"],
+      "output": "dist/mobile-android-light.json"
+    },
+    {
+      "theme": "dark",
+      "brand": "mobile",
+      "platform": "android",
+      "density": "touch",
+      "features": ["compact"],
+      "output": "dist/mobile-android-dark.json"
+    },
+    {
+      "theme": "light",
+      "brand": "consumer",
+      "platform": "web",
+      "density": "comfortable",
+      "features": "*",
+      "output": "dist/consumer-web-kitchen-sink.json"
+    }
+  ],
+
+  "options": {
+    "resolveReferences": false,
+    "validation": {
+      "mode": "strict"
+    }
+  }
+}

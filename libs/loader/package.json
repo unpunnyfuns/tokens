@@ -1,0 +1,61 @@
+{
+  "name": "@upft/loader",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Pipeline orchestrator for loading and validating design token files",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unpunnyfuns/tokens.git",
+    "directory": "libs/loader"
+  },
+  "license": "MIT",
+  "author": "unpunnyfuns <unpunnyfuns@gmail.com>",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "dependencies": {
+    "@upft/ast": "workspace:*",
+    "@upft/foundation": "workspace:*",
+    "@upft/io": "workspace:*",
+    "@upft/manifest": "workspace:*",
+    "@upft/schema-validator": "workspace:*",
+    "@upft/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "@upft/bundler": "workspace:*",
+    "@upft/examples": "workspace:*",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "format": "biome format --write .",
+    "lint": "biome lint --write .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run",
+    "test:integration": "vitest run --run --reporter=verbose pipeline.integration.test.ts",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "design-tokens",
+    "dtcg",
+    "loader",
+    "pipeline"
+  ]
+}

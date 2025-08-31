@@ -1,0 +1,704 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokens.unpunny.fun/schemas/v0.0.1/tokens/types/color.schema.json",
+  "title": "Color Token Schema",
+  "description": "Schema for color tokens supporting both simple hex values and detailed DTCG color objects",
+  "$defs": {
+    "alpha": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Alpha channel value (0-1)"
+    },
+    "hex": {
+      "type": "string",
+      "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$",
+      "description": "Hex color representation"
+    },
+    "componentOrNone": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string",
+          "const": "none"
+        }
+      ]
+    },
+    "rgbBase": {
+      "type": "object",
+      "properties": {
+        "colorSpace": {
+          "type": "string"
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              {
+                "type": "string",
+                "const": "none"
+              }
+            ]
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "alpha": {
+          "$ref": "#/$defs/alpha"
+        },
+        "hex": {
+          "$ref": "#/$defs/hex"
+        }
+      },
+      "required": ["colorSpace", "components"],
+      "additionalProperties": false
+    },
+    "srgb": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/rgbBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "colorSpace": {
+              "const": "srgb"
+            },
+            "components": {
+              "type": "array",
+              "description": "R, G, B components (0-1)"
+            }
+          }
+        }
+      ]
+    },
+    "srgb-linear": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/rgbBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "colorSpace": {
+              "const": "srgb-linear"
+            },
+            "components": {
+              "type": "array",
+              "description": "Linear R, G, B components (0-1)"
+            }
+          }
+        }
+      ]
+    },
+    "display-p3": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/rgbBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "colorSpace": {
+              "const": "display-p3"
+            },
+            "components": {
+              "type": "array",
+              "description": "R, G, B components (0-1) in Display P3 color space"
+            }
+          }
+        }
+      ]
+    },
+    "a98-rgb": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/rgbBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "colorSpace": {
+              "const": "a98-rgb"
+            },
+            "components": {
+              "type": "array",
+              "description": "R, G, B components (0-1) in Adobe RGB (1998) color space"
+            }
+          }
+        }
+      ]
+    },
+    "prophoto-rgb": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/rgbBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "colorSpace": {
+              "const": "prophoto-rgb"
+            },
+            "components": {
+              "type": "array",
+              "description": "R, G, B components (0-1) in ProPhoto RGB color space"
+            }
+          }
+        }
+      ]
+    },
+    "rec2020": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/rgbBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "colorSpace": {
+              "const": "rec2020"
+            },
+            "components": {
+              "type": "array",
+              "description": "R, G, B components (0-1) in Rec.2020 color space"
+            }
+          }
+        }
+      ]
+    },
+    "hsl": {
+      "type": "object",
+      "properties": {
+        "colorSpace": {
+          "const": "hsl"
+        },
+        "components": {
+          "type": "array",
+          "description": "[Hue (0-360), Saturation (0-100), Lightness (0-100)]",
+          "prefixItems": [
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 360
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            }
+          ],
+          "minItems": 3,
+          "maxItems": 3,
+          "items": false
+        },
+        "alpha": {
+          "$ref": "#/$defs/alpha"
+        },
+        "hex": {
+          "$ref": "#/$defs/hex"
+        }
+      },
+      "required": ["colorSpace", "components"],
+      "additionalProperties": false
+    },
+    "hwb": {
+      "type": "object",
+      "properties": {
+        "colorSpace": {
+          "const": "hwb"
+        },
+        "components": {
+          "type": "array",
+          "description": "[Hue (0-360), Whiteness (0-100), Blackness (0-100)]",
+          "prefixItems": [
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 360
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            }
+          ],
+          "minItems": 3,
+          "maxItems": 3,
+          "items": false
+        },
+        "alpha": {
+          "$ref": "#/$defs/alpha"
+        },
+        "hex": {
+          "$ref": "#/$defs/hex"
+        }
+      },
+      "required": ["colorSpace", "components"],
+      "additionalProperties": false
+    },
+    "lab": {
+      "type": "object",
+      "properties": {
+        "colorSpace": {
+          "const": "lab"
+        },
+        "components": {
+          "type": "array",
+          "description": "[Lightness (0-100), a* (-125 to 125), b* (-125 to 125)]",
+          "prefixItems": [
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": -125,
+                  "maximum": 125
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": -125,
+                  "maximum": 125
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            }
+          ],
+          "minItems": 3,
+          "maxItems": 3,
+          "items": false
+        },
+        "alpha": {
+          "$ref": "#/$defs/alpha"
+        },
+        "hex": {
+          "$ref": "#/$defs/hex"
+        }
+      },
+      "required": ["colorSpace", "components"],
+      "additionalProperties": false
+    },
+    "lch": {
+      "type": "object",
+      "properties": {
+        "colorSpace": {
+          "const": "lch"
+        },
+        "components": {
+          "type": "array",
+          "description": "[Lightness (0-100), Chroma (0-230), Hue (0-360)]",
+          "prefixItems": [
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 230
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 360
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            }
+          ],
+          "minItems": 3,
+          "maxItems": 3,
+          "items": false
+        },
+        "alpha": {
+          "$ref": "#/$defs/alpha"
+        },
+        "hex": {
+          "$ref": "#/$defs/hex"
+        }
+      },
+      "required": ["colorSpace", "components"],
+      "additionalProperties": false
+    },
+    "oklab": {
+      "type": "object",
+      "properties": {
+        "colorSpace": {
+          "const": "oklab"
+        },
+        "components": {
+          "type": "array",
+          "description": "[Lightness (0-1), a* (-0.4 to 0.4), b* (-0.4 to 0.4)]",
+          "prefixItems": [
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": -0.4,
+                  "maximum": 0.4
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": -0.4,
+                  "maximum": 0.4
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            }
+          ],
+          "minItems": 3,
+          "maxItems": 3,
+          "items": false
+        },
+        "alpha": {
+          "$ref": "#/$defs/alpha"
+        },
+        "hex": {
+          "$ref": "#/$defs/hex"
+        }
+      },
+      "required": ["colorSpace", "components"],
+      "additionalProperties": false
+    },
+    "oklch": {
+      "type": "object",
+      "properties": {
+        "colorSpace": {
+          "const": "oklch"
+        },
+        "components": {
+          "type": "array",
+          "description": "[Lightness (0-1), Chroma (0-0.4), Hue (0-360)]",
+          "prefixItems": [
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 0.4
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            },
+            {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 360
+                },
+                {
+                  "type": "string",
+                  "const": "none"
+                }
+              ]
+            }
+          ],
+          "minItems": 3,
+          "maxItems": 3,
+          "items": false
+        },
+        "alpha": {
+          "$ref": "#/$defs/alpha"
+        },
+        "hex": {
+          "$ref": "#/$defs/hex"
+        }
+      },
+      "required": ["colorSpace", "components"],
+      "additionalProperties": false
+    },
+    "xyz-d65": {
+      "type": "object",
+      "properties": {
+        "colorSpace": {
+          "const": "xyz-d65"
+        },
+        "components": {
+          "type": "array",
+          "description": "[X, Y, Z] in CIE XYZ with D65 illuminant (values can exceed 1.0)",
+          "items": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "const": "none"
+              }
+            ]
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "alpha": {
+          "$ref": "#/$defs/alpha"
+        },
+        "hex": {
+          "$ref": "#/$defs/hex"
+        }
+      },
+      "required": ["colorSpace", "components"],
+      "additionalProperties": false
+    },
+    "xyz-d50": {
+      "type": "object",
+      "properties": {
+        "colorSpace": {
+          "const": "xyz-d50"
+        },
+        "components": {
+          "type": "array",
+          "description": "[X, Y, Z] in CIE XYZ with D50 illuminant (values can exceed 1.0)",
+          "items": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "const": "none"
+              }
+            ]
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "alpha": {
+          "$ref": "#/$defs/alpha"
+        },
+        "hex": {
+          "$ref": "#/$defs/hex"
+        }
+      },
+      "required": ["colorSpace", "components"],
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../base.schema.json#/$defs/leaf"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "$type": {
+          "type": "string",
+          "const": "color"
+        },
+        "$value": {
+          "oneOf": [
+            {
+              "$ref": "../value-types.schema.json#/$defs/dtcgReference"
+            },
+            {
+              "$ref": "#/$defs/hex",
+              "description": "Simple hex color value (e.g., #ff0000, #f00, #ff0000ff)"
+            },
+            {
+              "type": "object",
+              "description": "Color value with explicit color space",
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/srgb"
+                },
+                {
+                  "$ref": "#/$defs/srgb-linear"
+                },
+                {
+                  "$ref": "#/$defs/hsl"
+                },
+                {
+                  "$ref": "#/$defs/hwb"
+                },
+                {
+                  "$ref": "#/$defs/lab"
+                },
+                {
+                  "$ref": "#/$defs/lch"
+                },
+                {
+                  "$ref": "#/$defs/oklab"
+                },
+                {
+                  "$ref": "#/$defs/oklch"
+                },
+                {
+                  "$ref": "#/$defs/display-p3"
+                },
+                {
+                  "$ref": "#/$defs/a98-rgb"
+                },
+                {
+                  "$ref": "#/$defs/prophoto-rgb"
+                },
+                {
+                  "$ref": "#/$defs/rec2020"
+                },
+                {
+                  "$ref": "#/$defs/xyz-d65"
+                },
+                {
+                  "$ref": "#/$defs/xyz-d50"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "required": ["$type"]
+    }
+  ]
+}
