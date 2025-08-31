@@ -1,5 +1,13 @@
 # @upft/ast
 
+## 0.0.3
+
+### Patch Changes
+
+- c88c864: Version bump to verify release process
+- Updated dependencies [c88c864]
+  - @upft/foundation@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes

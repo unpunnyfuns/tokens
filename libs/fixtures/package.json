@@ -1,6 +1,6 @@
 {
   "name": "@upft/examples",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "description": "Test fixtures and design token examples for testing across packages",
   "repository": {
