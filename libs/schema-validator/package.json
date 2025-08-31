@@ -1,6 +1,6 @@
 {
   "name": "@upft/schema-validator",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "JSON schema validation for UPFT design tokens and manifests",
   "repository": {
