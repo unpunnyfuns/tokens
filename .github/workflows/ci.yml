@@ -55,6 +55,12 @@ jobs:
 
       - name: Check for changesets
         run: |
+          # Skip changeset check for release PRs (they consume changesets)
+          if [[ "${{ github.head_ref }}" == changeset-release/* ]]; then
+            echo "✅ Skipping changeset check for release PR"
+            exit 0
+          fi
+          
           if [ "$(ls -A .changeset/*.md 2>/dev/null | grep -v README | wc -l)" -eq 0 ]; then
             echo "❌ No changesets found. Please run 'pnpm changeset' to create one."
             exit 1
