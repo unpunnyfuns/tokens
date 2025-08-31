@@ -59,10 +59,29 @@ export function validateBundle(
     tokenTypes: {} as Record<string, number>,
   };
 
-  // Calculate bundle size
-  const bundleJson = JSON.stringify(bundle);
-  stats.bundleSizeKB =
-    Math.round((Buffer.byteLength(bundleJson, "utf8") / 1024) * 100) / 100;
+  // Calculate bundle size - handle null/undefined and circular references
+  let bundleJson: string;
+  try {
+    bundleJson = JSON.stringify(bundle || {});
+    stats.bundleSizeKB =
+      Math.round((Buffer.byteLength(bundleJson, "utf8") / 1024) * 100) / 100;
+  } catch (error) {
+    // Handle circular references or other JSON.stringify errors
+    errors.push({
+      type: "error",
+      message: `Bundle size calculation failed: ${error instanceof Error ? error.message : String(error)}`,
+      path: "bundle",
+    });
+    stats.bundleSizeKB = 0;
+
+    // If we can't calculate size, we can't check size limits
+    return {
+      valid: false,
+      errors,
+      warnings,
+      stats,
+    };
+  }
 
   if (stats.bundleSizeKB > opts.maxBundleSize * 1024) {
     errors.push({
@@ -72,8 +91,8 @@ export function validateBundle(
     });
   }
 
-  // Validate tokens recursively
-  validateTokensRecursive(bundle, "", errors, warnings, stats, opts);
+  // Validate tokens recursively - handle null/undefined bundle
+  validateTokensRecursive(bundle || {}, "", errors, warnings, stats, opts);
 
   return {
     valid: errors.length === 0,
@@ -311,7 +330,7 @@ function validateDimensionValue(
     // String dimension (e.g., "16px", "1rem")
     if (
       !value.match(
-        /^-?\d*\.?\d+(px|rem|em|%|vh|vw|pt|pc|in|cm|mm|ex|ch|lh|cap|ic|rlh)$/,
+        /^-?(?:\d{1,10}(?:\.\d{0,10})?|\.\d{1,10})(px|rem|em|%|vh|vw|pt|pc|in|cm|mm|ex|ch|lh|cap|ic|rlh)$/,
       )
     ) {
       errors.push({
@@ -450,7 +469,7 @@ function checkForUnresolvedReferences(
 ): void {
   if (typeof value === "string") {
     // Check for reference patterns like {color.primary} or {typography.fontSize.base}
-    const referencePattern = /\{[a-zA-Z][a-zA-Z0-9._-]*\}/g;
+    const referencePattern = /\{[a-zA-Z][a-zA-Z0-9._-]{0,100}\}/g;
     const matches = value.match(referencePattern);
     if (matches) {
       errors.push({

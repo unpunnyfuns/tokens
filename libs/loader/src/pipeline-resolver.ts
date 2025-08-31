@@ -13,6 +13,7 @@ import {
   type TokenNode,
 } from "@upft/ast";
 import type { TokenDocument } from "@upft/foundation";
+import { isDangerousProperty } from "@upft/foundation";
 
 export interface PipelineResolutionInput {
   [modifierName: string]: string | string[] | null;
@@ -532,17 +533,17 @@ function astToTokenDocument(tokens: TokenNode[]): TokenDocument {
     // Navigate/create the path structure
     for (let i = 0; i < pathParts.length - 1; i++) {
       const part = pathParts[i];
-      if (part && !current[part]) {
-        current[part] = {};
-      }
-      if (part) {
+      if (part && !isDangerousProperty(part)) {
+        if (!current[part]) {
+          current[part] = Object.create(null);
+        }
         current = current[part] as Record<string, unknown>;
       }
     }
 
-    // Set the final token value - prefer resolved value over typed value
+    // Set the final token value
     const finalKey = pathParts[pathParts.length - 1];
-    if (finalKey) {
+    if (finalKey && !isDangerousProperty(finalKey)) {
       current[finalKey] = token.resolvedValue ||
         token.typedValue || {
           $type: token.tokenType,

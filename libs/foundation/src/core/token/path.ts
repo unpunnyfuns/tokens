@@ -2,6 +2,13 @@ import type { TokenDocument, TokenOrGroup } from "../../types.js";
 import { isToken, isTokenGroup } from "./guards.js";
 
 /**
+ * Check if a key is dangerous for prototype pollution
+ */
+export function isDangerousProperty(key: string): boolean {
+  return key === "__proto__" || key === "prototype" || key === "constructor";
+}
+
+/**
  * Parse a path string into segments
  * Handles both dot notation and JSON pointer format
  */
@@ -107,9 +114,9 @@ export function setTokenAtPath(
   for (let i = 0; i < segments.length - 1; i++) {
     const segment = segments[i];
 
-    if (segment) {
+    if (segment && !isDangerousProperty(segment)) {
       if (!(segment in current) || typeof current[segment] !== "object") {
-        current[segment] = {};
+        current[segment] = Object.create(null);
       }
       current = current[segment] as Record<string, unknown>;
     }
@@ -117,7 +124,7 @@ export function setTokenAtPath(
 
   // Set the value at the final segment
   const lastSegment = segments[segments.length - 1];
-  if (lastSegment) {
+  if (lastSegment && !isDangerousProperty(lastSegment)) {
     current[lastSegment] = value;
   }
 }
