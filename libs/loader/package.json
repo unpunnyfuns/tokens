@@ -1,6 +1,6 @@
 {
   "name": "@upft/loader",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "description": "Pipeline orchestrator for loading and validating design token files",
   "repository": {
