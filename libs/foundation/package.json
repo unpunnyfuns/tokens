@@ -1,6 +1,6 @@
 {
   "name": "@upft/foundation",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Foundation types and core token operations",
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 {
   "name": "@upft/cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "description": "CLI for UPFT design token processing",
   "repository": {
