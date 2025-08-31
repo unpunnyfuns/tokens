@@ -13,7 +13,7 @@ const server = setupServer();
 describe("TokenFileReader", () => {
   let reader: TokenFileReader;
   // Use a simpler path resolution approach for tests
-  const examplesPath = join(process.cwd(), "..", "examples", "src");
+  const examplesPath = join(process.cwd(), "..", "fixtures", "src");
   let tempDir: string;
 
   beforeEach(async () => {

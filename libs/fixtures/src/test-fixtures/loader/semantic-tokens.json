@@ -1,0 +1,9 @@
+{
+  "$schema": "../../../schemas/tokens/base.schema.json",
+  "color": {
+    "surface": {
+      "$type": "color",
+      "$value": "{color.primary}"
+    }
+  }
+}

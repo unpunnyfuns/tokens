@@ -1,0 +1,25 @@
+{
+  "$schema": "../../../schemas/manifest-upft.json",
+  "name": "test-manifest",
+  "description": "Test manifest for loader tests",
+  "sets": [
+    {
+      "name": "base",
+      "files": ["base-tokens.json"]
+    },
+    {
+      "name": "semantic",
+      "files": ["semantic-tokens.json"]
+    }
+  ],
+  "modifiers": {
+    "theme": {
+      "oneOf": ["light", "dark"],
+      "values": {
+        "light": [],
+        "dark": ["dark-tokens.json"]
+      },
+      "default": "light"
+    }
+  }
+}

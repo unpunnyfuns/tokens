@@ -2,20 +2,20 @@
  * Token operations
  */
 
-export * from "./merge/index.js";
-export * from "./operations.js";
 // Re-export path utilities from foundation to maintain API compatibility
 export {
-  parsePath,
-  joinPath,
-  getParentPath,
-  getTokenAtPath,
-  setTokenAtPath,
-  deleteTokenAtPath,
-  isDangerousProperty,
   convertDTCGToJSONPath,
   convertJSONPathToDTCG,
+  deleteTokenAtPath,
+  getParentPath,
+  getTokenAtPath,
+  isDangerousProperty,
+  joinPath,
+  parsePath,
+  setTokenAtPath,
 } from "@upft/foundation";
+export * from "./merge/index.js";
+export * from "./operations.js";
 export {
   buildPathIndex,
   getTokenFromIndex,

@@ -4,14 +4,15 @@
  */
 
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runPipeline } from "./pipeline.js";
 
-const TEST_DIR = resolve(__dirname, "__pipeline_fixtures__");
+let TEST_DIR: string;
 
 const VALID_TOKENS = {
-  $schema: "https://schemas.upft.co/draft/tokens/v0.json",
+  $schema: "../../../schemas/tokens/base.schema.json",
   color: {
     primary: {
       $type: "color",
@@ -21,7 +22,7 @@ const VALID_TOKENS = {
 };
 
 const VALID_MANIFEST = {
-  $schema: "https://schemas.upft.co/draft/manifest/v0.json",
+  $schema: "../../../schemas/manifest/base.schema.json",
   name: "test-manifest",
   version: "1.0.0",
   modifiers: {},
@@ -35,6 +36,10 @@ const VALID_MANIFEST = {
 
 describe("Pipeline Core Functions", () => {
   beforeEach(() => {
+    TEST_DIR = join(
+      tmpdir(),
+      `pipeline-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    );
     try {
       rmSync(TEST_DIR, { recursive: true, force: true });
     } catch {
@@ -205,7 +210,7 @@ describe("Pipeline Core Functions", () => {
         resolve(TEST_DIR, "dark-tokens.json"),
         JSON.stringify(
           {
-            $schema: "https://schemas.upft.co/draft/tokens/v0.json",
+            $schema: "../../../schemas/tokens/base.schema.json",
             color: { bg: { $type: "color", $value: "#000" } },
           },
           null,

@@ -7,12 +7,12 @@ describe("Token Operations", () => {
   describe("merge (DTCG-aware)", () => {
     it("should merge two token documents", async () => {
       const base = (
-        await import("@upft/examples/tokens/primitives/colors.json", {
+        await import("@upft/fixtures/tokens/primitives/colors.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;
       const overlay = (
-        await import("@upft/examples/tokens/themes/dark.json", {
+        await import("@upft/fixtures/tokens/themes/dark.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;

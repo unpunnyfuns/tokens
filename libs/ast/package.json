@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.2.1",
-    "@upft/examples": "workspace:*",
+    "@upft/fixtures": "workspace:*",
     "memfs": "^4.36.3",
     "msw": "^2.10.5",
     "typescript": "^5.9.2",

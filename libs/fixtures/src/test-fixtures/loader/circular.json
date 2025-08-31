@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schemas.upft.co/draft/tokens/v0.json",
+  "a": {
+    "$type": "color",
+    "$value": "{b}"
+  },
+  "b": {
+    "$type": "color",
+    "$value": "{a}"
+  }
+}

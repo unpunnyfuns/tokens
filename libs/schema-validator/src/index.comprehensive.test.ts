@@ -2,13 +2,13 @@
  * Comprehensive tests for schema validator functions
  */
 
-import colorsBase from "@upft/examples/bundler-fixtures/input/colors-base.json" with {
+import colorsBase from "@upft/fixtures/bundler-fixtures/input/colors-base.json" with {
   type: "json",
 };
-import simpleManifest from "@upft/examples/test-scenarios/simple.manifest.json" with {
+import simpleManifest from "@upft/fixtures/test-scenarios/simple.manifest.json" with {
   type: "json",
 };
-import simpleTokens from "@upft/examples/test-scenarios/simple-tokens.json" with {
+import simpleTokens from "@upft/fixtures/test-scenarios/simple-tokens.json" with {
   type: "json",
 };
 import { describe, expect, it } from "vitest";

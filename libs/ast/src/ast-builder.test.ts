@@ -10,7 +10,7 @@ describe("AST Builder", () => {
   describe("createAST", () => {
     it("should build AST from token document", async () => {
       const doc = (
-        await import("@upft/examples/tokens/full-example.json", {
+        await import("@upft/fixtures/tokens/full-example.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;
@@ -184,7 +184,7 @@ describe("AST Builder", () => {
   describe("error handling", () => {
     it("should handle invalid token structures gracefully", async () => {
       const doc = (
-        await import("@upft/examples/error-cases/broken-references.json", {
+        await import("@upft/fixtures/error-cases/broken-references.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;

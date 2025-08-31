@@ -4,13 +4,15 @@
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import Ajv from "ajv/dist/2020.js";
 import { describe, expect, it } from "vitest";
 import { schemas } from "../dist/index.js";
 
-// Use a simpler path resolution for tests
-const EXAMPLES_PATH = join(process.cwd(), "..", "examples", "src");
+// Get fixtures path using workspace structure
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const EXAMPLES_PATH = join(currentDir, "..", "..", "fixtures", "src");
 
 // Initialize AJV with all schemas
 const ajv = new Ajv({
