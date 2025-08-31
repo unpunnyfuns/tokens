@@ -1,5 +1,11 @@
 # @upft/cli
 
+## 0.0.4
+
+### Patch Changes
+
+- de79493: Fixing CLI
+
 ## 0.0.3
 
 ### Patch Changes
