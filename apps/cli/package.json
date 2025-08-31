@@ -18,19 +18,6 @@
   "files": [
     "dist"
   ],
-  "bundledDependencies": [
-    "@upft/foundation",
-    "@upft/bundler",
-    "@upft/analysis",
-    "@upft/ast",
-    "@upft/linter",
-    "@upft/loader",
-    "@upft/schemas",
-    "@upft/shared",
-    "commander",
-    "picocolors",
-    "chokidar"
-  ],
   "devDependencies": {
     "@types/node": "^24.2.1",
     "@upft/analysis": "workspace:*",
