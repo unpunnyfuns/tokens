@@ -22,22 +22,22 @@ export {
   validateManifestWithRegistry,
 } from "./registry.js";
 export {
-  type DTCGResolverManifest,
-  dtcgResolver,
-  isDTCGManifest,
-} from "./resolvers/dtcg-resolver.js";
-export {
   type DTCGManifest,
   dtcgManifestResolver,
   isDTCGManifestFormat,
 } from "./resolvers/dtcg-manifest-resolver.js";
+export {
+  type DTCGResolverManifest,
+  dtcgResolver,
+  isDTCGManifest,
+} from "./resolvers/dtcg-resolver.js";
 // Resolver implementations
 export { upftResolver } from "./resolvers/upft-resolver.js";
 
 // Register built-in resolvers
 import { registerManifestResolver } from "./registry.js";
-import { dtcgResolver } from "./resolvers/dtcg-resolver.js";
 import { dtcgManifestResolver } from "./resolvers/dtcg-manifest-resolver.js";
+import { dtcgResolver } from "./resolvers/dtcg-resolver.js";
 import { upftResolver } from "./resolvers/upft-resolver.js";
 
 registerManifestResolver(upftResolver);

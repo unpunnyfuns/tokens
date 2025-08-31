@@ -1,4 +1,5 @@
 import type { TokenDocument } from "@upft/foundation";
+import { isDangerousProperty } from "@upft/foundation";
 import { visitTokens } from "./ast-traverser.js";
 import type { ASTNode, GroupNode, TokenNode } from "./types.js";
 
@@ -12,9 +13,9 @@ function processTokenNode(token: TokenNode, doc: TokenDocument): void {
   // Navigate to parent
   for (let i = 0; i < segments.length - 1; i++) {
     const segment = segments[i];
-    if (segment) {
+    if (segment && !isDangerousProperty(segment)) {
       if (!current[segment]) {
-        current[segment] = {};
+        current[segment] = Object.create(null);
       }
       current = current[segment] as TokenDocument;
     }
@@ -22,7 +23,7 @@ function processTokenNode(token: TokenNode, doc: TokenDocument): void {
 
   // Set token value
   const lastSegment = segments[segments.length - 1];
-  if (lastSegment) {
+  if (lastSegment && !isDangerousProperty(lastSegment)) {
     current[lastSegment] = {
       $value: token.typedValue?.$value,
       ...(token.tokenType ? { $type: token.tokenType } : {}),

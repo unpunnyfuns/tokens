@@ -224,11 +224,11 @@ export class TokenFileWatcher {
    * Check if path matches pattern
    */
   private matchesPattern(path: string, pattern: string): boolean {
-    // Simple glob pattern matching
+    // Simple glob pattern matching - escape regex special chars first
     const regex = pattern
-      .replace(/\./g, "\\.")
-      .replace(/\*/g, ".*")
-      .replace(/\?/g, ".");
+      .replace(/[\\^$+?.()|[\]{}]/g, "\\$&")
+      .replace(/\\\*/g, ".*")
+      .replace(/\\\?/g, ".");
 
     return new RegExp(regex).test(path);
   }

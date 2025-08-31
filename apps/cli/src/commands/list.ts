@@ -28,17 +28,20 @@ export async function listTokens(
     const content = await fs.readFile(filePath, "utf-8");
     const doc = JSON.parse(content);
 
+    // Ensure options is not null/undefined
+    const safeOptions = options ?? {};
+
     // Convert CLI options to analysis options
     const analysisOptions: ListTokensOptions = {
-      resolveReferences: options.resolve ?? true, // Default to resolving references
+      resolveReferences: safeOptions.resolve ?? true, // Default to resolving references
     };
 
     // Only add optional properties if they have values
-    if (options.type) {
-      analysisOptions.type = options.type;
+    if (safeOptions.type) {
+      analysisOptions.type = safeOptions.type;
     }
-    if (options.group) {
-      analysisOptions.group = options.group;
+    if (safeOptions.group) {
+      analysisOptions.group = safeOptions.group;
     }
 
     // Use high-level analysis API

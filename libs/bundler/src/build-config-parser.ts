@@ -84,7 +84,11 @@ export function validateBuildConfig(config: BuildConfig): ValidationResult {
   }> = [];
 
   // Validate outputs
-  if (!config.outputs || config.outputs.length === 0) {
+  const validOutputs = (config.outputs || []).filter(
+    (output) => output !== null && output !== undefined,
+  );
+
+  if (validOutputs.length === 0) {
     errors.push({
       message: "Build configuration must have at least one output",
       path: "outputs",
@@ -103,6 +107,8 @@ export function validateBuildConfig(config: BuildConfig): ValidationResult {
   // Check for duplicate output names
   const outputNames = new Set<string>();
   for (const output of config.outputs || []) {
+    if (!output) continue; // Skip null outputs
+
     if (outputNames.has(output.name)) {
       warnings.push({
         message: `Duplicate output name: ${output.name}`,
@@ -180,7 +186,7 @@ function validateBuildConfigOutput(
  * Extract template variables from a path string
  */
 export function extractPathTemplates(path: string): string[] {
-  const templateRegex = /\{([^}]+)\}/g;
+  const templateRegex = /\{([^}]{1,100})\}/g;
   const templates: string[] = [];
 
   for (const match of path.matchAll(templateRegex)) {
@@ -199,7 +205,7 @@ export function resolvePathTemplates(
   path: string,
   modifiers: Record<string, string | string[]>,
 ): string {
-  return path.replace(/\{([^}]+)\}/g, (match, key) => {
+  return path.replace(/\{([^}]{1,100})\}/g, (match, key) => {
     const value = modifiers[key];
     if (Array.isArray(value)) {
       return value.join("-");

@@ -3,11 +3,11 @@
  * Supports the standard DTCG manifest format with sources, themes, and outputs
  */
 
+import { dirname, resolve } from "node:path";
 import type { ManifestAST, ModifierAST, TokenSetAST } from "@upft/ast";
 import type { ValidationResult } from "@upft/foundation";
-import type { ManifestResolver } from "../registry.js";
-import { dirname, resolve } from "node:path";
 import { glob } from "glob";
+import type { ManifestResolver } from "../registry.js";
 
 /**
  * W3C DTCG Manifest format
@@ -95,13 +95,11 @@ export function isDTCGManifestFormat(
   }
 
   // Basic structural check for sources
-  const sourcesAreValid = m.sources.every(
-    (source: unknown) => {
-      if (!source || typeof source !== "object") return false;
-      const s = source as Record<string, unknown>;
-      return typeof s.name === "string" && Array.isArray(s.include);
-    }
-  );
+  const sourcesAreValid = m.sources.every((source: unknown) => {
+    if (!source || typeof source !== "object") return false;
+    const s = source as Record<string, unknown>;
+    return typeof s.name === "string" && Array.isArray(s.include);
+  });
 
   if (!sourcesAreValid) {
     return false;
@@ -140,10 +138,10 @@ function convertDTCGManifestToAST(
   manifestPath: string,
 ): ManifestAST {
   const manifestAST = createBaseDTCGManifestAST(manifest, manifestPath);
-  
+
   // Convert sources to token sets
   convertDTCGSourcesToAST(manifest.sources, manifestAST, manifestPath);
-  
+
   // Convert themes to modifiers if present
   if (manifest.themes) {
     convertDTCGThemesToAST(manifest.themes, manifestAST, manifestPath);
@@ -191,18 +189,21 @@ function createDTCGSourceTokenSetAST(
   // Resolve glob patterns to actual file paths
   const manifestDir = dirname(manifestPath);
   const resolvedFiles: string[] = [];
-  
+
   for (const pattern of source.include) {
     // If pattern starts with ./, make it relative to manifest directory
-    const resolvedPattern = pattern.startsWith('./') 
+    const resolvedPattern = pattern.startsWith("./")
       ? resolve(manifestDir, pattern)
       : pattern;
-    
+
     try {
       // Use glob to expand patterns
-      const matches = glob.sync(resolvedPattern, { absolute: false, cwd: manifestDir });
+      const matches = glob.sync(resolvedPattern, {
+        absolute: false,
+        cwd: manifestDir,
+      });
       resolvedFiles.push(...matches);
-    } catch (error) {
+    } catch {
       // If glob fails, try the pattern as-is (might be a direct file path)
       resolvedFiles.push(pattern);
     }
@@ -238,7 +239,7 @@ function convertDTCGThemesToAST(
   // Create modifiers for each condition key
   for (const conditionKey of conditionKeys) {
     const values = themes
-      .map(theme => theme.conditions[conditionKey])
+      .map((theme) => theme.conditions[conditionKey])
       .filter((value): value is string => value !== undefined)
       .filter((value, index, arr) => arr.indexOf(value) === index);
 
@@ -247,7 +248,7 @@ function convertDTCGThemesToAST(
         conditionKey,
         values,
         themes,
-        manifestPath
+        manifestPath,
       );
       manifestAST.modifiers.set(conditionKey, modifierAST);
     }
@@ -279,9 +280,9 @@ function createDTCGThemeModifierAST(
   // Note: The upft pipeline will resolve source names to actual files
   for (const value of values) {
     const associatedThemes = themes.filter(
-      theme => theme.conditions[conditionKey] === value
+      (theme) => theme.conditions[conditionKey] === value,
     );
-    
+
     // Collect all source names from associated themes
     const sourceNames = new Set<string>();
     for (const theme of associatedThemes) {
@@ -454,7 +455,7 @@ function validateDTCGThemes(
     }>;
   },
 ): void {
-  const sourceNames = new Set(sources.map(s => s.name));
+  const sourceNames = new Set(sources.map((s) => s.name));
 
   for (let i = 0; i < themes.length; i++) {
     const theme = themes[i];
