@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches:
-      - main
       - "feat/**"
       - "fix/**"
   pull_request:
@@ -49,27 +48,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
 
-      # Let Turborepo handle all task orchestration and dependencies
+      # Run all CI tasks
       - name: Run CI
         run: pnpm turbo quality test:coverage
 
       - name: Check for changesets
+        if: github.event_name == 'pull_request'
         run: |
-          echo "Branch: ${{ github.head_ref }}"
-          echo "Event: ${{ github.event_name }}"
-
-          # Skip changeset check for release PRs (they consume changesets)
-          if [[ "${{ github.head_ref }}" =~ ^changeset-release/ ]] || [[ "${{ github.head_ref }}" == *changeset* ]]; then
+          # Skip changeset check for release PRs
+          if [[ "${{ github.head_ref }}" == *changeset* ]]; then
             echo "✅ Skipping changeset check for release PR"
             exit 0
           fi
-
-          # Skip for push events (only check on PRs)
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            echo "✅ Skipping changeset check for push events"
-            exit 0
-          fi
-
+          
           if [ "$(ls -A .changeset/*.md 2>/dev/null | grep -v README | wc -l)" -eq 0 ]; then
             echo "❌ No changesets found. Please run 'pnpm changeset' to create one."
             exit 1
