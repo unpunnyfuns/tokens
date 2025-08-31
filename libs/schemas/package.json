@@ -1,6 +1,6 @@
 {
   "name": "@upft/schemas",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "description": "JSON schemas for DTCG design tokens",
   "repository": {
