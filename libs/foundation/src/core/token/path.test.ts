@@ -117,7 +117,7 @@ describe("Token Path Utilities", () => {
   describe("getTokenAtPath", () => {
     it("should retrieve token at specified path", async () => {
       const tokens = (
-        await import("@upft/examples/tokens/full-example.json", {
+        await import("@upft/fixtures/tokens/full-example.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;
@@ -136,7 +136,7 @@ describe("Token Path Utilities", () => {
 
     it("should return undefined for non-existent paths", async () => {
       const tokens = (
-        await import("@upft/examples/tokens/full-example.json", {
+        await import("@upft/fixtures/tokens/full-example.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;

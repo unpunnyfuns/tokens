@@ -3,26 +3,26 @@
  * Tests the complete flow from detection to parsing to validation
  */
 
-import dtcgExtensions from "@upft/examples/test-scenarios/dtcg-complex-extensions.json" with {
+import dtcgExtensions from "@upft/fixtures/test-scenarios/dtcg-complex-extensions.json" with {
   type: "json",
 };
-import dtcgEnumerated from "@upft/examples/test-scenarios/dtcg-enumerated-modifiers.json" with {
+import dtcgEnumerated from "@upft/fixtures/test-scenarios/dtcg-enumerated-modifiers.json" with {
   type: "json",
 };
-import dtcgInclude from "@upft/examples/test-scenarios/dtcg-include-modifiers.json" with {
+import dtcgInclude from "@upft/fixtures/test-scenarios/dtcg-include-modifiers.json" with {
   type: "json",
 };
-import dtcgInline from "@upft/examples/test-scenarios/dtcg-inline-tokens.json" with {
+import dtcgInline from "@upft/fixtures/test-scenarios/dtcg-inline-tokens.json" with {
   type: "json",
 };
-import dtcgMixed from "@upft/examples/test-scenarios/dtcg-mixed-features.json" with {
+import dtcgMixed from "@upft/fixtures/test-scenarios/dtcg-mixed-features.json" with {
   type: "json",
 };
-import dtcgComplex from "@upft/examples/test-scenarios/dtcg-resolver.json" with {
+import dtcgComplex from "@upft/fixtures/test-scenarios/dtcg-resolver.json" with {
   type: "json",
 };
 // Import example manifests
-import dtcgSimple from "@upft/examples/test-scenarios/simple-dtcg.json" with {
+import dtcgSimple from "@upft/fixtures/test-scenarios/simple-dtcg.json" with {
   type: "json",
 };
 import type { UPFTResolverManifest } from "@upft/foundation";

@@ -2,10 +2,10 @@
  * Tests for token merging functionality
  */
 
-import colorsBase from "@upft/examples/bundler-fixtures/input/colors-base.json" with {
+import colorsBase from "@upft/fixtures/bundler-fixtures/input/colors-base.json" with {
   type: "json",
 };
-import spacingBase from "@upft/examples/bundler-fixtures/input/spacing-base.json" with {
+import spacingBase from "@upft/fixtures/bundler-fixtures/input/spacing-base.json" with {
   type: "json",
 };
 import { describe, expect, it } from "vitest";

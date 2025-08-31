@@ -3,19 +3,19 @@
  */
 
 // Import example tokens directly using package exports
-import fullExample from "@upft/examples/tokens/full-example.json" with {
+import fullExample from "@upft/fixtures/tokens/full-example.json" with {
   type: "json",
 };
-import primitiveColors from "@upft/examples/tokens/primitives/colors.json" with {
+import primitiveColors from "@upft/fixtures/tokens/primitives/colors.json" with {
   type: "json",
 };
-import primitiveTypography from "@upft/examples/tokens/primitives/typography.json" with {
+import primitiveTypography from "@upft/fixtures/tokens/primitives/typography.json" with {
   type: "json",
 };
-import semanticColors from "@upft/examples/tokens/semantic/colors.json" with {
+import semanticColors from "@upft/fixtures/tokens/semantic/colors.json" with {
   type: "json",
 };
-import lightTheme from "@upft/examples/tokens/themes/light.json" with {
+import lightTheme from "@upft/fixtures/tokens/themes/light.json" with {
   type: "json",
 };
 import Ajv from "ajv/dist/2020.js";

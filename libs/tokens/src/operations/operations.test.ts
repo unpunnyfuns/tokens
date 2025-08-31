@@ -1,4 +1,4 @@
-import colorsBase from "@upft/examples/bundler-fixtures/input/colors-base.json" with {
+import colorsBase from "@upft/fixtures/bundler-fixtures/input/colors-base.json" with {
   type: "json",
 };
 import type { TokenDocument, TokenOrGroup } from "@upft/foundation";
@@ -10,12 +10,12 @@ describe("Token Operations", () => {
   describe("merge (DTCG-aware)", () => {
     it("should merge two token documents", async () => {
       const base = (
-        await import("@upft/examples/tokens/primitives/colors.json", {
+        await import("@upft/fixtures/tokens/primitives/colors.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;
       const overlay = (
-        await import("@upft/examples/tokens/themes/dark.json", {
+        await import("@upft/fixtures/tokens/themes/dark.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;

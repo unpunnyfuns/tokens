@@ -4,7 +4,9 @@
  */
 
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { ManifestAST } from "@upft/ast";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createLoader } from "./loader.js";
@@ -14,10 +16,23 @@ import {
   resolveProject,
 } from "./multi-pass-resolver.js";
 
-const TEST_DIR = resolve(__dirname, "__multipass_fixtures__");
+// Get fixtures path using workspace structure
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const FIXTURES_DIR = join(
+  currentDir,
+  "..",
+  "..",
+  "fixtures",
+  "src",
+  "test-fixtures",
+  "loader",
+);
+
+// Use temp directory for dynamic test files to avoid overwriting centralized fixtures
+let TEST_DIR: string;
 
 const BASE_TOKENS = {
-  $schema: "https://schemas.upft.co/draft/tokens/v0.json",
+  $schema: "../../../schemas/tokens/base.schema.json",
   color: {
     primary: {
       $type: "color",
@@ -31,7 +46,7 @@ const BASE_TOKENS = {
 };
 
 const SEMANTIC_TOKENS = {
-  $schema: "https://schemas.upft.co/draft/tokens/v0.json",
+  $schema: "../../../schemas/tokens/base.schema.json",
   color: {
     surface: {
       $type: "color",
@@ -80,41 +95,34 @@ const MANIFEST_AST: ManifestAST = {
 
 describe("Multi-Pass Resolver", () => {
   beforeEach(() => {
-    try {
-      rmSync(TEST_DIR, { recursive: true, force: true });
-    } catch {
-      /* Directory cleanup - ignore if doesn't exist */
-    }
+    // Create temporary directory for tests that need to write files
+    TEST_DIR = join(
+      tmpdir(),
+      `multi-pass-test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    );
     mkdirSync(TEST_DIR, { recursive: true });
   });
 
   afterEach(() => {
+    // Clean up temporary directory
     try {
       rmSync(TEST_DIR, { recursive: true, force: true });
     } catch {
-      /* Directory cleanup - ignore if doesn't exist */
+      // Ignore cleanup errors
     }
   });
 
   describe("createProjectAST", () => {
     it("should create project AST from file paths", async () => {
-      writeFileSync(
-        resolve(TEST_DIR, "base.json"),
-        JSON.stringify(BASE_TOKENS, null, 2),
-      );
-      writeFileSync(
-        resolve(TEST_DIR, "semantic.json"),
-        JSON.stringify(SEMANTIC_TOKENS, null, 2),
-      );
-
-      const project = await createProjectAST(TEST_DIR, [
+      // Use centralized fixtures for this key test
+      const project = await createProjectAST(FIXTURES_DIR, [
         "base.json",
         "semantic.json",
       ]);
 
       expect(project.type).toBe("project");
       expect(project.name).toBe("project");
-      expect(project.basePath).toBe(TEST_DIR);
+      expect(project.basePath).toBe(FIXTURES_DIR);
       expect(project.files.size).toBe(2);
       expect(project.crossFileReferences).toBeDefined();
       expect(project.dependencyGraph).toBeDefined();

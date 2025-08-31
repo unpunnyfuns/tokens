@@ -2,7 +2,7 @@
  * Tests for the linter module
  */
 
-import colorsBase from "@upft/examples/bundler-fixtures/input/colors-base.json" with {
+import colorsBase from "@upft/fixtures/bundler-fixtures/input/colors-base.json" with {
   type: "json",
 };
 import type { Token, TokenDocument } from "@upft/foundation";

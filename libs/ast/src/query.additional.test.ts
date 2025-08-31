@@ -2,7 +2,7 @@
  * Additional tests for query functions to improve coverage
  */
 
-import colorsBase from "@upft/examples/bundler-fixtures/input/colors-base.json" with {
+import colorsBase from "@upft/fixtures/bundler-fixtures/input/colors-base.json" with {
   type: "json",
 };
 import { describe, expect, it } from "vitest";

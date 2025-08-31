@@ -2,8 +2,8 @@
  * Types for token parsing
  */
 
+import type { TokenAST } from "@upft/ast";
 import type { TokenDocument } from "@upft/foundation";
-import type { TokenAST } from "../../ast/dist/types.js";
 
 export interface TokenParseOptions {
   /** File path for AST metadata */

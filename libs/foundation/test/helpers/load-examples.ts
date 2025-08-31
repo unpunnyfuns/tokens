@@ -1,20 +1,16 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import type { TokenDocument } from "../../src/types.js";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import type { TokenDocument } from "@upft/foundation";
 
 /**
- * Load a token file from examples directory
+ * Load a token file from fixtures package
  */
 export function loadTokenFile<T = TokenDocument>(relativePath: string): T {
-  const examplesPath = join(
-    process.cwd(),
-    "..",
-    "..",
-    "libs",
-    "examples",
-    "src",
-  );
-  const fullPath = join(examplesPath, relativePath);
+  // Get the fixtures package path using workspace structure
+  const currentDir = dirname(fileURLToPath(import.meta.url));
+  const fixturesPath = join(currentDir, "..", "..", "..", "fixtures", "src");
+  const fullPath = join(fixturesPath, relativePath);
   const content = readFileSync(fullPath, "utf8");
   return JSON.parse(content) as T;
 }

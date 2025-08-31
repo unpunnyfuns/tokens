@@ -106,9 +106,9 @@ importers:
       '@types/node':
         specifier: ^24.2.1
         version: 24.3.0
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
@@ -125,9 +125,9 @@ importers:
       '@types/node':
         specifier: ^24.2.1
         version: 24.3.0
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       memfs:
         specifier: ^4.36.3
         version: 4.36.3
@@ -156,9 +156,9 @@ importers:
       '@types/node':
         specifier: ^24.2.1
         version: 24.3.0
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
@@ -166,16 +166,16 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@24.3.0)(msw@2.10.5(@types/node@24.3.0)(typescript@5.9.2))(tsx@4.20.4)(yaml@2.8.1)
 
-  libs/examples: {}
+  libs/fixtures: {}
 
   libs/foundation:
     devDependencies:
       '@types/node':
         specifier: ^24.2.1
         version: 24.3.0
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
@@ -204,9 +204,9 @@ importers:
       '@types/node':
         specifier: ^24.2.1
         version: 24.3.0
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       msw:
         specifier: ^2.10.5
         version: 2.10.5(@types/node@24.3.0)(typescript@5.9.2)
@@ -235,9 +235,9 @@ importers:
       '@types/node':
         specifier: ^24.2.1
         version: 24.3.0
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
@@ -272,9 +272,9 @@ importers:
       '@upft/bundler':
         specifier: workspace:*
         version: link:../bundler
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
@@ -294,9 +294,9 @@ importers:
         specifier: ^11.0.3
         version: 11.0.3
     devDependencies:
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       typescript:
         specifier: ^5.7.3
         version: 5.9.2
@@ -322,9 +322,9 @@ importers:
       '@types/node':
         specifier: ^24.2.1
         version: 24.3.0
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
@@ -337,9 +337,9 @@ importers:
       '@types/node':
         specifier: ^24.2.1
         version: 24.3.0
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
@@ -362,9 +362,9 @@ importers:
       '@types/node':
         specifier: ^24.2.1
         version: 24.3.0
-      '@upft/examples':
+      '@upft/fixtures':
         specifier: workspace:*
-        version: link:../examples
+        version: link:../fixtures
       typescript:
         specifier: ^5.9.2
         version: 5.9.2

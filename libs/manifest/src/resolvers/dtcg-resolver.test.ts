@@ -2,7 +2,7 @@
  * Tests for W3C DTCG resolver
  */
 
-import dtcgExample from "@upft/examples/test-scenarios/dtcg-resolver.json" with {
+import dtcgExample from "@upft/fixtures/test-scenarios/dtcg-resolver.json" with {
   type: "json",
 };
 import { describe, expect, it } from "vitest";

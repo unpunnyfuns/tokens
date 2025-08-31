@@ -17,7 +17,7 @@ describe("AST Traverser", () => {
   describe("traverseAST", () => {
     it("should traverse all nodes in pre-order", async () => {
       const doc = (
-        await import("@upft/examples/tokens/full-example.json", {
+        await import("@upft/fixtures/tokens/full-example.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;
@@ -96,7 +96,7 @@ describe("AST Traverser", () => {
   describe("visitTokens", () => {
     it("should visit only token nodes", async () => {
       const doc = (
-        await import("@upft/examples/tokens/full-example.json", {
+        await import("@upft/fixtures/tokens/full-example.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;
@@ -144,7 +144,7 @@ describe("AST Traverser", () => {
   describe("visitGroups", () => {
     it("should visit only group nodes", async () => {
       const doc = (
-        await import("@upft/examples/tokens/full-example.json", {
+        await import("@upft/fixtures/tokens/full-example.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;
@@ -270,7 +270,7 @@ describe("AST Traverser", () => {
   describe("findNode", () => {
     it("should find node by path", async () => {
       const doc = (
-        await import("@upft/examples/tokens/full-example.json", {
+        await import("@upft/fixtures/tokens/full-example.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;

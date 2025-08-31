@@ -84,7 +84,7 @@ describe("Token Guards", () => {
   describe("isTokenDocument", () => {
     it("should validate token documents", async () => {
       const doc = (
-        await import("@upft/examples/tokens/full-example.json", {
+        await import("@upft/fixtures/tokens/full-example.json", {
           with: { type: "json" },
         })
       ).default as TokenDocument;
@@ -172,7 +172,7 @@ describe("Token Guards", () => {
     describe("isColorToken", () => {
       it("should identify color tokens", async () => {
         const tokens = (
-          await import("@upft/examples/tokens/full-example.json", {
+          await import("@upft/fixtures/tokens/full-example.json", {
             with: { type: "json" },
           })
         ).default as TokenDocument;
@@ -194,7 +194,7 @@ describe("Token Guards", () => {
     describe("isDimensionToken", () => {
       it("should identify dimension tokens", async () => {
         const tokens = (
-          await import("@upft/examples/tokens/full-example.json", {
+          await import("@upft/fixtures/tokens/full-example.json", {
             with: { type: "json" },
           })
         ).default as TokenDocument;
@@ -216,7 +216,7 @@ describe("Token Guards", () => {
     describe("isTypographyToken", () => {
       it("should identify typography tokens", async () => {
         const tokens = (
-          await import("@upft/examples/tokens/full-example.json", {
+          await import("@upft/fixtures/tokens/full-example.json", {
             with: { type: "json" },
           })
         ).default as TokenDocument;

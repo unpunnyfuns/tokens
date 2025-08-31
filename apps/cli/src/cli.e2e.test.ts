@@ -10,7 +10,7 @@ import { describe, expect, it } from "vitest";
 // When running from apps/cli, go up to monorepo root
 const REPO_ROOT = join(process.cwd(), "..", "..");
 const CLI_BINARY = join(REPO_ROOT, "apps/cli/dist/cli.js");
-const EXAMPLES_PATH = join(REPO_ROOT, "libs/examples/src");
+const EXAMPLES_PATH = join(REPO_ROOT, "libs/fixtures/src");
 
 describe("CLI E2E Tests", () => {
   describe("basic functionality", () => {
