@@ -3,17 +3,24 @@
 import { existsSync } from "node:fs";
 import { cp, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-// Read package.json to get current version from schemas package
-// Find the root directory by looking for pnpm-workspace.yaml
-let rootDir = process.cwd();
+// Read package.json from current schemas package directory
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const packageRoot = dirname(__dirname); // Go up from scripts/ to package root
+const packageJson = JSON.parse(
+  await readFile(join(packageRoot, "package.json"), "utf-8"),
+);
+
+// Find the monorepo root directory by looking for pnpm-workspace.yaml
+let rootDir = packageRoot;
 while (!existsSync(join(rootDir, "pnpm-workspace.yaml")) && rootDir !== "/") {
   rootDir = dirname(rootDir);
 }
-const packageJson = JSON.parse(
-  await readFile(join(rootDir, "libs", "schemas", "package.json"), "utf-8"),
-);
-const VERSION = packageJson.version;
+
+// Use -dev suffix when not in CI
+const isCI = process.env.CI === "true" || process.env.GITHUB_ACTIONS === "true";
+const VERSION = isCI ? packageJson.version : `${packageJson.version}-dev`;
 const WEB_BASE_URL = "https://tokens.unpunny.fun/schemas";
 
 async function transformSchemaForWeb(schema, version) {
@@ -91,7 +98,7 @@ async function processSchemaFile(srcPath, destPath, version) {
 
   // Write transformed schema
   await writeFile(destPath, `${JSON.stringify(transformed, null, 2)}\n`);
-  console.log(`  ✓ ${srcPath.replace(`${rootDir}/`, "")}`);
+  console.log(`  ✓ ${srcPath.replace(`${packageRoot}/`, "")}`);
 }
 
 async function processDirectory(srcDir, destDir, version) {
@@ -110,8 +117,8 @@ async function processDirectory(srcDir, destDir, version) {
 }
 
 async function main() {
-  const srcDir = join(rootDir, "libs", "schemas", "src");
-  const webDir = join(rootDir, "libs", "schemas", "dist-web", "schemas");
+  const srcDir = join(packageRoot, "src");
+  const webDir = join(packageRoot, "dist-web", "schemas");
   const versionDir = join(webDir, `v${VERSION}`);
   const latestDir = join(webDir, "latest");
 
@@ -133,6 +140,23 @@ async function main() {
   console.log(`  ✓ Copied v${VERSION} to latest`);
 
   console.log("\n✨ Web schemas build complete!");
+
+  // Only commit to git when running in CI
+  if (isCI) {
+    console.log("\nCommitting web schemas to git...");
+    const { execSync } = await import("node:child_process");
+    
+    try {
+      execSync(`git add libs/schemas/dist-web`, { cwd: rootDir, stdio: 'inherit' });
+      execSync(`git commit -m "build: update web schemas to v${VERSION}"`, { cwd: rootDir, stdio: 'inherit' });
+      console.log("✅ Web schemas committed to git");
+    } catch (error) {
+      console.log("ℹ️  No changes to commit (schemas already up to date)");
+    }
+  } else {
+    console.log(`\n📝 Local build complete - schemas built as v${VERSION}`);
+    console.log("   (Git commit skipped - only done in CI)");
+  }
 }
 
 main().catch((error) => {

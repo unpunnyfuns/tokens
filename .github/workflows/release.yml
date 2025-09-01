@@ -65,6 +65,17 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Build Web Schemas
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          echo "📦 Building web schemas with release versions..."
+          cd libs/schemas
+          pnpm build:web
+        env:
+          CI: true
+
       - name: Release Summary
         run: |
           echo "## 📋 Release Summary" >> $GITHUB_STEP_SUMMARY
@@ -72,9 +83,10 @@ jobs:
             echo "✅ Version bump PR created - review and merge to trigger releases" >> $GITHUB_STEP_SUMMARY
           elif [ "${{ steps.changesets.outputs.published }}" = "true" ]; then
             echo "🎉 Packages published to NPM with GitHub releases and tags created!" >> $GITHUB_STEP_SUMMARY
+            echo "📦 Web schemas built and committed for deployment" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Optional next step:**" >> $GITHUB_STEP_SUMMARY
-            echo "- Run Deploy to Netlify workflow if schemas were updated" >> $GITHUB_STEP_SUMMARY
+            echo "**Ready for deployment:**" >> $GITHUB_STEP_SUMMARY
+            echo "- Web schemas in \`libs/schemas/dist-web/\` are ready to deploy" >> $GITHUB_STEP_SUMMARY
           else
             echo "ℹ️ No changesets found - nothing to release" >> $GITHUB_STEP_SUMMARY
           fi

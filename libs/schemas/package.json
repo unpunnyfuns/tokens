@@ -42,7 +42,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "build:web": "node ../../scripts/version-schemas.js",
+    "build:web": "node ./scripts/build-web.js",
     "clean": "rm -rf dist dist-web",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
