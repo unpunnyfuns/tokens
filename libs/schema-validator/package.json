@@ -44,9 +44,7 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "keywords": [
     "design-tokens",
     "dtcg",
