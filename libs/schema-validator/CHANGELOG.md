@@ -1,5 +1,14 @@
 # @upft/schema-validator
 
+## 0.0.4
+
+### Patch Changes
+
+- b4115b5: Triggering once more for great benefit
+- Updated dependencies [b4115b5]
+  - @upft/foundation@0.0.4
+  - @upft/schemas@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes

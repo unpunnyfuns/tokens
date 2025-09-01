@@ -1,5 +1,11 @@
 # @upft/schemas
 
+## 0.0.4
+
+### Patch Changes
+
+- b4115b5: Triggering once more for great benefit
+
 ## 0.0.3
 
 ### Patch Changes
