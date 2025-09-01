@@ -1,5 +1,12 @@
 # @upft/schema-validator
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [a60b11d]
+  - @upft/schemas@0.0.5
+
 ## 0.0.4
 
 ### Patch Changes
