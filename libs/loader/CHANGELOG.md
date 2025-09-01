@@ -1,5 +1,11 @@
 # @upft/loader
 
+## 0.0.6
+
+### Patch Changes
+
+- @upft/schema-validator@0.0.5
+
 ## 0.0.5
 
 ### Patch Changes

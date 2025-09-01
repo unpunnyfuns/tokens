@@ -1,5 +1,11 @@
 # @upft/schemas
 
+## 0.0.5
+
+### Patch Changes
+
+- a60b11d: Updated schema release flow
+
 ## 0.0.4
 
 ### Patch Changes
