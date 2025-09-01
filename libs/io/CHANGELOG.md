@@ -1,5 +1,11 @@
 # @upft/io
 
+## 0.0.4
+
+### Patch Changes
+
+- 63dfc0a: Made packages private to minimize confusion
+
 ## 0.0.3
 
 ### Patch Changes
