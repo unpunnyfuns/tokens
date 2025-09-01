@@ -141,21 +141,10 @@ async function main() {
 
   console.log("\n✨ Web schemas build complete!");
 
-  // Only commit to git when running in CI
   if (isCI) {
-    console.log("\nCommitting web schemas to git...");
-    const { execSync } = await import("node:child_process");
-    
-    try {
-      execSync(`git add libs/schemas/dist-web`, { cwd: rootDir, stdio: 'inherit' });
-      execSync(`git commit -m "build: update web schemas to v${VERSION}"`, { cwd: rootDir, stdio: 'inherit' });
-      console.log("✅ Web schemas committed to git");
-    } catch (error) {
-      console.log("ℹ️  No changes to commit (schemas already up to date)");
-    }
+    console.log("📝 Schemas ready for commit by release workflow");
   } else {
-    console.log(`\n📝 Local build complete - schemas built as v${VERSION}`);
-    console.log("   (Git commit skipped - only done in CI)");
+    console.log(`📝 Local build complete - schemas built as v${VERSION}`);
   }
 }
 
