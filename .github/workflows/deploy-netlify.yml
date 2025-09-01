@@ -16,26 +16,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v3
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build schemas for web
+      - name: Verify web schemas exist
         run: |
-          # Build the schemas package specifically for web deployment
-          pnpm turbo build --filter=@upft/schemas
-
-          # Verify the dist-web directory exists
+          # Web schemas should already be built and committed by the release pipeline
+          if [ ! -d "libs/schemas/dist-web/schemas" ]; then
+            echo "❌ Web schemas not found. Run a release first to build and commit schemas."
+            exit 1
+          fi
+          
+          echo "✅ Web schemas found, ready for deployment:"
           ls -la libs/schemas/dist-web/
 
       - name: Deploy to Netlify
