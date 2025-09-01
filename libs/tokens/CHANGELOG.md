@@ -1,5 +1,14 @@
 # @upft/tokens
 
+## 0.0.5
+
+### Patch Changes
+
+- b4115b5: Triggering once more for great benefit
+- Updated dependencies [b4115b5]
+  - @upft/ast@0.0.5
+  - @upft/foundation@0.0.4
+
 ## 0.0.4
 
 ### Patch Changes

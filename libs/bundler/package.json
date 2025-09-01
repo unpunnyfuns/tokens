@@ -1,6 +1,6 @@
 {
   "name": "@upft/bundler",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Token bundling and merging engine",
   "repository": {
     "type": "git",

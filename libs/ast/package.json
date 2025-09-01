@@ -1,6 +1,6 @@
 {
   "name": "@upft/ast",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "AST building and traversal for design tokens",
   "repository": {
     "type": "git",

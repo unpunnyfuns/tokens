@@ -1,5 +1,11 @@
 # @upft/cli
 
+## 0.0.6
+
+### Patch Changes
+
+- b4115b5: Triggering once more for great benefit
+
 ## 0.0.5
 
 ### Patch Changes

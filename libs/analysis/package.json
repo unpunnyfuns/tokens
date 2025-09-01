@@ -1,6 +1,6 @@
 {
   "name": "@upft/analysis",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Analysis and reporting tools for design tokens",
   "repository": {
     "type": "git",
