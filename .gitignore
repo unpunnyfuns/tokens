@@ -12,6 +12,9 @@ logs/
 build/
 dist/
 
+# Schema dev builds (only production schemas should be committed)
+libs/schemas/dist-web/schemas/*-dev/
+
 # Environment variables
 .env
 .env.local
