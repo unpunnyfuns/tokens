@@ -55,10 +55,7 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          version: |
-            pnpm changeset version
-            cd libs/schemas && pnpm build:web && cd ../..
-            git add libs/schemas/dist-web
+          version: bash .github/scripts/version-with-schemas.sh
           publish: pnpm changeset publish
           commit: "release: version packages"
           title: "release: version packages"
