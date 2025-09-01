@@ -1,5 +1,11 @@
 # @upft/cli
 
+## 0.0.5
+
+### Patch Changes
+
+- 7c407f6: Fix discrepancies in CLI package.json
+
 ## 0.0.4
 
 ### Patch Changes
