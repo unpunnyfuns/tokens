@@ -139,6 +139,14 @@ async function main() {
   await cp(versionDir, latestDir, { recursive: true });
   console.log(`  ✓ Copied v${VERSION} to latest`);
 
+  // Update README.md with current version
+  console.log("\nUpdating README.md with current version...");
+  const readmePath = join(packageRoot, "README.md");
+  let readmeContent = await readFile(readmePath, "utf-8");
+  readmeContent = readmeContent.replace(/v\d+\.\d+\.\d+/g, `v${VERSION}`);
+  await writeFile(readmePath, readmeContent);
+  console.log(`  ✓ Updated README.md version to v${VERSION}`);
+
   console.log("\n✨ Web schemas build complete!");
 
   if (isCI) {
