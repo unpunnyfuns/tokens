@@ -80,15 +80,27 @@ All schemas follow JSON Schema Draft 2020-12 and validate:
 
 Schemas are also available via CDN:
 
+**Base Token Schema:**
 ```json
 {
   "$schema": "https://tokens.unpunny.fun/schemas/latest/tokens/base.schema.json"
 }
 ```
 
-Versioned access:
-- `https://tokens.unpunny.fun/schemas/v0.5.0/`
-- `https://tokens.unpunny.fun/schemas/latest/`
+**Full Token Schema:**
+```json
+{
+  "$schema": "https://tokens.unpunny.fun/schemas/latest/tokens/full.schema.json"
+}
+```
+
+**Versioned URLs:**
+- Base: `https://tokens.unpunny.fun/schemas/v0.0.6/tokens/base.schema.json`
+- Full: `https://tokens.unpunny.fun/schemas/v0.0.6/tokens/full.schema.json`
+
+**Latest URLs:**
+- Base: `https://tokens.unpunny.fun/schemas/latest/tokens/base.schema.json`
+- Full: `https://tokens.unpunny.fun/schemas/latest/tokens/full.schema.json`
 
 ## Design Principles
 
