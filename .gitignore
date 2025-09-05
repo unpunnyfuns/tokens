@@ -63,3 +63,6 @@ yarn.lock
 
 # NX
 .nx
+
+# Docusaurus
+apps/website/.docusaurus/
