@@ -95,8 +95,8 @@ Schemas are also available via CDN:
 ```
 
 **Versioned URLs:**
-- Base: `https://tokens.unpunny.fun/schemas/v0.0.6/tokens/base.schema.json`
-- Full: `https://tokens.unpunny.fun/schemas/v0.0.6/tokens/full.schema.json`
+- Base: `https://tokens.unpunny.fun/schemas/v0.0.7/tokens/base.schema.json`
+- Full: `https://tokens.unpunny.fun/schemas/v0.0.7/tokens/full.schema.json`
 
 **Latest URLs:**
 - Base: `https://tokens.unpunny.fun/schemas/latest/tokens/base.schema.json`

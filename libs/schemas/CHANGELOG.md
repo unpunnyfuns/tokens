@@ -1,5 +1,11 @@
 # @upft/schemas
 
+## 0.0.7
+
+### Patch Changes
+
+- 3f35be9: fix: Update README.md schema URLs
+
 ## 0.0.6
 
 ### Patch Changes
