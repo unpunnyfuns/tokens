@@ -22,6 +22,7 @@
     "clean": "turbo clean",
     "dev": "turbo dev",
     "quality": "turbo lint typecheck test",
+    "quality:test:coverage": "turbo run quality test:coverage -- --since=origin/main",
     "quality:fix": "turbo format:fix lint:fix",
     "deps:check": "pnpm -r outdated",
     "deps:update": "pnpm -r update",
