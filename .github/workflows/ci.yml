@@ -54,13 +54,24 @@ jobs:
             ${{ runner.os }}-turbo-
 
       # Run all CI tasks
+      - name: Determine base ref
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "BASE_REF=${{ github.base_ref }}" >> "$GITHUB_ENV"
+          else
+            echo "BASE_REF=main" >> "$GITHUB_ENV"
+          fi
+
+      - name: Fetch base ref
+        run: git fetch --no-tags --prune --depth=1 origin +refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF
+
       - name: Run CI (full on main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: pnpm turbo run quality test:coverage
 
       - name: Run CI (changed packages)
         if: github.event_name != 'push' || github.ref != 'refs/heads/main'
-        run: pnpm turbo run quality test:coverage --since=origin/main
+        run: pnpm turbo run quality test:coverage --since=origin/${{ env.BASE_REF }}
 
       - name: Check for changesets
         if: github.event_name == 'pull_request'
