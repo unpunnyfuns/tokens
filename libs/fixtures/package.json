@@ -22,13 +22,21 @@
     "./test-scenarios/*.json": "./src/test-scenarios/*.json",
     "./error-cases/*.json": "./src/error-cases/*.json"
   },
+  "turbo": {
+    "tags": [
+      "internal",
+      "fixtures"
+    ]
+  },
   "files": [
     "src"
   ],
   "scripts": {
-    "check": "biome check --write .",
-    "format": "biome format --write .",
-    "lint": "biome lint --write ."
+    "check": "biome check .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write ."
   },
   "private": true,
   "keywords": [

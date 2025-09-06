@@ -41,7 +41,6 @@ Thumbs.db
 coverage/
 
 # npm specific
-.npm/
 .npmrc.local
 
 # Parcel-bundler cache
@@ -54,7 +53,9 @@ coverage/
 # Misc
 *.tgz
 
-# Keep package-lock.json but ignore other locks
+# Lockfiles
+# We use pnpm; keep pnpm-lock.yaml tracked; ignore npm and yarn lockfiles
+package-lock.json
 yarn.lock
 
 # Local Netlify folder
@@ -63,3 +64,12 @@ yarn.lock
 
 # NX
 .nx
+
+# Docusaurus
+apps/website/.docusaurus/
+
+# Generated graphs
+dependencies.dot
+
+# Root-level ephemeral outputs
+/output.json

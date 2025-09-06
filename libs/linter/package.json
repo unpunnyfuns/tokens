@@ -18,6 +18,12 @@
       "import": "./dist/index.js"
     }
   },
+  "turbo": {
+    "tags": [
+      "internal",
+      "processing"
+    ]
+  },
   "files": [
     "dist/",
     "README.md"
@@ -35,10 +41,12 @@
     "vitest": "^3.2.4"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "clean": "rm -rf dist",
-    "format": "biome format --write .",
-    "lint": "biome lint --write .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",

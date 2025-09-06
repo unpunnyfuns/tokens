@@ -3,8 +3,18 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "noEmit": false
+    "noEmit": false,
+    "composite": true
   },
   "include": ["src/**/*"],
-  "exclude": ["**/*.test.ts", "**/*.spec.ts", "**/*.e2e.test.ts"]
+  "exclude": ["**/*.test.ts", "**/*.spec.ts", "**/*.e2e.test.ts"],
+  "references": [
+    { "path": "../../libs/foundation" },
+    { "path": "../../libs/ast" },
+    { "path": "../../libs/analysis" },
+    { "path": "../../libs/bundler" },
+    { "path": "../../libs/linter" },
+    { "path": "../../libs/loader" },
+    { "path": "../../libs/schemas" }
+  ]
 }

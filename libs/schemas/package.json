@@ -36,12 +36,15 @@
     "./tokens/types/transition.schema.json": "./src/tokens/types/transition.schema.json",
     "./tokens/types/typography.schema.json": "./src/tokens/types/typography.schema.json"
   },
+  "turbo": {
+    "tags": ["public", "core"]
+  },
   "files": [
     "src",
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "build:web": "node ./scripts/build-web.js",
     "clean": "rm -rf dist dist-web",
     "typecheck": "tsc --noEmit",

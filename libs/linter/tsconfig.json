@@ -4,8 +4,13 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "noEmit": false,
-    "emitDeclarationOnly": false
+    "emitDeclarationOnly": false,
+    "composite": true
   },
   "include": ["src/**/*"],
-  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+  "exclude": ["**/*.test.ts", "**/*.spec.ts"],
+  "references": [
+    { "path": "../foundation" },
+    { "path": "../ast" }
+  ]
 }

@@ -24,10 +24,13 @@ export interface ASTNode {
 // Type-aware TokenNode using discriminated unions
 export interface TokenNode<T extends TokenType = TokenType> extends ASTNode {
   type: "token";
-  tokenType: T;
+  /** Optional to allow untyped tokens at parse time (pre-validation) */
+  tokenType?: T;
+  /** Present when tokenType is known */
   typedValue?: TypedToken & { $type: T };
   references?: TokenReference[];
   resolved?: boolean;
+  /** Present when resolved and tokenType is known */
   resolvedValue?: TypedToken & { $type: T };
 }
 
@@ -158,19 +161,7 @@ export type {
 };
 
 // Type guard functions
-export function isUPFTManifest(
-  manifest: unknown,
-): manifest is UPFTResolverManifest {
-  if (!manifest || typeof manifest !== "object") return false;
-  const m = manifest as Record<string, unknown>;
-
-  // UPFT format has modifiers as an object with oneOf/anyOf structure
-  return Boolean(
-    m.modifiers &&
-      typeof m.modifiers === "object" &&
-      !Array.isArray(m.modifiers),
-  );
-}
+export { isUPFTManifest } from "@upft/foundation";
 
 // Validation result interface
 export interface ValidationResult {

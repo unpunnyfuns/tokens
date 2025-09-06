@@ -19,3 +19,4 @@ export {
   type WriteResult,
 } from "./file-writer.js";
 export * from "./types.js";
+export { deepMerge } from "./utils/deep-merge.js";

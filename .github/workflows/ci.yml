@@ -24,7 +24,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
+
+      - name: Lint commits (Conventional Commits)
+        uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: .commitlintrc.cjs
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v3
@@ -44,13 +49,18 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-${{ hashFiles('pnpm-lock.yaml', 'turbo.json', '**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-turbo-
 
       # Run all CI tasks
-      - name: Run CI
-        run: pnpm turbo quality test:coverage
+      - name: Run CI (full on main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: pnpm turbo run quality test:coverage
+
+      - name: Run CI (changed packages)
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+        run: pnpm turbo run quality test:coverage --since=origin/main
 
       - name: Check for changesets
         if: github.event_name == 'pull_request'

@@ -12,15 +12,23 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "turbo": {
+    "tags": [
+      "internal",
+      "processing"
+    ]
+  },
   "files": [
     "dist/",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "clean": "rm -rf dist",
-    "format": "biome format --write .",
-    "lint": "biome lint --write .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",

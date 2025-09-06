@@ -7,8 +7,7 @@
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { extname, join } from "node:path";
-import { validateManifest } from "./libs/manifest/src/index.js";
-import { validateTokens } from "./libs/validator/src/index.js";
+import { validateManifest, validateTokenDocument } from "@upft/schema-validator";
 
 const target = process.argv[2];
 if (!target) {
@@ -24,27 +23,27 @@ async function validateFile(filepath: string): Promise<boolean> {
 
     // Detect manifest files
     const isManifest =
-      content.sets || content.modifiers || filepath.includes("manifest");
+      (content as any).sets || (content as any).modifiers || filepath.includes("manifest");
 
     const result = isManifest
       ? await validateManifest(content)
-      : await validateTokens(content);
+      : await validateTokenDocument(content);
 
-    if (result.success) {
+    if (result.valid) {
       console.log(`✅ ${filepath}`);
     } else {
       console.log(`❌ ${filepath}`);
       if (result.errors) {
         for (const err of result.errors) {
           console.log(
-            `  - ${err.message} ${err.instancePath ? `at ${err.instancePath}` : ""}`,
+            `  - ${err.message} ${"path" in err && (err as any).path ? `at ${(err as any).path}` : ""}`,
           );
         }
       }
     }
-    return result.success;
-  } catch (error) {
-    console.log(`💥 ${filepath}: ${error.message}`);
+    return result.valid;
+  } catch (error: any) {
+    console.log(`💥 ${filepath}: ${error.message ?? String(error)}`);
     return false;
   }
 }

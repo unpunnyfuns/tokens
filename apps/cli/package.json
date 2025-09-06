@@ -39,10 +39,12 @@
   },
   "scripts": {
     "build": "vite build --config vite.config.bundle.ts && chmod +x dist/cli.js",
-    "check": "biome check --write .",
+    "check": "biome check .",
     "clean": "rm -rf dist",
-    "format": "biome format --write .",
-    "lint": "biome lint --write .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:unit": "vitest run --config ../../vitest.config.ts",
@@ -50,6 +52,12 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "dev": "tsx watch src/cli.ts"
+  },
+  "turbo": {
+    "tags": [
+      "public",
+      "app"
+    ]
   },
   "publishConfig": {
     "access": "public"

@@ -34,12 +34,6 @@ export {
 // Resolver implementations
 export { upftResolver } from "./resolvers/upft-resolver.js";
 
-// Register built-in resolvers
-import { registerManifestResolver } from "./registry.js";
-import { dtcgManifestResolver } from "./resolvers/dtcg-manifest-resolver.js";
-import { dtcgResolver } from "./resolvers/dtcg-resolver.js";
-import { upftResolver } from "./resolvers/upft-resolver.js";
-
-registerManifestResolver(upftResolver);
-registerManifestResolver(dtcgResolver);
-registerManifestResolver(dtcgManifestResolver);
+// No automatic registration at import time. Consumers may call
+// registerBuiltInResolvers() or provide a custom registry.
+export { registerBuiltInResolvers, createRegistry, getRegistry, setRegistry, clearRegistry } from "./registry.js";
