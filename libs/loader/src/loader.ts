@@ -8,7 +8,6 @@
  * 4. Follow references to load dependencies
  */
 
-import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
 // Use real implementations
@@ -18,12 +17,10 @@ import {
   validateManifest,
   validateTokenDocument,
 } from "@upft/schema-validator";
+import { TokenFileReader } from "@upft/io";
+import { parseManifest, registerBuiltInResolvers } from "@upft/manifest";
 
-const readFile = async (path: string, options: { encoding: "utf-8" }) => {
-  return readFileSync(path, options);
-};
-
-import type { ManifestAST, TokenAST, UPFTResolverManifest } from "@upft/ast";
+import type { ManifestAST, TokenAST } from "@upft/ast";
 // Import AST types
 import type { TokenDocument } from "@upft/foundation";
 import type { FileInfo, LoadedFile, LoadOptions, LoadResult } from "./types.js";
@@ -67,29 +64,6 @@ async function parseTokenDocument(
   }
 }
 
-/**
- * Parse a validated manifest into AST structure
- */
-function parseManifestDocument(
-  data: UPFTResolverManifest,
-  options: { filePath: string },
-): { ast: ManifestAST; warnings: string[] } {
-  const warnings: string[] = [];
-
-  // Create ManifestAST structure
-  const ast: ManifestAST = {
-    type: "manifest",
-    path: options.filePath,
-    name: data.name || "unnamed",
-    manifestType: "upft",
-    sets: new Map(),
-    modifiers: new Map(),
-    permutations: new Map(),
-  };
-
-  return { ast, warnings };
-}
-
 export interface LoaderState {
   basePath: string;
   loadedFiles: Map<string, LoadedFile>;
@@ -116,9 +90,11 @@ export async function loadFile(
   try {
     await loadSingleFile(state, entryPath, options, errors);
   } catch (error) {
-    errors.push(
-      `Failed to load ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
-    );
+    const baseMsg = error instanceof Error ? error.message : String(error);
+    const prefix = baseMsg.toLowerCase().includes("json")
+      ? "Invalid JSON: "
+      : "";
+    errors.push(`Failed to load ${filePath}: ${prefix}${baseMsg}`);
   }
 
   return {
@@ -179,18 +155,14 @@ export async function loadSingleFile(
     return;
   }
 
-  // Phase 1: Read file content
-  const content = await readFile(absolutePath, { encoding: "utf-8" });
+  // Phase 1: Read file content using @upft/io (supports JSON/JSON5/YAML)
+  const reader = new TokenFileReader({ basePath: state.basePath });
+  const tokenFile = await reader.readFile(absolutePath, {
+    resolveImports: false,
+  });
 
-  // Parse JSON
-  let data: unknown;
-  try {
-    data = JSON.parse(content.toString());
-  } catch (error) {
-    throw new Error(
-      `Invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
+  // Parsed data
+  const data: unknown = tokenFile.tokens;
 
   // Phase 2: Detect file type
   const fileType = detectFileType(data);
@@ -227,7 +199,13 @@ export async function loadSingleFile(
   // Create file info
   const fileInfo: FileInfo = {
     path: absolutePath,
-    content: content.toString(),
+    content: (() => {
+      try {
+        return JSON.stringify(data, null, 2);
+      } catch {
+        return "";
+      }
+    })(),
     type: fileType as "manifest" | "tokens" | "unknown",
   };
 
@@ -271,7 +249,8 @@ async function parseToAST(data: unknown, fileType: string, filePath: string) {
     case "tokens":
       return await parseTokenDocument(data as TokenDocument, { filePath });
     case "manifest":
-      return parseManifestDocument(data as UPFTResolverManifest, { filePath });
+      await registerBuiltInResolvers();
+      return { ast: parseManifest(data, filePath), warnings: [] };
     default:
       throw new Error(`Cannot parse file type: ${fileType}`);
   }

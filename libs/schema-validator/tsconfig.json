@@ -6,8 +6,13 @@
     "baseUrl": "../..",
     "paths": {
       "@upft/*": ["libs/*/src", "libs/*/dist"]
-    }
+    },
+    "composite": true
   },
   "include": ["src/**/*"],
-  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+  "exclude": ["**/*.test.ts", "**/*.spec.ts"],
+  "references": [
+    { "path": "../foundation" },
+    { "path": "../schemas" }
+  ]
 }

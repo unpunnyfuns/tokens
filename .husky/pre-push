@@ -1,0 +1,16 @@
+# Lint commit messages in the range being pushed
+# Prefer linting from upstream base to HEAD if upstream exists,
+# otherwise lint the latest commit (or HEAD itself for the first commit).
+
+upstream_ref=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
+if [ -n "$upstream_ref" ]; then
+  base=$(git merge-base HEAD "$upstream_ref")
+  pnpm exec commitlint --from "$base" --to HEAD
+  exit $?
+fi
+
+if git rev-parse HEAD~1 >/dev/null 2>&1; then
+  pnpm exec commitlint --from HEAD~1 --to HEAD
+else
+  pnpm exec commitlint --from HEAD --to HEAD
+fi

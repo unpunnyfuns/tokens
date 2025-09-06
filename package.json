@@ -14,12 +14,16 @@
     "test:e2e": "turbo test:e2e",
     "test:coverage": "turbo test:coverage",
     "test:watch": "turbo test:watch",
-    "lint": "biome check --write . && turbo lint",
-    "format": "biome format --write . && turbo format",
+    "lint": "turbo lint",
+    "lint:fix": "turbo lint:fix",
+    "format": "turbo format",
+    "format:fix": "turbo format:fix",
     "typecheck": "turbo typecheck",
     "clean": "turbo clean",
     "dev": "turbo dev",
-    "quality": "turbo format lint typecheck test",
+    "quality": "turbo lint typecheck test",
+    "quality:test:coverage": "turbo run quality test:coverage -- --since=origin/main",
+    "quality:fix": "turbo format:fix lint:fix",
     "deps:check": "pnpm -r outdated",
     "deps:update": "pnpm -r update",
     "depcheck": "dependency-cruiser libs apps --config .dependency-cruiser.cjs && turbo depcheck",
@@ -27,18 +31,87 @@
     "workspace:clean": "pnpm -r exec rm -rf node_modules dist && rm -rf node_modules",
     "workspace:reset": "pnpm workspace:clean && pnpm install",
     "release:prepare": "pnpm quality && pnpm build",
+    "prepare": "husky",
+    "commit": "cz",
+    "commit:cs": "pnpm commit && pnpm changeset",
+    "changeset:add": "changeset",
     "turbo": "turbo"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.4",
     "@changesets/cli": "^2.29.6",
+    "@commitlint/cli": "^19.4.0",
+    "@commitlint/config-conventional": "^19.4.0",
     "@types/node": "^24.2.1",
     "@vitest/coverage-v8": "^3.2.4",
     "dependency-cruiser": "^17.0.1",
+    "husky": "^9.1.6",
+    "commitizen": "^4.3.0",
+    "cz-git": "^1.9.1",
+    "@changesets/changelog-github": "^0.5.0",
     "json-schema-to-typescript": "^15.0.4",
     "tsx": "^4.20.4",
     "turbo": "^2.5.6",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-git"
+    },
+    "cz-git": {
+      "useEmoji": true,
+      "emojiAlign": "center",
+      "subjectMaxLength": 72,
+      "allowCustomScopes": false,
+      "allowEmptyScopes": false,
+      "scopes": [
+        "analysis",
+        "ast",
+        "bundler",
+        "cli",
+        "fixtures",
+        "foundation",
+        "io",
+        "linter",
+        "loader",
+        "manifest",
+        "schema-validator",
+        "schemas",
+        "tokens",
+        "repo",
+        "deps",
+        "release"
+      ],
+      "types": [
+        { "value": "feat", "name": "feat:     a new feature", "emoji": "✨" },
+        { "value": "fix", "name": "fix:      a bug fix", "emoji": "🐛" },
+        { "value": "docs", "name": "docs:     documentation only changes", "emoji": "📝" },
+        { "value": "style", "name": "style:    changes that do not affect the meaning of the code", "emoji": "🎨" },
+        { "value": "refactor", "name": "refactor: a code change that neither fixes a bug nor adds a feature", "emoji": "♻️" },
+        { "value": "perf", "name": "perf:     a code change that improves performance", "emoji": "⚡️" },
+        { "value": "test", "name": "test:     adding missing tests or correcting existing tests", "emoji": "✅" },
+        { "value": "build", "name": "build:    changes that affect the build system or external dependencies", "emoji": "📦️" },
+        { "value": "ci", "name": "ci:       changes to CI configuration files and scripts", "emoji": "👷" },
+        { "value": "chore", "name": "chore:    other changes that don't modify src or test files", "emoji": "🔧" },
+        { "value": "revert", "name": "revert:   revert a previous commit", "emoji": "⏪️" }
+      ],
+      "alias": {
+        "wip": "chore: wip",
+        "deps": "chore(deps): update dependencies",
+        "release": "chore(release): prepare release"
+      },
+      "messages": {
+        "type": "Select the type of change that you're committing:",
+        "scope": "Select the scope of this change (required):",
+        "subject": "Write a short, imperative description of the change:",
+        "body": "Provide a longer description (optional). Use | to break lines:",
+        "breaking": "List any breaking changes (optional):",
+        "footerPrefixsSelect": "Select the type of issue this change addresses (optional):",
+        "customFooterPrefixs": "Input issue prefix (e.g. Closes, Fixes):",
+        "footer": "List any issues closed by this change (e.g. #31, #34):",
+        "confirmCommit": "Are you sure you want to proceed with the commit above?"
+      }
+    }
   }
 }

@@ -5,6 +5,7 @@ on:
     branches:
       - "feat/**"
       - "fix/**"
+      - "refactor/**"
   pull_request:
     branches:
       - main
@@ -24,7 +25,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
+
+      - name: Lint commits (Conventional Commits)
+        uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: .commitlintrc.cjs
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v3
@@ -44,13 +50,35 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-${{ hashFiles('pnpm-lock.yaml', 'turbo.json', '**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-turbo-
 
       # Run all CI tasks
-      - name: Run CI
-        run: pnpm turbo quality test:coverage
+      - name: Determine base ref
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "BASE_REF=${{ github.base_ref }}" >> "$GITHUB_ENV"
+          else
+            echo "BASE_REF=main" >> "$GITHUB_ENV"
+          fi
+
+      - name: Fetch base ref
+        run: git fetch --no-tags --prune --depth=1 origin +refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF
+
+      - name: Run CI (full on main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          TURBO_UI: stream
+          TURBO_TELEMETRY_DISABLED: "1"
+        run: pnpm turbo run lint typecheck depcheck test:coverage
+
+      - name: Run CI (changed packages)
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+        env:
+          TURBO_UI: stream
+          TURBO_TELEMETRY_DISABLED: "1"
+        run: pnpm turbo run lint typecheck depcheck test:coverage --since=origin/${{ env.BASE_REF }}
 
       - name: Check for changesets
         if: github.event_name == 'pull_request'

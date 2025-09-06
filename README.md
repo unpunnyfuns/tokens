@@ -62,7 +62,7 @@ UPFT uses a modular architecture with pluggable manifest resolvers supporting mu
 | Package | Purpose |
 |---------|---------|
 | **[@upft/io](./libs/io)** | File system operations with caching |
-| **[@upft/examples](./libs/examples)** | Comprehensive examples and test fixtures |
+| **[@upft/fixtures](./libs/fixtures)** | Comprehensive examples and test fixtures |
 
 ## Usage Examples
 
@@ -106,7 +106,7 @@ registerManifestResolver(customResolver);
 ## Development
 
 ```bash
-git clone https://github.com/upft/upft.git
+git clone https://github.com/unpunnyfuns/tokens.git
 cd upft
 pnpm install
 pnpm build

@@ -10,6 +10,7 @@ import JSON5 from "json5";
 import YAML from "yaml";
 import { FileCache } from "./cache.js";
 import type { TokenFile } from "./types.js";
+import { deepMerge } from "./utils/deep-merge.js";
 
 /**
  * Options for reading token files
@@ -228,10 +229,11 @@ export class TokenFileReader implements ITokenFileReader {
    */
   private mergeEntry(target: TokenDocument, key: string, value: unknown): void {
     if (this.isMergeableObject(value) && this.isMergeableObject(target[key])) {
-      target[key] = {
-        ...(target[key] as Record<string, unknown>),
-        ...(value as Record<string, unknown>),
-      };
+      // Deep merge groups; replace leaves and arrays
+      target[key] = deepMerge(
+        target[key] as Record<string, unknown>,
+        value as Record<string, unknown>,
+      ) as TokenDocument[string];
     } else {
       target[key] = value as TokenDocument[string];
     }

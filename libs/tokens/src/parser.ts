@@ -102,7 +102,7 @@ function parseObject(
 
     if (isToken(value)) {
       // Create token node
-      const token = createTokenNode(key, value, currentPath, parent);
+      const token = createTokenNode(key, value, currentPath, parent, warnings);
       parent.tokens.set(key, token);
       parent.children.set(key, token);
     } else if (isTokenGroup(value)) {
@@ -132,8 +132,16 @@ function createTokenNode(
   token: Token,
   path: string,
   parent: TokenAST | GroupNode,
+  warnings: string[],
 ): TokenNode {
-  const tokenType = (token.$type || "color") as TokenNode["tokenType"];
+  const hasStringType =
+    typeof (token as { $type?: unknown }).$type === "string";
+  if (!hasStringType) {
+    warnings.push(`Token ${path} is missing $type; leaving type unset`);
+  }
+  const tokenType = hasStringType
+    ? ((token as { $type: string }).$type as TokenNode["tokenType"])
+    : undefined;
   const references = extractReferences(token.$value);
   const referencesArray = references.map((ref) => `{${ref}}` as const);
 
@@ -145,11 +153,15 @@ function createTokenNode(
     name,
     path,
     parent,
-    tokenType,
-    typedValue: {
-      $type: tokenType,
-      $value: tokenValue as never, // Type assertion for complex union type
-    },
+    ...(tokenType ? { tokenType } : {}),
+    ...(tokenType
+      ? {
+          typedValue: {
+            $type: tokenType,
+            $value: tokenValue as never, // Type assertion for complex union type
+          },
+        }
+      : {}),
     references: referencesArray,
     resolved: references.length === 0,
     metadata: {

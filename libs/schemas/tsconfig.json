@@ -3,8 +3,12 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "noEmit": false
+    "noEmit": false,
+    "composite": true,
+    "resolveJsonModule": true,
+    "allowArbitraryExtensions": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+  "include": ["src/**/*", "src/**/*.json"],
+  "exclude": ["**/*.test.ts", "**/*.spec.ts"],
+  "references": []
 }

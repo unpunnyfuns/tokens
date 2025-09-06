@@ -209,12 +209,13 @@ export async function discoverAllDependencies(
   manifestAST: ManifestAST,
   _manifestPath: string,
   loader: LoaderState,
+  options?: { maxRounds?: number },
 ): Promise<DependencyDiscoveryResult> {
   const allDependencies = new Set<string>();
   const warnings: string[] = [];
   const errors: string[] = [];
   let round = 0;
-  const maxRounds = 10; // Prevent infinite loops
+  const maxRounds = options?.maxRounds ?? Number.POSITIVE_INFINITY; // Prevent infinite loops if configured
 
   // Extract initial file paths from manifest
   const queue = extractManifestFilePaths(manifestAST);
@@ -241,9 +242,9 @@ export async function discoverAllDependencies(
     if (queue.length === 0) break;
   }
 
-  if (round >= maxRounds) {
+  if (Number.isFinite(maxRounds) && round >= maxRounds) {
     warnings.push(
-      `Dependency discovery hit maximum rounds (${maxRounds}), may have missed some dependencies`,
+      `Dependency discovery hit maximum rounds (${maxRounds}), may have missed some dependencies (remaining: ${queue.length})`,
     );
   }
 

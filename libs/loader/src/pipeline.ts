@@ -28,6 +28,10 @@ import type { LoadOptions } from "./types.js";
 export interface PipelineOptions extends LoadOptions {
   /** Base path for resolving files */
   basePath?: string;
+  /** Enable verbose debug logging */
+  debug?: boolean;
+  /** Optional safety valve for dependency discovery rounds */
+  discoveryMaxRounds?: number;
 }
 
 export interface PipelineResult {
@@ -82,7 +86,12 @@ async function loadManifest(
   manifestPath: string,
   loader: LoaderState,
 ): Promise<ManifestAST> {
-  const { parseManifest } = await import("@upft/manifest");
+  const { parseManifest, registerBuiltInResolvers } = await import(
+    "@upft/manifest"
+  );
+
+  // Ensure built-in resolvers are registered explicitly
+  await registerBuiltInResolvers();
 
   // Load the manifest file using the loader
   const absoluteManifestPath = resolve(loader.basePath, manifestPath);
@@ -152,6 +161,39 @@ async function resolveAllPermutations(
 }
 
 /**
+ * Generate all permutations from the resolved project and attach them to the manifest
+ */
+async function generateAndAttachPermutations(
+  manifestPath: string,
+  resolutionResult: { project: ProjectAST },
+): Promise<void> {
+  if (!resolutionResult.project.manifest) return;
+
+  const { generateAllPermutations } = await import("./pipeline-resolver.js");
+  const permutations = await generateAllPermutations(resolutionResult.project);
+
+  for (const perm of permutations) {
+    // Filter out null values from input to match PermutationAST type
+    const cleanInput: Record<string, string | string[]> = {};
+    for (const [key, value] of Object.entries(perm.input)) {
+      if (value !== null) {
+        cleanInput[key] = value;
+      }
+    }
+
+    resolutionResult.project.manifest.permutations.set(perm.id, {
+      type: "project" as const,
+      name: perm.id, // Use permutation ID as name
+      path: manifestPath,
+      input: cleanInput,
+      resolvedFiles: perm.files,
+      tokens: perm.tokens,
+      metadata: perm.metadata,
+    } as PermutationAST);
+  }
+}
+
+/**
  * Execute the full multi-pass pipeline
  */
 export async function runPipeline(
@@ -167,10 +209,16 @@ export async function runPipeline(
     const manifestAST = await loadManifest(manifestPath, loader);
 
     // Step 2: Discover dependencies
+    const discoveryOptions =
+      options.discoveryMaxRounds !== undefined
+        ? { maxRounds: options.discoveryMaxRounds }
+        : undefined;
+
     const discoveryResult = await discoverAllDependencies(
       manifestAST,
       manifestPath,
       loader,
+      discoveryOptions,
     );
 
     allErrors.push(...discoveryResult.errors);
@@ -196,35 +244,7 @@ export async function runPipeline(
     allWarnings.push(...resolutionResult.warnings);
 
     // Step 5: Generate all possible permutations from modifiers
-    if (resolutionResult.project.manifest) {
-      const { generateAllPermutations } = await import(
-        "./pipeline-resolver.js"
-      );
-      const permutations = await generateAllPermutations(
-        resolutionResult.project,
-      );
-
-      // Add generated permutations to manifest
-      for (const perm of permutations) {
-        // Filter out null values from input to match PermutationAST type
-        const cleanInput: Record<string, string | string[]> = {};
-        for (const [key, value] of Object.entries(perm.input)) {
-          if (value !== null) {
-            cleanInput[key] = value;
-          }
-        }
-
-        resolutionResult.project.manifest.permutations.set(perm.id, {
-          type: "project" as const,
-          name: perm.id, // Use permutation ID as name
-          path: manifestPath,
-          input: cleanInput,
-          resolvedFiles: perm.files,
-          tokens: perm.tokens,
-          metadata: perm.metadata,
-        } as PermutationAST);
-      }
-    }
+    await generateAndAttachPermutations(manifestPath, resolutionResult);
 
     // Step 6: Resolve permutations
     await resolveAllPermutations(

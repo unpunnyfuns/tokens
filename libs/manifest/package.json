@@ -6,10 +6,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "lint": "biome lint --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -28,5 +31,6 @@
       "import": "./dist/index.js"
     }
   },
+  "turbo": { "tags": ["internal", "processing"] },
   "private": true
 }
