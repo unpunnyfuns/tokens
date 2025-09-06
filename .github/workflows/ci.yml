@@ -5,6 +5,7 @@ on:
     branches:
       - "feat/**"
       - "fix/**"
+      - "refactor/**"
   pull_request:
     branches:
       - main
@@ -67,11 +68,17 @@ jobs:
 
       - name: Run CI (full on main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: pnpm turbo run quality test:coverage
+        env:
+          TURBO_UI: stream
+          TURBO_TELEMETRY_DISABLED: "1"
+        run: pnpm turbo run lint typecheck depcheck test:coverage
 
       - name: Run CI (changed packages)
         if: github.event_name != 'push' || github.ref != 'refs/heads/main'
-        run: pnpm turbo run quality test:coverage --since=origin/${{ env.BASE_REF }}
+        env:
+          TURBO_UI: stream
+          TURBO_TELEMETRY_DISABLED: "1"
+        run: pnpm turbo run lint typecheck depcheck test:coverage --since=origin/${{ env.BASE_REF }}
 
       - name: Check for changesets
         if: github.event_name == 'pull_request'

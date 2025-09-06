@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Lint commit messages in the range being pushed
 # Prefer linting from upstream base to HEAD if upstream exists,
 # otherwise lint the latest commit (or HEAD itself for the first commit).
