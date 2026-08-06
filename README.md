@@ -1,3 +1,8 @@
+> [!WARNING] 
+> This project has been archived. Please use [Terrazzo](https://terrazzo.app) instead.
+> 
+> Most of the discovery here has gone into the [Storybook Swatchbook Addon](https://unpunnyfuns.github.io/swatchbook/).
+
 # upft
 
 TypeScript toolkit for DTCG-compliant design token validation, processing, and bundling with pluggable manifest resolver architecture.
